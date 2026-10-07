@@ -8,6 +8,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -57,6 +58,15 @@ export function ToastProvider({ children }: { children: ReactNode }): React.JSX.
     [opacity],
   );
   const api = useMemo(() => ({ show }), [show]);
+
+  useEffect(
+    () => () => {
+      if (timer.current !== null) {
+        clearTimeout(timer.current);
+      }
+    },
+    [],
+  );
 
   return (
     <ToastContext.Provider value={api}>

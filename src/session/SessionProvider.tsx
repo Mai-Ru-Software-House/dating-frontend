@@ -48,7 +48,8 @@ export interface SessionApi {
   retry: () => void;
 }
 
-const SessionContext = createContext<SessionApi | null>(null);
+/** The session context. Exported so tests can provide a fake session. */
+export const SessionContext = createContext<SessionApi | null>(null);
 
 /**
  * Provides the session to the app.

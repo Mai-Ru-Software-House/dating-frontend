@@ -3,6 +3,9 @@
 # dependencies
 node_modules/
 
+# Test coverage (npm run test:ci)
+coverage/
+
 # Expo
 .expo/
 dist/

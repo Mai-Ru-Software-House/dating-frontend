@@ -126,6 +126,7 @@ gear button on first launch; close the sheet with "Continue".
 | `npm run text:normal -- <serial>`                             | Text size back to 1.0×                                                                            |
 | `npm run avds:create`                                         | Creates (or recreates) the six emulators                                                          |
 | `npm run typecheck` / `npm run lint` / `npm run format:check` | `tsc --noEmit`, ESLint, Prettier. Run all three before every commit                               |
+| `npm test` / `npm run test:ci`                                | Unit tests (Jest, `unit-test-plan.md`); `test:ci` adds coverage with the plan's thresholds        |
 
 ## Mock mode
 
