@@ -4,6 +4,7 @@
  * from a server field to its Create profile step (4.3).
  * Created by Tee (Kittiphon Kijpinyochai), 6 October 2026
  */
+import { LAST_PROFILE_STEP, type ProfileStep } from "../constants/limits";
 
 /** Every error code the app knows. NETWORK_ERROR and UNEXPECTED_RESPONSE are app-only. */
 export type ApiErrorCode =
@@ -162,7 +163,7 @@ const STEP_TWO_FIELDS = ["photoUploadId", "location", "location.lat", "location.
  * @param field The error's field.
  * @returns 1, 2 or 3, or null when unknown (show a banner instead).
  */
-export function stepForField(field: string | undefined): 1 | 2 | 3 | null {
+export function stepForField(field: string | undefined): ProfileStep | null {
   if (field === undefined) {
     return null;
   }
@@ -174,7 +175,7 @@ export function stepForField(field: string | undefined): 1 | 2 | 3 | null {
     return 2;
   }
   if (clean.startsWith("preferences.") || clean === "preferences") {
-    return 3;
+    return LAST_PROFILE_STEP;
   }
   return null;
 }

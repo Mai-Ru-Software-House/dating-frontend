@@ -15,6 +15,12 @@ export const USERNAME_PATTERN = /^[A-Za-z0-9_]+$/;
 /** Minimum password length (A2); it also needs at least one letter and one digit. */
 export const PASSWORD_MIN = 8;
 
+/** The last step of Create profile (About you, Photo and place, Preferences). */
+export const LAST_PROFILE_STEP = 3;
+
+/** A step number of Create profile. */
+export type ProfileStep = 1 | 2 | typeof LAST_PROFILE_STEP;
+
 /** Minimum age for a profile and for preference ages (A3). */
 export const MIN_AGE = 18;
 

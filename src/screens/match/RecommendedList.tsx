@@ -20,7 +20,15 @@ import { useFavorites } from "../../hooks/useFavorites";
 import { usePullRefresh } from "../../hooks/usePullRefresh";
 import { useRefreshOnFocus } from "../../hooks/useRefreshOnFocus";
 import { keys } from "../../session/queryClient";
-import { colors, columnStyle, GUTTER, radius, space } from "../../theme";
+import {
+  colors,
+  columnStyle,
+  GUTTER,
+  MATCH_CARD_MAX_HEIGHT,
+  MATCH_CARD_RATIO,
+  radius,
+  space,
+} from "../../theme";
 import { dedupeCandidates, nextOffset, splitTopMatch } from "../../utils/recommendations";
 import { CandidateRow } from "./CandidateRow";
 
@@ -140,8 +148,8 @@ const styles = StyleSheet.create({
   },
   cardSkeleton: {
     width: "100%",
-    aspectRatio: 353 / 330,
-    maxHeight: 420,
+    aspectRatio: MATCH_CARD_RATIO,
+    maxHeight: MATCH_CARD_MAX_HEIGHT,
     borderRadius: radius.hero,
     backgroundColor: colors.chip,
     marginBottom: space.xxl,

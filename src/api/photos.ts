@@ -35,7 +35,7 @@ export function photoFormData(photo: PickedPhoto): FormData {
   const body = new FormData();
   const name = fileNameFor(photo);
   if (__DEV__) {
-    console.log("[photo] picked", photo, "file name", name, "type", uploadMimeType(photo));
+    console.warn("[photo] picked", photo, "file name", name, "type", uploadMimeType(photo));
   }
   // File implements Blob but is not declared as one; the cast avoids `any`.
   body.append("photo", new File(photo.uri) as unknown as Blob, name);

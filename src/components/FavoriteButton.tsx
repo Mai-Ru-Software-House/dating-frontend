@@ -8,6 +8,9 @@ import { Pressable, StyleSheet } from "react-native";
 
 import { colors, ICON_STROKE, PRESSED_OPACITY, size } from "../theme";
 
+/** Extra touch area around the square variant, in points. */
+const HIT_SLOP = 10;
+
 /** Props for FavoriteButton. */
 export interface FavoriteButtonProps {
   isFavorite: boolean;
@@ -29,7 +32,7 @@ export function FavoriteButton({
   return (
     <Pressable
       onPress={onPress}
-      hitSlop={isCircle ? 0 : 10}
+      hitSlop={isCircle ? 0 : HIT_SLOP}
       accessibilityRole="button"
       accessibilityLabel={isFavorite ? "Remove from favorites" : "Add to favorites"}
       accessibilityState={{ selected: isFavorite }}

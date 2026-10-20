@@ -12,6 +12,12 @@ import { StyleSheet, View, type LayoutChangeEvent } from "react-native";
 import { gradientFor, usePhotoSource } from "../hooks/usePhoto";
 import { colors } from "../theme";
 
+/** The placeholder silhouette: head size as a share of the smaller side, and its proportions. */
+const HEAD_RATIO = 0.26;
+const BODY_TO_HEAD_RATIO = 1.45;
+const BODY_HEIGHT_RATIO = 0.42;
+const NECK_GAP_RATIO = 0.2;
+
 /** Props for PhotoFill. */
 export interface PhotoFillProps {
   userId: string;
@@ -40,8 +46,8 @@ export function PhotoFill({
     const { width, height } = event.nativeEvent.layout;
     setBox({ width, height });
   };
-  const head = Math.min(box.width, box.height) * 0.26;
-  const body = head * 1.45;
+  const head = Math.min(box.width, box.height) * HEAD_RATIO;
+  const body = head * BODY_TO_HEAD_RATIO;
 
   return (
     <View style={StyleSheet.absoluteFill} onLayout={onLayout} accessible={false}>
@@ -58,8 +64,12 @@ export function PhotoFill({
             style={[
               styles.ghost,
               styles.body,
-              { width: body, height: box.height * 0.42, borderTopLeftRadius: body / 2 },
-              { borderTopRightRadius: body / 2, marginTop: head * 0.2 },
+              {
+                width: body,
+                height: box.height * BODY_HEIGHT_RATIO,
+                borderTopLeftRadius: body / 2,
+              },
+              { borderTopRightRadius: body / 2, marginTop: head * NECK_GAP_RATIO },
             ]}
           />
         </View>

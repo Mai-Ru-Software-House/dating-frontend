@@ -9,6 +9,9 @@ import { Pressable, StyleSheet, Text } from "react-native";
 
 import { colors, fonts, ICON_STROKE, PRESSED_OPACITY, size, space } from "../theme";
 
+/** Size of the row's leading icon. */
+const ICON_SIZE = 22;
+
 /** Where the label starts, which is also where a ListGroup's dividers start. */
 export const ACTION_ROW_TEXT_INSET = 50;
 
@@ -39,7 +42,7 @@ export function ActionRow({
       accessibilityRole="button"
       style={({ pressed }) => [styles.row, pressed && styles.pressed]}
     >
-      <Icon size={22} color={color} strokeWidth={ICON_STROKE} />
+      <Icon size={ICON_SIZE} color={color} strokeWidth={ICON_STROKE} />
       <Text style={[styles.label, { color }]} numberOfLines={1}>
         {label}
       </Text>
@@ -57,7 +60,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingLeft: space.lg,
     paddingRight: space.lg,
-    gap: ACTION_ROW_TEXT_INSET - space.lg - 22,
+    gap: ACTION_ROW_TEXT_INSET - space.lg - ICON_SIZE,
   },
   pressed: {
     opacity: PRESSED_OPACITY,

@@ -69,10 +69,12 @@ export function Screen(props: ScreenProps): React.JSX.Element {
   const insets = useSafeAreaInsets();
   const pull = usePullRefresh(onRefresh ?? noop);
   const needsBottomInset = footer === undefined && !isInTabs;
+  const topInset = hasTopInset ? insets.top : 0;
+  const bottomInset = needsBottomInset ? insets.bottom : 0;
   const column = [columnStyle, isPadded && styles.padded, contentStyle];
 
   return (
-    <View style={[styles.root, { backgroundColor, paddingTop: hasTopInset ? insets.top : 0 }]}>
+    <View style={[styles.root, { backgroundColor, paddingTop: topInset }]}>
       {header}
       {/* Android draws edge to edge, so the window doesn't resize for the keyboard: pad on both. */}
       <KeyboardAvoidingView style={styles.flex} behavior="padding">
@@ -82,7 +84,7 @@ export function Screen(props: ScreenProps): React.JSX.Element {
             style={styles.flex}
             contentContainerStyle={[
               styles.scrollContent,
-              { paddingBottom: (needsBottomInset ? insets.bottom : 0) + space.xxl },
+              { paddingBottom: bottomInset + space.xxl },
             ]}
             keyboardShouldPersistTaps="handled"
             keyboardDismissMode="interactive"
@@ -100,9 +102,7 @@ export function Screen(props: ScreenProps): React.JSX.Element {
             <View style={column}>{children}</View>
           </ScrollView>
         ) : (
-          <View style={[styles.flex, { paddingBottom: needsBottomInset ? insets.bottom : 0 }]}>
-            {children}
-          </View>
+          <View style={[styles.flex, { paddingBottom: bottomInset }]}>{children}</View>
         )}
         {footer}
       </KeyboardAvoidingView>

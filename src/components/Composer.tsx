@@ -23,7 +23,10 @@ import {
 import { firstLine } from "../utils/format";
 import { messageRule, ruleMessage } from "../utils/rules";
 
-const MAX_LINES_HEIGHT = 4 * 21 + 24;
+const MAX_VISIBLE_LINES = 4;
+const LINE_HEIGHT = 21;
+const INPUT_VERTICAL_PADDING = 24;
+const MAX_LINES_HEIGHT = MAX_VISIBLE_LINES * LINE_HEIGHT + INPUT_VERTICAL_PADDING;
 
 /** The message being replied to. */
 export interface ComposerReply {

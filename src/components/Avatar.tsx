@@ -13,6 +13,9 @@ import { gradientFor, usePhotoSource } from "../hooks/usePhoto";
 import { colors, fonts } from "../theme";
 import { initialOf } from "../utils/avatar";
 
+/** The initial's font size as a share of the avatar diameter. */
+const INITIAL_FONT_RATIO = 0.4;
+
 /** Props for Avatar. */
 export interface AvatarProps {
   userId: string;
@@ -41,7 +44,10 @@ export function Avatar({ userId, displayName, photoUrl, size }: AvatarProps): Re
         end={{ x: 1, y: 1 }}
         style={[StyleSheet.absoluteFill, styles.center, { borderRadius: size / 2 }]}
       >
-        <Text style={[styles.initial, { fontSize: size * 0.4 }]} allowFontScaling={false}>
+        <Text
+          style={[styles.initial, { fontSize: size * INITIAL_FONT_RATIO }]}
+          allowFontScaling={false}
+        >
           {initialOf(displayName)}
         </Text>
       </LinearGradient>

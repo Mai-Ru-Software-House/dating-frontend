@@ -152,10 +152,11 @@ export function dobToWire(display: string): string | null {
   if (match === null) {
     return null;
   }
+  const [, dayText, monthText, yearText] = match;
   const wire = toWireDate({
-    year: Number(match[3]),
-    month: Number(match[2]),
-    day: Number(match[1]),
+    year: Number(yearText),
+    month: Number(monthText),
+    day: Number(dayText),
   });
   return parseWireDate(wire) === null ? null : wire;
 }

@@ -18,6 +18,14 @@ import { Buffer } from "node:buffer";
 import { readFileSync } from "node:fs";
 import { deflateSync } from "node:zlib";
 
+/**
+ * Writes one line to standard output (the script's report, not debug output).
+ * @param {string} line The text to print.
+ */
+function print(line) {
+  process.stdout.write(`${line}\n`);
+}
+
 const GENDERS = ["female", "male", "non_binary", "prefer_not_to_say"];
 
 /**
@@ -459,15 +467,15 @@ async function main() {
   if (options.isDryRun) {
     for (const p of people) {
       const { username, gender, dateOfBirth, location, preferences } = p.body;
-      console.log(
+      print(
         `${username} ${gender.padEnd(17)} ${dateOfBirth} ${location.lat},${location.lon} -> ${preferences.targetGenders.join("/")} ${preferences.minAge}-${preferences.maxAge} ${preferences.radiusKm} km`,
       );
     }
-    console.log(`Dry run: ${people.length} users, nothing sent.`);
+    print(`Dry run: ${people.length} users, nothing sent.`);
     return;
   }
 
-  console.log(`Seeding ${people.length} users at ${options.baseUrl} (seed ${options.seed})`);
+  print(`Seeding ${people.length} users at ${options.baseUrl} (seed ${options.seed})`);
   const counts = { created: 0, exists: 0, updated: 0, failed: 0 };
   let next = 0;
   let finished = 0;
@@ -484,17 +492,17 @@ async function main() {
       }
       finished++;
       if (finished % 100 === 0 || finished === people.length) {
-        console.log(
+        print(
           `${finished}/${people.length} (${counts.created} created, ${counts.exists} existed, ${counts.updated} moved, ${counts.failed} failed)`,
         );
       }
     }
   };
   await Promise.all(Array.from({ length: options.concurrency }, worker));
-  console.log(
+  print(
     `Done: ${counts.created} created, ${counts.exists} already existed, ${counts.updated} moved, ${counts.failed} failed.`,
   );
-  console.log(
+  print(
     `Log in as ${people[0].body.username} to ${people[people.length - 1].body.username} with password "${options.password}".`,
   );
   process.exitCode = counts.failed > 0 ? 1 : 0;

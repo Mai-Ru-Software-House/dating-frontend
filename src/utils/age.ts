@@ -5,6 +5,9 @@
  * Created by Tee (Kittiphon Kijpinyochai), 6 October 2026
  */
 
+/** Digits in the year of a wire date (YYYY-MM-DD). */
+const YEAR_DIGITS = 4;
+
 /** A calendar date with no time or time zone. */
 export interface CalendarDate {
   year: number;
@@ -22,9 +25,10 @@ export function parseWireDate(wire: string): CalendarDate | null {
   if (match === null) {
     return null;
   }
-  const year = Number(match[1]);
-  const month = Number(match[2]);
-  const day = Number(match[3]);
+  const [, yearText, monthText, dayText] = match;
+  const year = Number(yearText);
+  const month = Number(monthText);
+  const day = Number(dayText);
   const check = new Date(Date.UTC(year, month - 1, day));
   const isReal =
     check.getUTCFullYear() === year &&
@@ -41,7 +45,7 @@ export function parseWireDate(wire: string): CalendarDate | null {
 export function toWireDate(date: CalendarDate): string {
   const mm = String(date.month).padStart(2, "0");
   const dd = String(date.day).padStart(2, "0");
-  return `${String(date.year).padStart(4, "0")}-${mm}-${dd}`;
+  return `${String(date.year).padStart(YEAR_DIGITS, "0")}-${mm}-${dd}`;
 }
 
 /**

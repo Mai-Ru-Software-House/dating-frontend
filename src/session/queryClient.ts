@@ -8,6 +8,10 @@ import { QueryClient } from "@tanstack/react-query";
 
 import { ApiError } from "../api/errors";
 
+/** HTTP status range of a client error (4xx): retrying will not help. */
+const CLIENT_ERROR_MIN = 400;
+const SERVER_ERROR_MIN = 500;
+
 const STALE_MS = 30_000;
 
 /**
@@ -17,7 +21,11 @@ const STALE_MS = 30_000;
  * @returns True for one retry of a network or server error.
  */
 function shouldRetry(failureCount: number, error: unknown): boolean {
-  if (error instanceof ApiError && error.status >= 400 && error.status < 500) {
+  if (
+    error instanceof ApiError &&
+    error.status >= CLIENT_ERROR_MIN &&
+    error.status < SERVER_ERROR_MIN
+  ) {
     return false;
   }
   return failureCount < 1;

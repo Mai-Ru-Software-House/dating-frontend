@@ -9,7 +9,16 @@ import { FileText, Heart, House, MessageSquare, type LucideIcon } from "lucide-r
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { colors, columnStyle, fonts, ICON_STROKE, MAX_FONT_SCALE, size, type } from "../theme";
+import {
+  colors,
+  columnStyle,
+  fonts,
+  ICON_STROKE,
+  MAX_FONT_SCALE,
+  size,
+  space,
+  type,
+} from "../theme";
 import { UnreadBadge } from "./UnreadBadge";
 
 const ICONS: Record<string, LucideIcon> = {
@@ -87,7 +96,7 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: "row",
-    minHeight: size.tabBar + 12,
+    minHeight: size.tabBar + space.md,
   },
   tab: {
     flex: 1,

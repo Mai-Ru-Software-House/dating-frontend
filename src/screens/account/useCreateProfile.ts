@@ -10,7 +10,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { ERROR_COPY, messageFor, normalizeField, stepForField, toApiError } from "../../api/errors";
 import { photosApi } from "../../api/photos";
 import { profileApi } from "../../api/profile";
-import { UPLOAD_REFRESH_MARGIN_MS } from "../../constants/limits";
+import { LAST_PROFILE_STEP, UPLOAD_REFRESH_MARGIN_MS } from "../../constants/limits";
 import { useUsernameCheck, type UsernameStatus } from "../../hooks/useUsernameCheck";
 import { useSession } from "../../session/SessionProvider";
 import { MESSAGES } from "../../utils/rules";
@@ -111,7 +111,7 @@ export function useCreateProfile(): CreateProfileController {
       setAttempted((prev) => new Set(prev).add(step));
       return;
     }
-    setStep((s) => (s < 3 ? ((s + 1) as Step) : s));
+    setStep((s) => (s < LAST_PROFILE_STEP ? ((s + 1) as Step) : s));
   };
   const back = (): void => {
     setStep((s) => (s > 1 ? ((s - 1) as Step) : s));

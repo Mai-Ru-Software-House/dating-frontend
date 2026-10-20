@@ -14,7 +14,12 @@ import { Avatar } from "./Avatar";
 
 const CYCLE_MS = 1200;
 const DOT = 8;
-const OPACITIES = [0.9, 0.6, 0.35];
+const OPACITY_STRONG = 0.9;
+const OPACITY_MEDIUM = 0.6;
+const OPACITY_FAINT = 0.35;
+const OPACITIES = [OPACITY_STRONG, OPACITY_MEDIUM, OPACITY_FAINT];
+/** The animation runs 0 to one step per dot; each dot reads the opacity list from its own offset. */
+const PHASE_STEPS = [0, 1, 2, OPACITIES.length];
 
 /** Props for TypingIndicator. */
 export interface TypingIndicatorProps {
@@ -31,7 +36,11 @@ export function TypingIndicator({ other }: TypingIndicatorProps): React.JSX.Elem
 
   useEffect(() => {
     const loop = Animated.loop(
-      Animated.timing(phase, { toValue: 3, duration: CYCLE_MS, useNativeDriver: true }),
+      Animated.timing(phase, {
+        toValue: OPACITIES.length,
+        duration: CYCLE_MS,
+        useNativeDriver: true,
+      }),
     );
     loop.start();
     return () => {
@@ -58,8 +67,8 @@ export function TypingIndicator({ other }: TypingIndicatorProps): React.JSX.Elem
               styles.dot,
               {
                 opacity: phase.interpolate({
-                  inputRange: [0, 1, 2, 3],
-                  outputRange: [0, 1, 2, 3].map((p) => OPACITIES[(index + p) % 3]),
+                  inputRange: PHASE_STEPS,
+                  outputRange: PHASE_STEPS.map((p) => OPACITIES[(index + p) % OPACITIES.length]),
                 }),
               },
             ]}
