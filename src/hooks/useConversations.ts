@@ -5,6 +5,7 @@
  */
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 
+import { CHAT_POLL_MS } from "../constants/limits";
 import { messagingApi } from "../api/messaging";
 import type { Conversation } from "../api/types";
 import { keys } from "../session/queryClient";
@@ -14,5 +15,9 @@ import { keys } from "../session/queryClient";
  * @returns The query.
  */
 export function useConversations(): UseQueryResult<Conversation[]> {
-  return useQuery({ queryKey: keys.conversations, queryFn: messagingApi.getConversations });
+  return useQuery({
+    queryKey: keys.conversations,
+    queryFn: messagingApi.getConversations,
+    refetchInterval: CHAT_POLL_MS,
+  });
 }
