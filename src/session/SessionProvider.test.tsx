@@ -20,7 +20,11 @@ jest.mock("../api/sessions");
 
 const mockShowToast = jest.fn<undefined, [string]>();
 jest.mock("../components/Toast", () => {
-  const toast = { show: (text: string) => mockShowToast(text) };
+  const toast = {
+    show: (text: string) => {
+      mockShowToast(text);
+    },
+  };
   return {
     ToastProvider: ({ children }: { children: React.ReactNode }) => children,
     useToast: () => toast,

@@ -9,6 +9,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { messageFor } from "../../api/errors";
 import { matchingApi } from "../../api/matching";
+import type { OwnProfile } from "../../api/types";
 import { Avatar } from "../../components/Avatar";
 import { EmptyState } from "../../components/EmptyState";
 import { ListRow } from "../../components/ListRow";
@@ -33,6 +34,40 @@ import {
 import { HomeMenu } from "./HomeMenu";
 
 /**
+ * The text under "Matches" on its tile; a blank until the recommendations load.
+ * @param data The loaded recommendations, if any.
+ * @returns The tile subtitle.
+ */
+function matchesTileOf(data: { recommendations: unknown[] } | undefined): string {
+  return data ? formatMatchesTile(data.recommendations.length, RECOMMENDATIONS_PAGE) : " ";
+}
+
+/**
+ * The avatar button that opens the own profile.
+ * @param me The own profile, once loaded.
+ * @param onPress Opens the profile.
+ * @returns The button, or null while the profile loads.
+ */
+function renderProfileButton(
+  me: OwnProfile | undefined,
+  onPress: () => void,
+): React.JSX.Element | null {
+  if (!me) {
+    return null;
+  }
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel="Open your profile"
+      hitSlop={4}
+    >
+      <Avatar userId={me.userId} displayName={me.displayName} photoUrl={me.photoUrl} size={44} />
+    </Pressable>
+  );
+}
+
+/**
  * The Home screen.
  * @param props.navigation Tab navigation (with the root stack as parent).
  * @returns The screen.
@@ -50,9 +85,7 @@ export function HomeScreen({ navigation }: TabScreenProps<"HomeTab">): React.JSX
   };
   useRefreshOnFocus(refresh);
   const now = new Date();
-  const matchesSubtitle = matches.data
-    ? formatMatchesTile(matches.data.recommendations.length, RECOMMENDATIONS_PAGE)
-    : " ";
+  const matchesSubtitle = matchesTileOf(matches.data);
 
   return (
     <Screen isInTabs onRefresh={refresh}>
@@ -63,23 +96,9 @@ export function HomeScreen({ navigation }: TabScreenProps<"HomeTab">): React.JSX
           </Text>
           <Text style={styles.date}>{formatHomeDate(now)}</Text>
         </View>
-        {me ? (
-          <Pressable
-            onPress={() => {
-              navigation.navigate("Profile");
-            }}
-            accessibilityRole="button"
-            accessibilityLabel="Open your profile"
-            hitSlop={4}
-          >
-            <Avatar
-              userId={me.userId}
-              displayName={me.displayName}
-              photoUrl={me.photoUrl}
-              size={44}
-            />
-          </Pressable>
-        ) : null}
+        {renderProfileButton(me, () => {
+          navigation.navigate("Profile");
+        })}
       </View>
       <HomeMenu
         matchesSubtitle={matchesSubtitle}

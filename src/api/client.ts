@@ -132,6 +132,42 @@ async function errorFrom(response: Response): Promise<ApiError> {
 }
 
 /**
+ * The request body, setting the Content-Type header for JSON.
+ * @param options Body options of the request.
+ * @param headers The request headers; Content-Type is added when the body is JSON.
+ * @returns The form data, the JSON text, or undefined when there is no body.
+ */
+function bodyFor(
+  options: RequestOptions,
+  headers: Record<string, string>,
+): string | FormData | undefined {
+  if (options.formData !== undefined) {
+    return options.formData;
+  }
+  if (options.body === undefined) {
+    return undefined;
+  }
+  headers["Content-Type"] = "application/json";
+  return JSON.stringify(options.body);
+}
+
+/**
+ * The ApiError for a failed fetch call.
+ * @param error What fetch threw.
+ * @param timeoutMs The timeout that was set, for the message.
+ * @returns NETWORK_ERROR when there was no response (or the timeout fired), else the mapped error.
+ */
+function failureFrom(error: unknown, timeoutMs: number): ApiError {
+  if (!isNetworkFailure(error)) {
+    return toApiError(error);
+  }
+  if (error instanceof Error && error.name === "AbortError") {
+    return new ApiError(0, "NETWORK_ERROR", `Timed out after ${String(timeoutMs)} ms`);
+  }
+  return new ApiError(0, "NETWORK_ERROR", error instanceof Error ? error.message : "");
+}
+
+/**
  * Sends one HTTP request with a timeout.
  * @param method HTTP method.
  * @param url Full URL.
@@ -155,32 +191,14 @@ async function send(
   if (accessToken !== null) {
     headers.Authorization = `Bearer ${accessToken}`;
   }
-  let body: string | FormData | undefined;
-  if (options.formData !== undefined) {
-    body = options.formData;
-  } else if (options.body !== undefined) {
-    headers["Content-Type"] = "application/json";
-    body = JSON.stringify(options.body);
-  }
+  const body = bodyFor(options, headers);
   try {
     return await fetch(url, { method, headers, body, signal: controller.signal });
   } catch (error) {
     if (__DEV__) {
       console.warn("[api] fetch failed", method, url, error, { headers });
     }
-    if (isNetworkFailure(error)) {
-      const isTimeout = error instanceof Error && error.name === "AbortError";
-      throw new ApiError(
-        0,
-        "NETWORK_ERROR",
-        isTimeout
-          ? `Timed out after ${String(timeoutMs)} ms`
-          : error instanceof Error
-            ? error.message
-            : "",
-      );
-    }
-    throw toApiError(error);
+    throw failureFrom(error, timeoutMs);
   } finally {
     clearTimeout(timer);
   }
@@ -250,6 +268,37 @@ async function parse<T>(response: Response): Promise<T> {
 }
 
 /**
+ * Refreshes the tokens after a 401 and repeats the request once.
+ * @param method HTTP method.
+ * @param url Full URL of the request.
+ * @param options Body and headers of the request.
+ * @param error The 401 error, thrown when the session is over.
+ * @returns The parsed JSON body of the repeated request.
+ * @throws ApiError The 401 when the refresh fails, or the error of the repeated request.
+ */
+async function retryAfterRefresh<T>(
+  method: string,
+  url: string,
+  options: RequestOptions,
+  error: ApiError,
+): Promise<T> {
+  const isRefreshed = await refreshOnce();
+  if (!isRefreshed) {
+    bridge?.expire();
+    throw error;
+  }
+  const retry = await send(method, url, options, currentAccessToken());
+  if (retry.ok) {
+    return parse<T>(retry);
+  }
+  const retryError = await errorFrom(retry);
+  if (retryError.code === "UNAUTHENTICATED") {
+    bridge?.expire();
+  }
+  throw retryError;
+}
+
+/**
  * Calls the API.
  * @param method HTTP method.
  * @param path Path after the base URL, for example "/conversations".
@@ -264,8 +313,7 @@ export async function request<T>(
 ): Promise<T> {
   const isAuthenticated = options.isAuthenticated ?? true;
   const url = buildUrl(path, options.query);
-  const token = isAuthenticated ? (bridge?.getTokens()?.accessToken ?? null) : null;
-  const response = await send(method, url, options, token);
+  const response = await send(method, url, options, isAuthenticated ? currentAccessToken() : null);
   if (response.ok) {
     return parse<T>(response);
   }
@@ -273,21 +321,7 @@ export async function request<T>(
   if (!isAuthenticated || error.code !== "UNAUTHENTICATED") {
     throw error;
   }
-  const isRefreshed = await refreshOnce();
-  if (!isRefreshed) {
-    bridge?.expire();
-    throw error;
-  }
-  const retryToken = bridge?.getTokens()?.accessToken ?? null;
-  const retry = await send(method, url, options, retryToken);
-  if (retry.ok) {
-    return parse<T>(retry);
-  }
-  const retryError = await errorFrom(retry);
-  if (retryError.code === "UNAUTHENTICATED") {
-    bridge?.expire();
-  }
-  throw retryError;
+  return retryAfterRefresh<T>(method, url, options, error);
 }
 
 /**

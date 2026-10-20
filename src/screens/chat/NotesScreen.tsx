@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 import { messageFor } from "../../api/errors";
+import type { Note } from "../../api/types";
 import { Button } from "../../components/Button";
 import { ConfirmDialog } from "../../components/ConfirmDialog";
 import { LoadError } from "../../components/LoadError";
@@ -28,6 +29,32 @@ import { NoteSubject } from "./NoteSubject";
 import { useNewNote } from "./useNewNote";
 
 type Props = RootScreenProps<"Notes"> | NotesStackScreenProps<"NotesInTab">;
+
+/**
+ * The "Earlier" section with one card per note.
+ * @param notes The notes about the person.
+ * @param onOpen Opens a note's page.
+ * @returns The section, or null when there are no notes.
+ */
+function renderEarlier(notes: Note[], onOpen: (note: Note) => void): React.JSX.Element | null {
+  if (notes.length === 0) {
+    return null;
+  }
+  return (
+    <View style={styles.section}>
+      <SectionLabel label="Earlier" />
+      {notes.map((note) => (
+        <NoteCard
+          key={note.noteId}
+          note={note}
+          onPress={() => {
+            onOpen(note);
+          }}
+        />
+      ))}
+    </View>
+  );
+}
 
 /**
  * The Notes screen.
@@ -90,25 +117,14 @@ export function NotesScreen({ navigation, route }: Props): React.JSX.Element {
       {query.isSuccess && notes.length === 0 && !editor.isOpen ? (
         <Text style={styles.empty}>No notes about {person.displayName} yet.</Text>
       ) : null}
-      {notes.length > 0 ? (
-        <View style={styles.section}>
-          <SectionLabel label="Earlier" />
-          {notes.map((note) => (
-            <NoteCard
-              key={note.noteId}
-              note={note}
-              onPress={() => {
-                rootNavigation.navigate("NoteDetail", {
-                  noteId: note.noteId,
-                  aboutUserId: person.userId,
-                  displayName: person.displayName,
-                  photoUrl: person.photoUrl,
-                });
-              }}
-            />
-          ))}
-        </View>
-      ) : null}
+      {renderEarlier(notes, (note) => {
+        rootNavigation.navigate("NoteDetail", {
+          noteId: note.noteId,
+          aboutUserId: person.userId,
+          displayName: person.displayName,
+          photoUrl: person.photoUrl,
+        });
+      })}
       <ConfirmDialog
         isVisible={pendingLeave !== null}
         title="Discard this note?"

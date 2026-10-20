@@ -12,16 +12,14 @@ import {
   type NavigationContainerRefWithCurrent,
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
 import { render } from "@testing-library/react-native";
 import type { ComponentType, ReactElement, ReactNode } from "react";
-import { Text } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import { ToastProvider } from "../src/components/Toast";
-import { SessionContext, type SessionApi } from "../src/session/SessionProvider";
+import type { SessionApi } from "../src/session/SessionProvider";
 import { USERS } from "./fixtures/seed";
-import { SAFE_AREA_METRICS } from "./safeArea";
+import { Providers } from "./Providers";
+import { StubScreen } from "./StubScreen";
 
 /** Every route name in the app (root stack, tabs and the Notes tab's stack). */
 const ROUTE_NAMES = [
@@ -84,38 +82,6 @@ export interface Rendered {
   queryClient: QueryClient;
   session: SessionApi;
   navigation: NavigationContainerRefWithCurrent<ParamList>;
-}
-
-/**
- * The app's providers around some content.
- * @param props.children The content.
- * @param props.queryClient The query client.
- * @param props.session The session.
- * @returns The wrapped content.
- */
-function Providers(props: {
-  children: ReactNode;
-  queryClient: QueryClient;
-  session: SessionApi;
-}): React.JSX.Element {
-  return (
-    <SafeAreaProvider initialMetrics={SAFE_AREA_METRICS}>
-      <QueryClientProvider client={props.queryClient}>
-        <ToastProvider>
-          <SessionContext.Provider value={props.session}>{props.children}</SessionContext.Provider>
-        </ToastProvider>
-      </QueryClientProvider>
-    </SafeAreaProvider>
-  );
-}
-
-/**
- * A stub screen that shows its route name and params.
- * @param props.route The route.
- * @returns The stub.
- */
-function StubScreen({ route }: { route: { name: string; params?: object } }): React.JSX.Element {
-  return <Text>{`Screen: ${route.name} ${JSON.stringify(route.params ?? {})}`}</Text>;
 }
 
 /**
