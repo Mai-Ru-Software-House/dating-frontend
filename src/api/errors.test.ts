@@ -4,7 +4,13 @@
  * (unit-test-plan.md 6.8, api-integration.md 4.2 and 4.3).
  * Created by Tee (Kittiphon Kijpinyochai), 7 October 2026
  */
-import { ApiError, messageFor, stepForField, type ApiErrorCode } from "./errors";
+import {
+  ApiError,
+  messageFor,
+  photoUploadMessage,
+  stepForField,
+  type ApiErrorCode,
+} from "./errors";
 
 /** The copy from api-integration.md 4.2, word for word. "" means no message is shown. */
 const COPY: [ApiErrorCode, number, string][] = [
@@ -36,12 +42,30 @@ describe("messageFor", () => {
     expect(message).toBe("Age range is not valid");
   });
 
-  it("UT-ERR-01: anything that isn't an ApiError is a network failure", () => {
-    const fromError = messageFor(new TypeError("Network request failed"));
-    const fromAnythingElse = messageFor("offline");
+  it("UT-ERR-01: a failed fetch (TypeError) or a timeout (AbortError) is a network failure", () => {
+    const timeout = new Error("aborted");
+    timeout.name = "AbortError";
+    const expected = "Can't reach the server. Check your connection and try again.";
 
-    expect(fromError).toBe("Can't reach the server. Check your connection and try again.");
-    expect(fromAnythingElse).toBe(fromError);
+    expect(messageFor(new TypeError("Network request failed"))).toBe(expected);
+    expect(messageFor(timeout)).toBe(expected);
+  });
+
+  it("UT-ERR-01: any other thrown error is an unknown error, not a network failure", () => {
+    expect(messageFor(new Error("bug"))).toBe("Something went wrong. Try again.");
+    expect(messageFor("offline")).toBe("Something went wrong. Try again.");
+  });
+
+  it("UT-ERR-01: a photo upload keeps network and server copy, else its own message", () => {
+    expect(photoUploadMessage(new Error("bug"))).toBe(
+      "Something went wrong uploading the photo. Try again.",
+    );
+    expect(photoUploadMessage(new TypeError("Network request failed"))).toBe(
+      "Can't reach the server. Check your connection and try again.",
+    );
+    expect(photoUploadMessage(new ApiError(400, "INVALID_INPUT", "Photo is too large"))).toBe(
+      "Photo is too large",
+    );
   });
 
   it("UT-ERR-02: a wrong password and an unknown user look the same", () => {

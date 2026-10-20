@@ -51,7 +51,7 @@ export function HomeScreen({ navigation }: TabScreenProps<"HomeTab">): React.JSX
   useRefreshOnFocus(refresh);
   const now = new Date();
   const matchesSubtitle = matches.data
-    ? formatMatchesTile(matches.data.length, RECOMMENDATIONS_PAGE)
+    ? formatMatchesTile(matches.data.recommendations.length, RECOMMENDATIONS_PAGE)
     : " ";
 
   return (

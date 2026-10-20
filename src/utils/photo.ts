@@ -1,7 +1,8 @@
 /**
  * photo.ts
  * Profile photo checks before upload (A5, api-integration.md 6.2) and the file details the upload
- * needs. The first failing rule wins, in a fixed order: type, size, square.
+ * needs. The first failing rule wins, in a fixed order: type, size. Any shape is accepted; the server
+ * center-crops to a square.
  * Created by Tee (Kittiphon Kijpinyochai), 6 October 2026
  */
 import type { PickedPhoto } from "../api/types";
@@ -44,6 +45,16 @@ export function photoMimeType(photo: PickedPhoto): string {
 }
 
 /**
+ * The MIME type to send with the upload: photoMimeType, else "image/jpeg". Never empty, because
+ * Android fails the whole request when a multipart part has no type.
+ * @param photo The picked photo.
+ * @returns A MIME type.
+ */
+export function uploadMimeType(photo: PickedPhoto): string {
+  return photoMimeType(photo) || "image/jpeg";
+}
+
+/**
  * A file name for the upload's multipart part.
  * @param photo The picked photo.
  * @returns The picker's file name, or "photo.<ext>" from the type.
@@ -72,9 +83,6 @@ export function checkProfilePhoto(photo: PickedPhoto): RuleResult {
   }
   if (typeof photo.fileSize === "number" && photo.fileSize > PROFILE_PHOTO_MAX_BYTES) {
     return { isValid: false, message: MESSAGES.photoSize };
-  }
-  if (photo.width !== photo.height) {
-    return { isValid: false, message: MESSAGES.photoSquare };
   }
   return { isValid: true };
 }

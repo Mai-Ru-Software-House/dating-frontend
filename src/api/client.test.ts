@@ -24,6 +24,14 @@ jest.mock("../constants/env", () => ({
   MOCK_FAIL: "",
 }));
 
+jest.mock("expo-file-system", () => ({
+  File: class extends Blob {
+    constructor() {
+      super([]);
+    }
+  },
+}));
+
 const BASE = "http://10.0.2.2:3000/api/v1";
 
 /** A fake fetch response. A string body is sent as-is (not JSON). */
@@ -91,9 +99,9 @@ describe("request", () => {
     ["replaceMine", () => photosApi.replaceMine(SQUARE_500), "PUT", "/users/me/photo", undefined],
     [
       "getRecommendations",
-      () => matchingApi.getRecommendations(10),
+      () => matchingApi.getRecommendations(10, 20),
       "GET",
-      "/recommendations?limit=10",
+      "/recommendations?limit=10&offset=20",
       undefined,
     ],
     ["getFavorites", () => favoritesApi.getFavorites(), "GET", "/favorites", undefined],
@@ -129,10 +137,10 @@ describe("request", () => {
     ],
     [
       "markRead",
-      () => messagingApi.markRead("usr_bob", "M4"),
+      () => messagingApi.markRead("usr_bob"),
       "PATCH",
       "/conversations/usr_bob",
-      { lastReadMessageId: "M4" },
+      { isRead: true },
     ],
     [
       "getUnread",
@@ -231,7 +239,7 @@ describe("request", () => {
     });
   });
 
-  it("UT-API-04: a network failure and a non-JSON body are both NETWORK_ERROR", async () => {
+  it("UT-API-04: a network failure is NETWORK_ERROR; a non-JSON error body is UNEXPECTED_RESPONSE", async () => {
     fetchMock.mockRejectedValueOnce(new TypeError("Network request failed"));
     fetchMock.mockResolvedValueOnce(reply(502, "<html>Bad gateway</html>"));
 
@@ -239,18 +247,18 @@ describe("request", () => {
     const badGateway = request("GET", "/conversations");
 
     await expect(offline).rejects.toMatchObject({ status: 0, code: "NETWORK_ERROR" });
-    await expect(badGateway).rejects.toMatchObject({ status: 0, code: "NETWORK_ERROR" });
+    await expect(badGateway).rejects.toMatchObject({ status: 502, code: "UNEXPECTED_RESPONSE" });
   });
 
-  it("UT-API-04: a 200 whose body isn't JSON, and an error with an unknown code, are NETWORK_ERROR", async () => {
+  it("UT-API-04: a 200 whose body isn't JSON, and an error with an unknown code, are UNEXPECTED_RESPONSE", async () => {
     fetchMock.mockResolvedValueOnce(reply(200, "<html>Captive portal</html>"));
     fetchMock.mockResolvedValueOnce(reply(500, apiError("SOMETHING_NEW")));
 
     const notJson = request("GET", "/conversations");
     const unknownCode = request("GET", "/conversations");
 
-    await expect(notJson).rejects.toMatchObject({ status: 0, code: "NETWORK_ERROR" });
-    await expect(unknownCode).rejects.toMatchObject({ status: 0, code: "NETWORK_ERROR" });
+    await expect(notJson).rejects.toMatchObject({ status: 200, code: "UNEXPECTED_RESPONSE" });
+    await expect(unknownCode).rejects.toMatchObject({ status: 500, code: "UNEXPECTED_RESPONSE" });
   });
 
   it("UT-API-05: gives up after 15 s", async () => {
@@ -258,7 +266,9 @@ describe("request", () => {
     fetchMock.mockImplementationOnce(
       (_url, init) =>
         new Promise((_resolve, reject) => {
-          init.signal?.addEventListener("abort", () => reject(new Error("Aborted")));
+          init.signal?.addEventListener("abort", () =>
+            reject(Object.assign(new Error("Aborted"), { name: "AbortError" })),
+          );
         }),
     );
 
@@ -267,6 +277,25 @@ describe("request", () => {
 
     await expect(result).rejects.toMatchObject({ code: "NETWORK_ERROR" });
     expect(fetchMock.mock.calls[0][1].signal?.aborted).toBe(true);
+  });
+
+  it("UT-API-05: an upload waits up to 60 s", async () => {
+    jest.useFakeTimers();
+    fetchMock.mockImplementationOnce(
+      (_url, init) =>
+        new Promise((_resolve, reject) => {
+          init.signal?.addEventListener("abort", () =>
+            reject(Object.assign(new Error("Aborted"), { name: "AbortError" })),
+          );
+        }),
+    );
+
+    const result = photosApi.uploadTemp(SQUARE_500);
+    jest.advanceTimersByTime(15_000);
+
+    expect(fetchMock.mock.calls[0][1].signal?.aborted).toBe(false);
+    jest.advanceTimersByTime(45_000);
+    await expect(result).rejects.toMatchObject({ code: "NETWORK_ERROR" });
   });
 
   it("UT-API-06: refreshes an expired access token once and retries the call", async () => {

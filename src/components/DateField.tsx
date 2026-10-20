@@ -94,6 +94,8 @@ export function DateField(props: DateFieldProps): React.JSX.Element {
             value={draft}
             mode="date"
             display="spinner"
+            themeVariant="light"
+            textColor={colors.ink}
             maximumDate={new Date()}
             onValueChange={(_event, date) => setDraft(date)}
           />

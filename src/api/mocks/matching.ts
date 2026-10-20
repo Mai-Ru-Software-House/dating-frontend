@@ -24,15 +24,18 @@ function toCard(person: MockPerson, withScore: boolean): CandidateCard {
 }
 
 export const mockMatchingApi: MatchingApi = {
-  async getRecommendations(limit) {
+  async getRecommendations(limit, offset = 0) {
     const me = await authed();
     if (MOCK_FAIL === "match") {
       throw new ApiError(500, "MATCH_ENGINE_UNAVAILABLE", "Match Engine timed out");
     }
     if (me.profile.userId !== TEE.userId) {
-      return [];
+      return { recommendations: [], hasMore: false };
     }
-    return PEOPLE.slice(0, limit).map((p) => toCard(p, true));
+    return {
+      recommendations: PEOPLE.slice(offset, offset + limit).map((p) => toCard(p, true)),
+      hasMore: offset + limit < PEOPLE.length,
+    };
   },
   async searchCandidates(criteria) {
     const me = await authed();

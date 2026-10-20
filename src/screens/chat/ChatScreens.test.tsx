@@ -20,7 +20,13 @@ import {
   summaryOf,
   USERS,
 } from "../../../test/fixtures/seed";
-import { fakeSession, renderScreen, type Rendered } from "../../../test/renderWithProviders";
+import {
+  fakeSession,
+  renderScreen,
+  testQueryClient,
+  type Rendered,
+  type RenderOptions,
+} from "../../../test/renderWithProviders";
 import { ApiError } from "../../api/errors";
 import { messagingApi } from "../../api/messaging";
 import { notesApi } from "../../api/notes";
@@ -61,10 +67,11 @@ function hostsOfType(type: string): HostElement[] {
 /**
  * Renders the conversation with a seed user.
  * @param username The other person.
+ * @param options Render options, for example a query client to spy on.
  * @returns The render result.
  */
-function renderConversation(username: string): Promise<Rendered> {
-  return renderScreen(ConversationScreen, "Conversation", summaryOf(username));
+function renderConversation(username: string, options?: RenderOptions): Promise<Rendered> {
+  return renderScreen(ConversationScreen, "Conversation", summaryOf(username), options);
 }
 
 /**
@@ -116,10 +123,12 @@ describe("ChatList", () => {
 describe("Conversation", () => {
   it("UT-SCR-18: opening it marks the newest message as read", async () => {
     messaging.getMessages.mockResolvedValue({ messages: [M4, M3, M2], hasMore: false });
-    const { queryClient } = await renderConversation("bob");
+    // Spy before rendering: the screen marks the messages read as soon as they load.
+    const queryClient = testQueryClient();
     const invalidate = jest.spyOn(queryClient, "invalidateQueries");
+    await renderConversation("bob", { queryClient });
 
-    await waitFor(() => expect(messaging.markRead).toHaveBeenCalledWith(USERS.bob.userId, "M4"));
+    await waitFor(() => expect(messaging.markRead).toHaveBeenCalledWith(USERS.bob.userId));
     await waitFor(() => expect(invalidate).toHaveBeenCalledWith({ queryKey: keys.unread }));
     expect(invalidate).toHaveBeenCalledWith({ queryKey: keys.conversations });
   });

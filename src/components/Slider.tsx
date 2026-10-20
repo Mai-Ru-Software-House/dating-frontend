@@ -4,6 +4,7 @@
  * Created by Tee (Kittiphon Kijpinyochai), 6 October 2026
  */
 import { useState } from "react";
+import { useSharedValue } from "react-native-reanimated";
 
 import { clamp, positionOf } from "../utils/slider";
 import { SliderFrame } from "./SliderFrame";
@@ -28,7 +29,8 @@ export interface SliderProps {
 export function Slider(props: SliderProps): React.JSX.Element {
   const { label, min, max, value, onChange, format = String } = props;
   const [trackWidth, setTrackWidth] = useState(0);
-  const at = positionOf(value, trackWidth, min, max);
+  const x = useSharedValue(positionOf(value, trackWidth, min, max));
+  const zero = useSharedValue(0);
   const set = (next: number): void => {
     const clamped = clamp(Math.round(next), min, max);
     if (clamped !== value) {
@@ -42,14 +44,17 @@ export function Slider(props: SliderProps): React.JSX.Element {
       valueText={format(value)}
       startLabel={format(min)}
       endLabel={format(max)}
-      fillFrom={0}
-      fillTo={at}
+      fillFrom={zero}
+      fillTo={x}
       onTrackWidth={setTrackWidth}
     >
       <SliderKnob
         value={value}
-        left={at}
+        x={x}
+        trackMin={min}
         pointsPerStep={max > min ? trackWidth / (max - min) : 0}
+        minAt={0}
+        maxAt={trackWidth}
         onDrag={set}
         onStep={set}
         accessibilityLabel={label}

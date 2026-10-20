@@ -11,6 +11,7 @@ import { mockTime } from "./time";
 /** Another user as the mocks keep them. */
 export interface MockPerson {
   userId: string;
+  username: string;
   displayName: string;
   photoUrl: string;
   age: number;
@@ -18,7 +19,7 @@ export interface MockPerson {
   placeName: string | null;
   distanceKm: number;
   matchScore: number;
-  lookingFor?: Preferences;
+  lookingFor: Preferences;
 }
 
 /** An account the mocks can log in to. */
@@ -98,6 +99,7 @@ function person(
   const photoId = userId.replace("usr_", "pho_");
   return {
     userId,
+    username: userId.replace("usr_", ""),
     displayName,
     photoUrl: `/api/v1/photos/${photoId}`,
     age,
@@ -105,6 +107,7 @@ function person(
     placeName,
     distanceKm,
     matchScore,
+    lookingFor: { minAge: 18, maxAge: 30, targetGenders: ["male"], radiusKm: 50 },
   };
 }
 

@@ -117,14 +117,10 @@ export const mockMessagingApi: MessagingApi = {
     const to = original.senderId === me ? original.receiverId : original.senderId;
     return { ...store(me, to, text, original) };
   },
-  async markRead(userId, lastReadMessageId) {
+  async markRead(userId) {
     const me = (await authed()).profile.userId;
-    const last = db().messages.find((m) => m.messageId === lastReadMessageId);
-    if (last === undefined) {
-      throw new ApiError(400, "INVALID_INPUT", "Unknown message", "lastReadMessageId");
-    }
     for (const m of db().messages) {
-      if (m.senderId === userId && m.receiverId === me && m.sentAt <= last.sentAt) {
+      if (m.senderId === userId && m.receiverId === me) {
         m.isRead = true;
       }
     }

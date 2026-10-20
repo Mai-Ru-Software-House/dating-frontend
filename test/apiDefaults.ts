@@ -30,7 +30,9 @@ export function setAliceDefaults(): void {
     messaging.markRead.mockResolvedValue(undefined);
   }
   if (jest.isMockFunction(matchingApi.getRecommendations)) {
-    jest.mocked(matchingApi.getRecommendations).mockResolvedValue(ALICE_RECOMMENDATIONS);
+    jest
+      .mocked(matchingApi.getRecommendations)
+      .mockResolvedValue({ recommendations: ALICE_RECOMMENDATIONS, hasMore: false });
     jest.mocked(matchingApi.searchCandidates).mockResolvedValue(ALICE_RECOMMENDATIONS);
   }
   if (jest.isMockFunction(favoritesApi.getFavorites)) {

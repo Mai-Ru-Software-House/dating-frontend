@@ -1,8 +1,7 @@
 /**
  * types.ts
  * Request and response types that mirror the API contract (api-integration.md 7). Fields marked
- * "pending" are frontend requests not in the contract yet; they stay optional so the app works
- * before and after they land.
+ * "pending" are frontend requests not in the contract yet; they stay optional.
  * Created by Tee (Kittiphon Kijpinyochai), 6 October 2026
  */
 import type { Gender } from "../constants/profile";
@@ -28,6 +27,7 @@ export interface UserSummary {
 }
 
 export interface CandidateCard extends UserSummary {
+  username: string;
   age: number;
   gender: Gender;
   /** "province, district", for example "Bangkok, Lat Krabang". */
@@ -38,10 +38,17 @@ export interface CandidateCard extends UserSummary {
   matchScore?: number;
 }
 
+/** One page of GET /recommendations. */
+export interface RecommendationsPage {
+  recommendations: CandidateCard[];
+  hasMore: boolean;
+}
+
 export interface PublicProfile extends CandidateCard {
   isFavorite: boolean;
-  /** Pending (8.4). */
-  lookingFor?: Preferences;
+  lookingFor: Preferences;
+  /** 0 to 100. */
+  matchScore: number;
 }
 
 export interface OwnProfile {
@@ -116,8 +123,8 @@ export interface Note {
   /** 1 to 500 characters after trimming (A7). */
   text: string;
   createdAt: string;
-  /** Pending (8.11); null until the note is edited. */
-  updatedAt?: string | null;
+  /** Null until the note is edited. */
+  updatedAt: string | null;
 }
 
 /** One row on the Notes tab (pending, 8.10). */

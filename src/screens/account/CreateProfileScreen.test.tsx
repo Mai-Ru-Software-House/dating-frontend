@@ -10,7 +10,7 @@ import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
 
 import { setPickedDate } from "../../../test/datePicker";
-import { ANIM_GIF, SQUARE_500, SQUARE_BIG, WIDE_800X600 } from "../../../test/fixtures/photos";
+import { ANIM_GIF, SQUARE_500, SQUARE_BIG } from "../../../test/fixtures/photos";
 import { MINT, ownProfileOf } from "../../../test/fixtures/seed";
 import { currentRoute, renderScreen, type Rendered } from "../../../test/renderWithProviders";
 import { ApiError } from "../../api/errors";
@@ -262,11 +262,9 @@ describe("Step 2 photo", () => {
     await pickPhoto(user, ANIM_GIF);
     const gif = await screen.findByText("Use a PNG, JPG or WebP photo.");
     await pickPhoto(user, SQUARE_BIG);
-    const big = await screen.findByText("Photo must be 1 MB or smaller.");
-    await pickPhoto(user, WIDE_800X600);
-    const wide = await screen.findByText("Photo must be square (same width and height).");
+    const big = await screen.findByText("Photo must be 5 MB or smaller.");
 
-    expect([gif, big, wide]).toHaveLength(3);
+    expect([gif, big]).toHaveLength(2);
     expect(photos.uploadTemp).not.toHaveBeenCalled();
   });
 });

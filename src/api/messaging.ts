@@ -20,8 +20,8 @@ export interface MessagingApi {
   sendMessage: (userId: string, text: string) => Promise<Message>;
   /** POST /messages/{messageId}/replies. @throws ApiError MESSAGE_NOT_FOUND. */
   reply: (messageId: string, text: string) => Promise<Message>;
-  /** PATCH /conversations/{userId}. @throws ApiError INVALID_INPUT. */
-  markRead: (userId: string, lastReadMessageId: string) => Promise<void>;
+  /** PATCH /conversations/{userId} { isRead: true }: marks every message from that user read. */
+  markRead: (userId: string) => Promise<void>;
   /** GET /messages?unread=true, newest first. */
   getUnread: () => Promise<{ messages: UnreadMessage[]; hasMore: boolean }>;
 }
@@ -43,9 +43,9 @@ const realMessagingApi: MessagingApi = {
     request<Message>("POST", `/messages/${encodeURIComponent(messageId)}/replies`, {
       body: { text },
     }),
-  async markRead(userId, lastReadMessageId) {
+  async markRead(userId) {
     await request<unknown>("PATCH", `/conversations/${encodeURIComponent(userId)}`, {
-      body: { lastReadMessageId },
+      body: { isRead: true },
     });
   },
   getUnread: () =>

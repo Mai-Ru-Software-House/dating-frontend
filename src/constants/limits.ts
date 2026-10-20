@@ -22,8 +22,8 @@ export const MIN_AGE = 18;
 export const PROFILE_PHOTO_TYPES = ["image/png", "image/jpeg", "image/webp"] as const;
 export const PROFILE_PHOTO_EXTENSIONS = ["png", "jpg", "jpeg", "webp"] as const;
 
-/** Largest profile photo in bytes: 1 MB taken as 1024 × 1024 (A5, P3). */
-export const PROFILE_PHOTO_MAX_BYTES = 1_048_576;
+/** Largest profile photo in bytes: 5 MB taken as 5 × 1024 × 1024 (A5, P3). */
+export const PROFILE_PHOTO_MAX_BYTES = 5_242_880;
 
 /** Longest message after trimming, counted with string.length (A6, P19). */
 export const MESSAGE_MAX = 1000;
@@ -44,9 +44,9 @@ export const DEFAULT_MIN_AGE = 18;
 export const DEFAULT_MAX_AGE = 25;
 export const DEFAULT_RADIUS_KM = 50;
 
-/** Recommendations page size and the most the app asks for (answer 7). */
+/** Recommendations page size and the most the app loads (the server allows offset + limit up to 200). */
 export const RECOMMENDATIONS_PAGE = 10;
-export const RECOMMENDATIONS_MAX = 50;
+export const RECOMMENDATIONS_MAX = 200;
 
 /** Search results per request (contract default). */
 export const SEARCH_LIMIT = 20;
@@ -60,6 +60,9 @@ export const USERNAME_CHECK_DEBOUNCE_MS = 500;
 
 /** Request timeout. */
 export const REQUEST_TIMEOUT_MS = 15_000;
+
+/** Timeout for photo uploads (multipart bodies), which are slower on mobile data. */
+export const UPLOAD_TIMEOUT_MS = 60_000;
 
 /** Messages from one sender closer than this form one group. */
 export const MESSAGE_GROUP_GAP_MS = 5 * 60 * 1000;

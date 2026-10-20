@@ -5,11 +5,11 @@
  */
 import { ANIM_GIF, SQUARE_500, SQUARE_BIG, WIDE_800X600 } from "../../test/fixtures/photos";
 import type { PickedPhoto } from "../api/types";
-import { checkProfilePhoto, fileNameFor } from "./photo";
+import { checkProfilePhoto, fileNameFor, uploadMimeType } from "./photo";
 import type { RuleResult } from "./rules";
 
 const TYPE_ERROR = "Use a PNG, JPG or WebP photo.";
-const SIZE_ERROR = "Photo must be 1 MB or smaller.";
+const SIZE_ERROR = "Photo must be 5 MB or smaller.";
 
 /**
  * The message of a failed check, or "ok".
@@ -33,19 +33,19 @@ describe("checkProfilePhoto", () => {
     expect(outcome(result)).toBe(TYPE_ERROR);
   });
 
-  it("UT-PHO-03: rejects a photo larger than 1 MB", () => {
+  it("UT-PHO-03: rejects a photo larger than 5 MB", () => {
     const result = checkProfilePhoto(SQUARE_BIG);
 
     expect(outcome(result)).toBe(SIZE_ERROR);
   });
 
-  it("UT-PHO-04: rejects a photo that isn't square", () => {
+  it("UT-PHO-04: accepts a photo that isn't square", () => {
     const result = checkProfilePhoto(WIDE_800X600);
 
-    expect(outcome(result)).toBe("Photo must be square (same width and height).");
+    expect(outcome(result)).toBe("ok");
   });
 
-  it("UT-PHO-05: allows exactly 1 048 576 bytes and refuses one byte more", () => {
+  it("UT-PHO-05: allows exactly 5 242 880 bytes and refuses one byte more", () => {
     const png: PickedPhoto = {
       uri: "file:///p.png",
       mimeType: "image/png",
@@ -53,8 +53,8 @@ describe("checkProfilePhoto", () => {
       height: 600,
     };
 
-    const atLimit = checkProfilePhoto({ ...png, fileSize: 1_048_576 });
-    const over = checkProfilePhoto({ ...png, fileSize: 1_048_577 });
+    const atLimit = checkProfilePhoto({ ...png, fileSize: 5_242_880 });
+    const over = checkProfilePhoto({ ...png, fileSize: 5_242_881 });
 
     expect(outcome(atLimit)).toBe("ok");
     expect(outcome(over)).toBe(SIZE_ERROR);
@@ -84,7 +84,19 @@ describe("checkProfilePhoto", () => {
     expect(names).toEqual(["mine.webp", "photo.jpeg", "photo.png", "photo.webp", "photo.jpg"]);
   });
 
-  it("UT-PHO-07: reports only the first failing rule (format, size, square)", () => {
+  it("UT-PHO-06: the upload type is never empty", () => {
+    const base = { width: 500, height: 500 };
+
+    const types = [
+      uploadMimeType({ ...base, uri: "file:///a/x.png" }),
+      uploadMimeType({ ...base, uri: "content://media/42" }),
+      uploadMimeType({ ...base, uri: "content://media/43", mimeType: "image/webp" }),
+    ];
+
+    expect(types).toEqual(["image/png", "image/jpeg", "image/webp"]);
+  });
+
+  it("UT-PHO-07: reports only the first failing rule (format, size)", () => {
     const result = checkProfilePhoto({ ...ANIM_GIF, fileSize: 2_000_000, width: 800, height: 600 });
 
     expect(outcome(result)).toBe(TYPE_ERROR);

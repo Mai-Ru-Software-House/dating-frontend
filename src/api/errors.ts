@@ -5,7 +5,7 @@
  * Created by Tee (Kittiphon Kijpinyochai), 6 October 2026
  */
 
-/** Every error code the app knows. NETWORK_ERROR is app-only. */
+/** Every error code the app knows. NETWORK_ERROR and UNEXPECTED_RESPONSE are app-only. */
 export type ApiErrorCode =
   | "INVALID_INPUT"
   | "UNAUTHENTICATED"
@@ -21,7 +21,8 @@ export type ApiErrorCode =
   | "MATCH_ENGINE_UNAVAILABLE"
   | "INTERNAL_ERROR"
   | "NOTE_NOT_FOUND"
-  | "NETWORK_ERROR";
+  | "NETWORK_ERROR"
+  | "UNEXPECTED_RESPONSE";
 
 const KNOWN_CODES: readonly ApiErrorCode[] = [
   "INVALID_INPUT",
@@ -39,6 +40,7 @@ const KNOWN_CODES: readonly ApiErrorCode[] = [
   "INTERNAL_ERROR",
   "NOTE_NOT_FOUND",
   "NETWORK_ERROR",
+  "UNEXPECTED_RESPONSE",
 ];
 
 /** An error from the API, or NETWORK_ERROR when there was no usable response. */
@@ -77,7 +79,11 @@ export const ERROR_COPY: Record<ApiErrorCode, string> = {
   INTERNAL_ERROR: "Something went wrong on our side. Try again.",
   NOTE_NOT_FOUND: "This note isn't available anymore.",
   NETWORK_ERROR: "Can't reach the server. Check your connection and try again.",
+  UNEXPECTED_RESPONSE: "Something went wrong. Try again.",
 };
+
+/** Shown when a photo upload fails for a reason that is not the network (api-integration.md 4.1). */
+export const PHOTO_UPLOAD_FAILED = "Something went wrong uploading the photo. Try again.";
 
 /**
  * Checks whether a string is a known error code.
@@ -89,16 +95,41 @@ export function isErrorCode(code: unknown): code is ApiErrorCode {
 }
 
 /**
+ * Whether fetch itself failed: a rejected request (TypeError) or a timeout (AbortError).
+ * @param error What was caught.
+ * @returns True for a network failure.
+ */
+export function isNetworkFailure(error: unknown): boolean {
+  return error instanceof TypeError || (error instanceof Error && error.name === "AbortError");
+}
+
+/**
  * Turns anything thrown into an ApiError, so callers handle one type.
  * @param error What was caught.
- * @returns The ApiError, or NETWORK_ERROR for anything else.
+ * @returns The ApiError; NETWORK_ERROR only for a failed fetch or timeout, UNEXPECTED_RESPONSE otherwise.
  */
 export function toApiError(error: unknown): ApiError {
   if (error instanceof ApiError) {
     return error;
   }
   const message = error instanceof Error ? error.message : "Unknown error";
-  return new ApiError(0, "NETWORK_ERROR", message);
+  if (__DEV__ && !isNetworkFailure(error)) {
+    console.warn("[api] unexpected error", error);
+  }
+  return new ApiError(
+    0,
+    isNetworkFailure(error) ? "NETWORK_ERROR" : "UNEXPECTED_RESPONSE",
+    message,
+  );
+}
+
+/**
+ * The text to show when a photo upload failed.
+ * @param error What was caught.
+ * @returns The network copy for network failures, server copy for server errors, else the photo copy.
+ */
+export function photoUploadMessage(error: unknown): string {
+  return toApiError(error).code === "UNEXPECTED_RESPONSE" ? PHOTO_UPLOAD_FAILED : messageFor(error);
 }
 
 /**

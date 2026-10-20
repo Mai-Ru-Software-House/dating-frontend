@@ -1,23 +1,22 @@
 /**
  * recommendations.ts
- * Load more for recommendations (answer 7): ask again with a bigger limit, 10 more at a time, up
- * to 50, stopping at a short page.
+ * Load more for recommendations: pages of 10 by offset, until hasMore is false or 200 are loaded.
  * Created by Tee (Kittiphon Kijpinyochai), 6 October 2026
  */
 import type { CandidateCard } from "../api/types";
 import { RECOMMENDATIONS_MAX, RECOMMENDATIONS_PAGE } from "../constants/limits";
 
 /**
- * The next limit to ask for when the list's end is reached.
- * @param limit The limit of the last request.
- * @param received How many items it returned.
- * @returns The next limit, or null when there is nothing more to load.
+ * The offset of the next page to load when the list's end is reached.
+ * @param hasMore The last page's hasMore.
+ * @param loaded How many cards are loaded so far.
+ * @returns The next offset, or null when there is nothing more to load.
  */
-export function nextLimit(limit: number, received: number): number | null {
-  if (received < limit || limit >= RECOMMENDATIONS_MAX) {
+export function nextOffset(hasMore: boolean, loaded: number): number | null {
+  if (!hasMore || loaded + RECOMMENDATIONS_PAGE > RECOMMENDATIONS_MAX) {
     return null;
   }
-  return Math.min(limit + RECOMMENDATIONS_PAGE, RECOMMENDATIONS_MAX);
+  return loaded;
 }
 
 /**
