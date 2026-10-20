@@ -12,6 +12,8 @@ import { secureStoreData } from "../../../test/secureStore";
 import { currentRoute, renderScreen } from "../../../test/renderWithProviders";
 import { ApiError } from "../../api/errors";
 import { sessionsApi } from "../../api/sessions";
+import { keys } from "../../session/queryClient";
+import { loadAccounts, saveAccounts } from "../../session/knownAccounts";
 import { colors } from "../../theme";
 import { LoginScreen } from "./LoginScreen";
 
@@ -76,5 +78,34 @@ describe("LoginScreen", () => {
 
     await waitFor(() => expect(session.logIn).toHaveBeenCalledWith(result));
     expect(logInApi).toHaveBeenCalledWith("alice", "Alice2026");
+  });
+
+  it("removes a picked account from the phone after confirming", async () => {
+    const alice = {
+      userId: USERS.alice.userId,
+      username: "alice",
+      displayName: "Alice",
+      photoUrl: "",
+      lastUsedAt: "2026-10-01T00:00:00.000Z",
+    };
+    await saveAccounts([alice]);
+    const { navigation, queryClient } = await renderScreen(LoginScreen, "SwitchLogin", {
+      username: "alice",
+    });
+    queryClient.setQueryData(keys.knownAccounts, [alice]);
+    const user = userEvent.setup();
+
+    await user.press(screen.getByRole("button", { name: "Remove from this phone" }));
+    await user.press(screen.getByRole("button", { name: "Remove" }));
+
+    await waitFor(async () => expect(await loadAccounts()).toEqual([]));
+    await waitFor(() => expect(currentRoute(navigation).name).toBe("Previous"));
+    expect(queryClient.getQueryData(keys.knownAccounts)).toEqual([]);
+  });
+
+  it("offers to create an account when no account was picked", async () => {
+    await renderScreen(LoginScreen, "SwitchLogin");
+    expect(screen.getByRole("link", { name: "Create a profile" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "Remove from this phone" })).toBeNull();
   });
 });

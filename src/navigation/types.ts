@@ -42,6 +42,7 @@ export type RootStackParamList = {
   EditProfile: undefined;
   SwitchUser: undefined;
   SwitchLogin: { username?: string } | undefined;
+  SwitchCreateProfile: undefined;
 };
 
 /** Props of a screen on the root stack. */

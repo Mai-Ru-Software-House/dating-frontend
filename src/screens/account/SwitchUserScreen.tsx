@@ -19,9 +19,10 @@ import { TopBar } from "../../components/TopBar";
 import { useMe } from "../../hooks/useMe";
 import type { RootScreenProps } from "../../navigation/types";
 import { forgetAccount, loadAccounts } from "../../session/knownAccounts";
+import { keys } from "../../session/queryClient";
 import { colors, fonts, radius, size, space, type } from "../../theme";
 
-const ACCOUNTS_KEY = ["knownAccounts"] as const;
+const ACCOUNTS_KEY = keys.knownAccounts;
 const CHECK = 24;
 
 /**

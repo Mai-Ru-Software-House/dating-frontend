@@ -46,6 +46,7 @@ export function RootNavigator({ isSignedIn }: RootNavigatorProps): React.JSX.Ele
           <Stack.Screen name="EditProfile" component={EditProfileScreen} />
           <Stack.Screen name="SwitchUser" component={SwitchUserScreen} />
           <Stack.Screen name="SwitchLogin" component={LoginScreen} />
+          <Stack.Screen name="SwitchCreateProfile" component={CreateProfileScreen} />
         </Stack.Group>
       ) : (
         <Stack.Group>
