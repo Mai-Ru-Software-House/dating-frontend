@@ -70,7 +70,9 @@ export function PhotoFill({
           style={[StyleSheet.absoluteFill, { borderRadius }]}
           contentFit="cover"
           cachePolicy="disk"
-          onError={() => setFailedUri(source.uri)}
+          onError={() => {
+            setFailedUri(source.uri);
+          }}
         />
       ) : null}
     </View>

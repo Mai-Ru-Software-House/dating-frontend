@@ -10,11 +10,11 @@ import { ChipGroup } from "../../components/ChipGroup";
 import { DateField } from "../../components/DateField";
 import { TextField, type FieldTrailing } from "../../components/TextField";
 import { MIN_AGE } from "../../constants/limits";
-import { GENDERS, type Gender } from "../../constants/profile";
+import { GENDERS } from "../../constants/profile";
 import { colors } from "../../theme";
 import type { CreateProfileController } from "./useCreateProfile";
 
-const GENDER_OPTIONS = GENDERS.map((g) => ({ value: g.value as Gender, label: g.label }));
+const GENDER_OPTIONS = GENDERS.map((g) => ({ value: g.value, label: g.label }));
 
 /**
  * The username field's status text.
@@ -43,7 +43,9 @@ export function AboutYouStep({ form }: { form: CreateProfileController }): React
   const [isPasswordShown, setIsPasswordShown] = useState(false);
   const showHide: FieldTrailing = {
     label: isPasswordShown ? "Hide" : "Show",
-    onPress: () => setIsPasswordShown((shown) => !shown),
+    onPress: () => {
+      setIsPasswordShown((shown) => !shown);
+    },
     accessibilityLabel: isPasswordShown ? "Hide password" : "Show password",
   };
 
@@ -52,16 +54,24 @@ export function AboutYouStep({ form }: { form: CreateProfileController }): React
       <TextField
         label="Display name"
         value={values.displayName}
-        onChangeText={(text) => set("displayName", text)}
-        onBlur={() => touch("displayName")}
+        onChangeText={(text) => {
+          set("displayName", text);
+        }}
+        onBlur={() => {
+          touch("displayName");
+        }}
         error={errorFor("displayName")}
         isLocked={isSubmitting}
       />
       <TextField
         label="Username"
         value={values.username}
-        onChangeText={(text) => set("username", text)}
-        onBlur={() => touch("username")}
+        onChangeText={(text) => {
+          set("username", text);
+        }}
+        onBlur={() => {
+          touch("username");
+        }}
         autoCapitalize="none"
         autoCorrect={false}
         textContentType="username"
@@ -72,8 +82,12 @@ export function AboutYouStep({ form }: { form: CreateProfileController }): React
       <TextField
         label="Password"
         value={values.password}
-        onChangeText={(text) => set("password", text)}
-        onBlur={() => touch("password")}
+        onChangeText={(text) => {
+          set("password", text);
+        }}
+        onBlur={() => {
+          touch("password");
+        }}
         secureTextEntry={!isPasswordShown}
         autoCapitalize="none"
         textContentType="newPassword"
@@ -84,8 +98,12 @@ export function AboutYouStep({ form }: { form: CreateProfileController }): React
       <TextField
         label="Confirm password"
         value={values.confirmPassword}
-        onChangeText={(text) => set("confirmPassword", text)}
-        onBlur={() => touch("confirmPassword")}
+        onChangeText={(text) => {
+          set("confirmPassword", text);
+        }}
+        onBlur={() => {
+          touch("confirmPassword");
+        }}
         secureTextEntry={!isPasswordShown}
         autoCapitalize="none"
         textContentType="newPassword"

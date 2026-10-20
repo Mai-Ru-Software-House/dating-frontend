@@ -147,7 +147,9 @@ async function send(
 ): Promise<Response> {
   const controller = new AbortController();
   const timeoutMs = options.timeoutMs ?? REQUEST_TIMEOUT_MS;
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  const timer = setTimeout(() => {
+    controller.abort();
+  }, timeoutMs);
   const headers: Record<string, string> = { Accept: "application/json", ...options.headers };
   if (accessToken !== null) {
     headers.Authorization = `Bearer ${accessToken}`;

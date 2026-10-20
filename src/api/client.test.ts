@@ -194,14 +194,20 @@ describe("request", () => {
       const [url, init] = fetchMock.mock.calls[0];
       expect(`${init.method} ${url}`).toBe(`${method} ${BASE}${path}`);
       expect(headersOf(0).Authorization).toBe("Bearer at1");
-      if (body !== undefined) expect(JSON.parse(init.body as string)).toEqual(body);
+      if (body !== undefined) {
+        expect(JSON.parse(init.body as string)).toEqual(body);
+      }
     },
   );
 
   it("UT-API-02: sends no token to public endpoints", async () => {
     fetchMock.mockImplementation(async (url: string) => {
-      if (url.includes("/usernames/")) return reply(200, { isAvailable: true });
-      if (url.includes("/places")) return reply(200, { placeName: "Bangkok, Siam" });
+      if (url.includes("/usernames/")) {
+        return reply(200, { isAvailable: true });
+      }
+      if (url.includes("/places")) {
+        return reply(200, { placeName: "Bangkok, Siam" });
+      }
       if (url.includes("/photo-uploads")) {
         return reply(201, { uploadId: "upl_1", expiresAt: "x", deleteToken: "d" });
       }
@@ -222,7 +228,9 @@ describe("request", () => {
       `${BASE}/sessions`,
       `${BASE}/photo-uploads`,
     ]);
-    fetchMock.mock.calls.forEach((_, i) => expect(headersOf(i).Authorization).toBeUndefined());
+    fetchMock.mock.calls.forEach((_, i) => {
+      expect(headersOf(i).Authorization).toBeUndefined();
+    });
   });
 
   it("UT-API-03: turns an error body into an ApiError with its field", async () => {
@@ -266,9 +274,9 @@ describe("request", () => {
     fetchMock.mockImplementationOnce(
       (_url, init) =>
         new Promise((_resolve, reject) => {
-          init.signal?.addEventListener("abort", () =>
-            reject(Object.assign(new Error("Aborted"), { name: "AbortError" })),
-          );
+          init.signal?.addEventListener("abort", () => {
+            reject(Object.assign(new Error("Aborted"), { name: "AbortError" }));
+          });
         }),
     );
 
@@ -284,9 +292,9 @@ describe("request", () => {
     fetchMock.mockImplementationOnce(
       (_url, init) =>
         new Promise((_resolve, reject) => {
-          init.signal?.addEventListener("abort", () =>
-            reject(Object.assign(new Error("Aborted"), { name: "AbortError" })),
-          );
+          init.signal?.addEventListener("abort", () => {
+            reject(Object.assign(new Error("Aborted"), { name: "AbortError" }));
+          });
         }),
     );
 

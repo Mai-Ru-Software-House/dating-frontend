@@ -61,7 +61,14 @@ export function NotesScreen({ navigation, route }: Props): React.JSX.Element {
   return (
     <Screen
       isInTabs={isInTab}
-      header={<TopBar title="Notes" onBack={() => navigation.goBack()} />}
+      header={
+        <TopBar
+          title="Notes"
+          onBack={() => {
+            navigation.goBack();
+          }}
+        />
+      }
       onRefresh={query.refetch}
     >
       <NoteSubject user={person} caption="Only you can see these notes." />
@@ -90,14 +97,14 @@ export function NotesScreen({ navigation, route }: Props): React.JSX.Element {
             <NoteCard
               key={note.noteId}
               note={note}
-              onPress={() =>
+              onPress={() => {
                 rootNavigation.navigate("NoteDetail", {
                   noteId: note.noteId,
                   aboutUserId: person.userId,
                   displayName: person.displayName,
                   photoUrl: person.photoUrl,
-                })
-              }
+                });
+              }}
             />
           ))}
         </View>
@@ -108,7 +115,9 @@ export function NotesScreen({ navigation, route }: Props): React.JSX.Element {
         message="What you wrote will be lost."
         cancelLabel="Keep writing"
         confirmLabel="Discard"
-        onCancel={() => setPendingLeave(null)}
+        onCancel={() => {
+          setPendingLeave(null);
+        }}
         onConfirm={() => {
           editor.close();
           setLeaveAction(pendingLeave);

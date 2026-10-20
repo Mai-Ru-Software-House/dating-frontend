@@ -30,7 +30,7 @@ import {
   DISTANCE_SLIDER_MIN,
   MIN_AGE,
 } from "../../constants/limits";
-import { GENDERS, type Gender } from "../../constants/profile";
+import { GENDERS } from "../../constants/profile";
 import { useLocationLookup, type LocationFix } from "../../hooks/useLocationLookup";
 import { useMe } from "../../hooks/useMe";
 import type { RootScreenProps } from "../../navigation/types";
@@ -39,7 +39,7 @@ import { kmLabel, TARGET_OPTIONS } from "./PreferencesStep";
 import { EditPhotoSection } from "./EditPhotoSection";
 import { useEditProfile } from "./useEditProfile";
 
-const GENDER_OPTIONS = GENDERS.map((g) => ({ value: g.value as Gender, label: g.label }));
+const GENDER_OPTIONS = GENDERS.map((g) => ({ value: g.value, label: g.label }));
 
 /**
  * The Edit profile screen (waits for the cached profile).
@@ -75,9 +75,9 @@ function EditProfileForm({
   );
   const lookup = useLocationLookup(onFix);
 
-  usePreventRemove(form.isChanged && !isDone && leaveAction === null, ({ data }) =>
-    setPendingLeave(data.action),
-  );
+  usePreventRemove(form.isChanged && !isDone && leaveAction === null, ({ data }) => {
+    setPendingLeave(data.action);
+  });
   useEffect(() => {
     if (leaveAction !== null) {
       navigation.dispatch(leaveAction);
@@ -98,13 +98,22 @@ function EditProfileForm({
 
   return (
     <Screen
-      header={<TopBar title="Edit profile" onBack={() => navigation.goBack()} />}
+      header={
+        <TopBar
+          title="Edit profile"
+          onBack={() => {
+            navigation.goBack();
+          }}
+        />
+      }
       footer={
         <ActionBar top={<Banner message={form.banner} />}>
           <Button
             label="Cancel"
             variant="secondary"
-            onPress={() => navigation.goBack()}
+            onPress={() => {
+              navigation.goBack();
+            }}
             isDisabled={form.isSaving}
             style={styles.flex}
           />
@@ -122,7 +131,9 @@ function EditProfileForm({
         userId={me.userId}
         photoUrl={me.photoUrl}
         picked={values.photo}
-        onPick={(photo) => set("photo", photo)}
+        onPick={(photo) => {
+          set("photo", photo);
+        }}
         error={errorFor("photo")}
         isLocked={form.isSaving}
       />
@@ -137,8 +148,12 @@ function EditProfileForm({
       <TextField
         label="Display name"
         value={values.displayName}
-        onChangeText={(t) => set("displayName", t)}
-        onBlur={() => form.touch("displayName")}
+        onChangeText={(t) => {
+          set("displayName", t);
+        }}
+        onBlur={() => {
+          form.touch("displayName");
+        }}
         error={errorFor("displayName")}
         isLocked={form.isSaving}
       />
@@ -157,7 +172,9 @@ function EditProfileForm({
         label="Gender"
         options={GENDER_OPTIONS}
         value={values.gender}
-        onChange={(g) => set("gender", g)}
+        onChange={(g) => {
+          set("gender", g);
+        }}
         error={errorFor("gender")}
         isDisabled={form.isSaving}
       />
@@ -174,7 +191,9 @@ function EditProfileForm({
         label="Interested in"
         options={TARGET_OPTIONS}
         value={values.targetChip}
-        onChange={(c) => set("targetChip", c)}
+        onChange={(c) => {
+          set("targetChip", c);
+        }}
         error={errorFor("targetChip")}
       />
       <RangeSlider
@@ -194,7 +213,9 @@ function EditProfileForm({
         min={DISTANCE_SLIDER_MIN}
         max={DISTANCE_SLIDER_MAX}
         value={values.radiusKm}
-        onChange={(km) => set("radiusKm", km)}
+        onChange={(km) => {
+          set("radiusKm", km);
+        }}
         format={kmLabel}
       />
       <ConfirmDialog
@@ -203,7 +224,9 @@ function EditProfileForm({
         message="Your edits will be lost."
         cancelLabel="Keep editing"
         confirmLabel="Discard"
-        onCancel={() => setPendingLeave(null)}
+        onCancel={() => {
+          setPendingLeave(null);
+        }}
         onConfirm={() => {
           setLeaveAction(pendingLeave);
           setPendingLeave(null);

@@ -92,9 +92,13 @@ const unref = (timer: TimerHandle): TimerHandle => {
 };
 timeoutManager.setTimeoutProvider({
   setTimeout: (callback, delay) => unref(setTimeout(callback, delay)),
-  clearTimeout: (id) => clearTimeout(id as TimerHandle),
+  clearTimeout: (id) => {
+    clearTimeout(id);
+  },
   setInterval: (callback, delay) => unref(setInterval(callback, delay)),
-  clearInterval: (id) => clearInterval(id as TimerHandle),
+  clearInterval: (id) => {
+    clearInterval(id);
+  },
 });
 
 // findBy* and waitFor wait up to 5 s: whole-screen flows can be slow when suites run in parallel.

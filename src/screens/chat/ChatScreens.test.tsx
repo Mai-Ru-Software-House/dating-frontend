@@ -57,8 +57,12 @@ function hostsOfType(type: string): HostElement[] {
   while (queue.length > 0) {
     const node = queue.shift() as
       { type?: unknown; props?: Record<string, unknown>; children?: unknown[] } | string;
-    if (typeof node !== "object" || node === null || node.props?.["aria-hidden"] === true) continue;
-    if (node.type === type) found.push(node as unknown as HostElement);
+    if (typeof node !== "object" || node === null || node.props?.["aria-hidden"] === true) {
+      continue;
+    }
+    if (node.type === type) {
+      found.push(node as unknown as HostElement);
+    }
     queue.push(...(node.children ?? []));
   }
   return found;
@@ -80,7 +84,7 @@ function renderConversation(username: string, options?: RenderOptions): Promise<
  * @returns The bubble element.
  */
 function bubbleOf(text: string): HostElement {
-  return screen.getByText(text).parent as HostElement;
+  return screen.getByText(text).parent!;
 }
 
 beforeEach(() => {
@@ -128,8 +132,12 @@ describe("Conversation", () => {
     const invalidate = jest.spyOn(queryClient, "invalidateQueries");
     await renderConversation("bob", { queryClient });
 
-    await waitFor(() => expect(messaging.markRead).toHaveBeenCalledWith(USERS.bob.userId));
-    await waitFor(() => expect(invalidate).toHaveBeenCalledWith({ queryKey: keys.unread }));
+    await waitFor(() => {
+      expect(messaging.markRead).toHaveBeenCalledWith(USERS.bob.userId);
+    });
+    await waitFor(() => {
+      expect(invalidate).toHaveBeenCalledWith({ queryKey: keys.unread });
+    });
     expect(invalidate).toHaveBeenCalledWith({ queryKey: keys.conversations });
   });
 
@@ -146,10 +154,12 @@ describe("Conversation", () => {
 
     // The list is inverted: its end is the top of the screen.
     await fireEvent(hostsOfType("RCTScrollView")[0], "endReached");
-    await waitFor(() => expect(messaging.getMessages).toHaveBeenCalledTimes(2));
-    await waitFor(() =>
-      expect(screen.queryByLabelText("Loading older messages")).not.toBeOnTheScreen(),
-    );
+    await waitFor(() => {
+      expect(messaging.getMessages).toHaveBeenCalledTimes(2);
+    });
+    await waitFor(() => {
+      expect(screen.queryByLabelText("Loading older messages")).not.toBeOnTheScreen();
+    });
     await fireEvent(hostsOfType("RCTScrollView")[0], "endReached");
 
     expect(messaging.getMessages.mock.calls).toEqual([
@@ -184,22 +194,24 @@ describe("Conversation", () => {
     );
     messaging.getMessages.mockResolvedValue({ messages: [sent, M4, M3, M2], hasMore: false });
     confirm(sent);
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
         StyleSheet.flatten(bubbleOf("Hi Bob, coffee this weekend?").props.style).opacity,
-      ).toBeUndefined(),
-    );
+      ).toBeUndefined();
+    });
     await user.type(screen.getByLabelText("Message"), "See you there");
     await user.press(screen.getByRole("button", { name: "Send" }));
     const retry = await screen.findByText("Not sent. Tap to retry.");
     await user.press(retry);
 
     expect(pendingStyle.opacity).toBe(0.5);
-    await waitFor(() => expect(messaging.sendMessage).toHaveBeenCalledTimes(3));
+    await waitFor(() => {
+      expect(messaging.sendMessage).toHaveBeenCalledTimes(3);
+    });
     expect(messaging.sendMessage).toHaveBeenLastCalledWith(USERS.bob.userId, "See you there");
-    await waitFor(() =>
-      expect(screen.queryByText("Not sent. Tap to retry.")).not.toBeOnTheScreen(),
-    );
+    await waitFor(() => {
+      expect(screen.queryByText("Not sent. Tap to retry.")).not.toBeOnTheScreen();
+    });
   });
 
   it("UT-SCR-21: long-press replies to a message and the bubble shows the quote", async () => {

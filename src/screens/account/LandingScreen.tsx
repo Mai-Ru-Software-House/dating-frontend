@@ -41,8 +41,19 @@ export function LandingScreen({ navigation }: RootScreenProps<"Landing">): React
           </Text>
         </View>
         <View style={styles.buttons}>
-          <Button label="Create profile" onPress={() => navigation.navigate("CreateProfile")} />
-          <Button label="Log in" variant="secondary" onPress={() => navigation.navigate("Login")} />
+          <Button
+            label="Create profile"
+            onPress={() => {
+              navigation.navigate("CreateProfile");
+            }}
+          />
+          <Button
+            label="Log in"
+            variant="secondary"
+            onPress={() => {
+              navigation.navigate("Login");
+            }}
+          />
         </View>
       </View>
     </Screen>

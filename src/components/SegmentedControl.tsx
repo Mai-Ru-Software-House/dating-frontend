@@ -33,7 +33,9 @@ export function SegmentedControl<T extends string>(
         return (
           <Pressable
             key={segment.value}
-            onPress={() => onChange(segment.value)}
+            onPress={() => {
+              onChange(segment.value);
+            }}
             accessibilityRole="tab"
             accessibilityState={{ selected: isActive }}
             style={[styles.segment, isActive && styles.active]}

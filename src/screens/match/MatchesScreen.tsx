@@ -38,7 +38,9 @@ export function MatchesScreen({
       <SegmentedControl
         segments={SEGMENTS}
         value={segment}
-        onChange={(next) => navigation.setParams({ segment: next })}
+        onChange={(next) => {
+          navigation.setParams({ segment: next });
+        }}
       />
     </View>
   );

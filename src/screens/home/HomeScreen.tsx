@@ -65,7 +65,9 @@ export function HomeScreen({ navigation }: TabScreenProps<"HomeTab">): React.JSX
         </View>
         {me ? (
           <Pressable
-            onPress={() => navigation.navigate("Profile")}
+            onPress={() => {
+              navigation.navigate("Profile");
+            }}
             accessibilityRole="button"
             accessibilityLabel="Open your profile"
             hitSlop={4}
@@ -82,16 +84,26 @@ export function HomeScreen({ navigation }: TabScreenProps<"HomeTab">): React.JSX
       <HomeMenu
         matchesSubtitle={matchesSubtitle}
         chatsSubtitle={formatChatsTile(unread.senderCount)}
-        onMatches={() => navigation.navigate("MatchesTab", { segment: "recommended" })}
-        onSearch={() => navigation.navigate("MatchesTab", { segment: "search" })}
-        onChats={() => navigation.navigate("ChatsTab")}
-        onNotes={() => navigation.navigate("NotesTab")}
+        onMatches={() => {
+          navigation.navigate("MatchesTab", { segment: "recommended" });
+        }}
+        onSearch={() => {
+          navigation.navigate("MatchesTab", { segment: "search" });
+        }}
+        onChats={() => {
+          navigation.navigate("ChatsTab");
+        }}
+        onNotes={() => {
+          navigation.navigate("NotesTab");
+        }}
       />
       <View style={styles.section}>
         <SectionLabel
           label="Unread messages"
           actionLabel="See all"
-          onPress={() => navigation.navigate("ChatsTab")}
+          onPress={() => {
+            navigation.navigate("ChatsTab");
+          }}
         />
         {unread.isLoading ? <RowSkeleton /> : null}
         {unread.error && !unread.isLoading ? (
@@ -113,7 +125,9 @@ export function HomeScreen({ navigation }: TabScreenProps<"HomeTab">): React.JSX
               time: formatListTime(group.newestSentAt, now),
               unreadCount: group.count,
             }}
-            onPress={() => navigation.navigate("Conversation", group.sender)}
+            onPress={() => {
+              navigation.navigate("Conversation", group.sender);
+            }}
           />
         ))}
       </View>

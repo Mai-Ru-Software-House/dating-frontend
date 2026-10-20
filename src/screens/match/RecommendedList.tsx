@@ -46,7 +46,9 @@ export function RecommendedList({ header }: { header: ReactElement }): React.JSX
   const cards = dedupeCandidates(query.data?.pages.flatMap((page) => page.recommendations) ?? []);
   const { card, rows } = splitTopMatch(cards);
   const isLoadingMore = query.isFetchingNextPage;
-  const open = (userId: string): void => navigation.navigate("CandidateProfile", { userId });
+  const open = (userId: string): void => {
+    navigation.navigate("CandidateProfile", { userId });
+  };
 
   const loadMore = (): void => {
     if (query.isFetching || !query.hasNextPage) {
@@ -82,8 +84,12 @@ export function RecommendedList({ header }: { header: ReactElement }): React.JSX
         <MatchCard
           card={card}
           isFavorite={isFavorite(card.userId)}
-          onToggleFavorite={() => toggle(card.userId)}
-          onPress={() => open(card.userId)}
+          onToggleFavorite={() => {
+            toggle(card.userId);
+          }}
+          onPress={() => {
+            open(card.userId);
+          }}
         />
       ) : null}
       {rows.length > 0 ? (
@@ -102,7 +108,9 @@ export function RecommendedList({ header }: { header: ReactElement }): React.JSX
         <CandidateRow
           card={item}
           isFavorite={isFavorite(item.userId)}
-          onPress={() => open(item.userId)}
+          onPress={() => {
+            open(item.userId);
+          }}
         />
       )}
       ListHeaderComponent={top}

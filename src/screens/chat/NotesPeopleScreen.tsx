@@ -59,7 +59,9 @@ export function NotesPeopleScreen({
           : formatListTime(person.lastNote.updatedAt ?? person.lastNote.createdAt, now),
         countLabel: isFallback ? "" : formatNoteCount(person.noteCount),
       }}
-      onPress={() => navigation.navigate("NotesInTab", person.user)}
+      onPress={() => {
+        navigation.navigate("NotesInTab", person.user);
+      }}
     />
   );
 
@@ -81,7 +83,9 @@ export function NotesPeopleScreen({
           detail="Open a chat and tap the note icon to write about someone."
           action={{
             label: "Go to Chats",
-            onPress: () => navigation.navigate("ChatsTab"),
+            onPress: () => {
+              navigation.navigate("ChatsTab");
+            },
             variant: "secondary",
           }}
         />

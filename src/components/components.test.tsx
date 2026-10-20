@@ -48,8 +48,12 @@ function hostOfType(type: string): HostElement {
   const queue: unknown[] = [screen.container];
   while (queue.length > 0) {
     const node = queue.shift() as { type?: unknown; children?: unknown[] } | string;
-    if (typeof node !== "object" || node === null) continue;
-    if (node.type === type) return node as unknown as HostElement;
+    if (typeof node !== "object" || node === null) {
+      continue;
+    }
+    if (node.type === type) {
+      return node as unknown as HostElement;
+    }
     queue.push(...(node.children ?? []));
   }
   throw new Error(`No ${type} rendered`);
@@ -90,7 +94,12 @@ describe("TextField", () => {
             label="Password"
             value="Mint2026"
             secureTextEntry={isHidden}
-            trailing={{ label: isHidden ? "Show" : "Hide", onPress: () => setIsHidden(!isHidden) }}
+            trailing={{
+              label: isHidden ? "Show" : "Hide",
+              onPress: () => {
+                setIsHidden(!isHidden);
+              },
+            }}
           />
         </>
       );

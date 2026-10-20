@@ -40,7 +40,9 @@ export function NoteDetailScreen({
   const [dialog, setDialog] = useState<"delete" | "discard" | null>(null);
   const [pendingLeave, setPendingLeave] = useState<NavigationAction | null>(null);
   const [isLeaving, setIsLeaving] = useState(false);
-  const actions = useNoteActions(noteId, aboutUserId, () => setIsLeaving(true));
+  const actions = useNoteActions(noteId, aboutUserId, () => {
+    setIsLeaving(true);
+  });
   const isChanged = isEditing && note !== undefined && draft !== note.text;
   const isMissing = notes.isSuccess && note === undefined;
 
@@ -63,7 +65,13 @@ export function NoteDetailScreen({
     setDraft(note?.text ?? "");
     setIsEditing(true);
   };
-  const cancelEdit = (): void => (isChanged ? setDialog("discard") : setIsEditing(false));
+  const cancelEdit = (): void => {
+    if (isChanged) {
+      setDialog("discard");
+    } else {
+      setIsEditing(false);
+    }
+  };
   const save = async (): Promise<void> => {
     if (await actions.save(draft.trim())) {
       setIsEditing(false);
@@ -107,7 +115,9 @@ export function NoteDetailScreen({
         <Button
           label="Delete"
           variant="danger"
-          onPress={() => setDialog("delete")}
+          onPress={() => {
+            setDialog("delete");
+          }}
           style={styles.flex}
         />
         <Button label="Edit" onPress={startEdit} style={styles.flex} />
@@ -115,7 +125,17 @@ export function NoteDetailScreen({
     );
 
   return (
-    <Screen header={<TopBar title="Note" onBack={() => navigation.goBack()} />} footer={footer}>
+    <Screen
+      header={
+        <TopBar
+          title="Note"
+          onBack={() => {
+            navigation.goBack();
+          }}
+        />
+      }
+      footer={footer}
+    >
       <NoteSubject
         user={{ userId: aboutUserId, displayName, photoUrl }}
         caption="Only you can see this note."
@@ -140,7 +160,9 @@ export function NoteDetailScreen({
         title="Delete this note?"
         message="This can't be undone."
         confirmLabel="Delete"
-        onCancel={() => setDialog(null)}
+        onCancel={() => {
+          setDialog(null);
+        }}
         onConfirm={() => void confirmDelete()}
         isBusy={actions.isDeleting}
       />

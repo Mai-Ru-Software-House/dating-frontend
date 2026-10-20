@@ -78,11 +78,18 @@ function startFrom(me: OwnProfile): EditValues {
  */
 export function changedFields(me: OwnProfile, v: EditValues): UpdateProfileBody {
   const body: UpdateProfileBody = {};
-  if (v.displayName !== me.displayName) body.displayName = v.displayName;
-  if (v.dateOfBirth !== me.dateOfBirth) body.dateOfBirth = v.dateOfBirth;
-  if (v.gender !== me.gender) body.gender = v.gender;
-  if (v.location.lat !== me.location.lat || v.location.lon !== me.location.lon)
+  if (v.displayName !== me.displayName) {
+    body.displayName = v.displayName;
+  }
+  if (v.dateOfBirth !== me.dateOfBirth) {
+    body.dateOfBirth = v.dateOfBirth;
+  }
+  if (v.gender !== me.gender) {
+    body.gender = v.gender;
+  }
+  if (v.location.lat !== me.location.lat || v.location.lon !== me.location.lon) {
     body.location = v.location;
+  }
   const prefs = {
     minAge: v.minAge,
     maxAge: v.maxAge,
@@ -96,7 +103,9 @@ export function changedFields(me: OwnProfile, v: EditValues): UpdateProfileBody 
     prefs.maxAge !== p.maxAge ||
     prefs.radiusKm !== p.radiusKm ||
     prefs.targetGenders.join() !== p.targetGenders.join();
-  if (isPrefsChanged) body.preferences = prefs;
+  if (isPrefsChanged) {
+    body.preferences = prefs;
+  }
   return body;
 }
 
@@ -185,7 +194,9 @@ export function useEditProfile(me: OwnProfile): EditProfileController {
   return {
     values,
     set,
-    touch: (key) => setTouched((prev) => new Set(prev).add(key)),
+    touch: (key) => {
+      setTouched((prev) => new Set(prev).add(key));
+    },
     errorFor,
     isChanged,
     isValid: Object.keys(clientErrors).length === 0,

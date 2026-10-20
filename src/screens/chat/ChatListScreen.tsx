@@ -53,7 +53,9 @@ export function ChatListScreen({ navigation }: TabScreenProps<"ChatsTab">): Reac
         time: formatListTime(c.lastMessage.sentAt, now),
         unreadCount: c.unreadCount,
       }}
-      onPress={() => navigation.navigate("Conversation", c.user)}
+      onPress={() => {
+        navigation.navigate("Conversation", c.user);
+      }}
     />
   );
 
@@ -75,7 +77,9 @@ export function ChatListScreen({ navigation }: TabScreenProps<"ChatsTab">): Reac
             title="No chats yet. Find someone in Matches and say hi."
             action={{
               label: "Go to Matches",
-              onPress: () => navigation.navigate("MatchesTab"),
+              onPress: () => {
+                navigation.navigate("MatchesTab");
+              },
               variant: "secondary",
             }}
           />

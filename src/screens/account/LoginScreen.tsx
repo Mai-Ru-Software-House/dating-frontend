@@ -92,7 +92,16 @@ export function LoginScreen({
   };
 
   return (
-    <Screen header={<TopBar onBack={() => navigation.goBack()} />} contentStyle={styles.content}>
+    <Screen
+      header={
+        <TopBar
+          onBack={() => {
+            navigation.goBack();
+          }}
+        />
+      }
+      contentStyle={styles.content}
+    >
       <Text style={styles.title} accessibilityRole="header">
         Welcome back
       </Text>
@@ -124,7 +133,9 @@ export function LoginScreen({
         hasErrorBorder={errors.isPasswordRed}
         trailing={{
           label: isPasswordShown ? "Hide" : "Show",
-          onPress: () => setIsPasswordShown((shown) => !shown),
+          onPress: () => {
+            setIsPasswordShown((shown) => !shown);
+          },
           accessibilityLabel: isPasswordShown ? "Hide password" : "Show password",
         }}
       />
@@ -135,7 +146,9 @@ export function LoginScreen({
       {pickedUsername !== undefined ? (
         <View style={styles.footer}>
           <Pressable
-            onPress={() => setIsConfirmingRemove(true)}
+            onPress={() => {
+              setIsConfirmingRemove(true);
+            }}
             accessibilityRole="button"
             hitSlop={8}
           >
@@ -146,7 +159,9 @@ export function LoginScreen({
         <View style={styles.footer}>
           <Text style={styles.footerText}>New here? </Text>
           <Pressable
-            onPress={() => navigation.replace(isSwitch ? "SwitchCreateProfile" : "CreateProfile")}
+            onPress={() => {
+              navigation.replace(isSwitch ? "SwitchCreateProfile" : "CreateProfile");
+            }}
             accessibilityRole="link"
             hitSlop={8}
           >
@@ -160,7 +175,9 @@ export function LoginScreen({
         message={`@${pickedUsername} will be forgotten on this phone. You can log in to it again later.`}
         cancelLabel="Cancel"
         confirmLabel="Remove"
-        onCancel={() => setIsConfirmingRemove(false)}
+        onCancel={() => {
+          setIsConfirmingRemove(false);
+        }}
         onConfirm={() => void removeFromPhone()}
       />
     </Screen>

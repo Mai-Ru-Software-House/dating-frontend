@@ -57,6 +57,8 @@ export function useFavorites(): Favorites {
   return {
     favorites,
     isFavorite: (userId) => favorites.has(userId),
-    toggle: (userId) => mutation.mutate({ userId, add: !favorites.has(userId) }),
+    toggle: (userId) => {
+      mutation.mutate({ userId, add: !favorites.has(userId) });
+    },
   };
 }

@@ -65,7 +65,9 @@ export function DateField(props: DateFieldProps): React.JSX.Element {
         value: start,
         mode: "date",
         maximumDate: new Date(),
-        onValueChange: (_event, date) => onChange(fromPickerDate(date)),
+        onValueChange: (_event, date) => {
+          onChange(fromPickerDate(date));
+        },
       });
       return;
     }
@@ -86,9 +88,16 @@ export function DateField(props: DateFieldProps): React.JSX.Element {
         visible={isSheetOpen}
         transparent
         animationType="slide"
-        onRequestClose={() => setIsSheetOpen(false)}
+        onRequestClose={() => {
+          setIsSheetOpen(false);
+        }}
       >
-        <Pressable style={styles.dim} onPress={() => setIsSheetOpen(false)} />
+        <Pressable
+          style={styles.dim}
+          onPress={() => {
+            setIsSheetOpen(false);
+          }}
+        />
         <View style={styles.sheet}>
           <DateTimePicker
             value={draft}
@@ -97,7 +106,9 @@ export function DateField(props: DateFieldProps): React.JSX.Element {
             themeVariant="light"
             textColor={colors.ink}
             maximumDate={new Date()}
-            onValueChange={(_event, date) => setDraft(date)}
+            onValueChange={(_event, date) => {
+              setDraft(date);
+            }}
           />
           <Button
             label="Done"

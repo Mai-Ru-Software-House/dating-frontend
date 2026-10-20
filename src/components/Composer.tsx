@@ -92,7 +92,9 @@ export function Composer(props: ComposerProps): React.JSX.Element {
             style={styles.input}
           />
           <Pressable
-            onPress={() => onSend(value.trim())}
+            onPress={() => {
+              onSend(value.trim());
+            }}
             disabled={!rule.isValid}
             accessibilityRole="button"
             accessibilityLabel="Send"

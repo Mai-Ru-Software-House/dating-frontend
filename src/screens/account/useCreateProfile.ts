@@ -91,7 +91,9 @@ export function useCreateProfile(): CreateProfileController {
     form.clearErrors(key);
     setBanner(null);
   };
-  const touch = (key: Field): void => setTouched((prev) => new Set(prev).add(key));
+  const touch = (key: Field): void => {
+    setTouched((prev) => new Set(prev).add(key));
+  };
   const errorFor = (key: Field): string | undefined => {
     const server = form.formState.errors[key]?.message;
     if (server) {
@@ -111,7 +113,9 @@ export function useCreateProfile(): CreateProfileController {
     }
     setStep((s) => (s < 3 ? ((s + 1) as Step) : s));
   };
-  const back = (): void => setStep((s) => (s > 1 ? ((s - 1) as Step) : s));
+  const back = (): void => {
+    setStep((s) => (s > 1 ? ((s - 1) as Step) : s));
+  };
 
   const showServerError = (error: unknown): void => {
     const apiError = toApiError(error);

@@ -61,7 +61,9 @@ describe("Profile", () => {
     expect(screen.getByRole("header", { name: "Teen, 18" })).toBeOnTheScreen();
     expect(screen.getByText("abcdefghij0123456789")).toBeOnTheScreen();
     expect(calledBeforeConfirm).toBe(0);
-    await waitFor(() => expect(session.logOut).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(session.logOut).toHaveBeenCalledTimes(1);
+    });
   });
 });
 
@@ -84,12 +86,14 @@ describe("EditProfile", () => {
     await user.press(screen.getAllByRole("button", { name: "Change photo" })[0]);
     await user.press(screen.getByRole("button", { name: "Save" }));
 
-    await waitFor(() => expect(photosApi.replaceMine).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(photosApi.replaceMine).toHaveBeenCalledTimes(1);
+    });
     expect(profileApi.updateMe).not.toHaveBeenCalled();
-    await waitFor(() =>
+    await waitFor(() => {
       expect(queryClient.getQueryData<OwnProfile>(keys.me)?.photoUrl).toBe(
         "/api/v1/photos/pho_new",
-      ),
-    );
+      );
+    });
   });
 });

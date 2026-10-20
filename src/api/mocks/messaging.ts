@@ -71,8 +71,12 @@ export const mockMessagingApi: MessagingApi = {
     const favorites = favoritesOf(me);
     const others = new Set<string>();
     for (const m of db().messages) {
-      if (m.senderId === me) others.add(m.receiverId);
-      if (m.receiverId === me) others.add(m.senderId);
+      if (m.senderId === me) {
+        others.add(m.receiverId);
+      }
+      if (m.receiverId === me) {
+        others.add(m.senderId);
+      }
     }
     const conversations: Conversation[] = [...others].map((other) => {
       const messages = thread(me, other);

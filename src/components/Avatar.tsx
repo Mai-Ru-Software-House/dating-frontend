@@ -52,7 +52,9 @@ export function Avatar({ userId, displayName, photoUrl, size }: AvatarProps): Re
           style={[StyleSheet.absoluteFill, { borderRadius: size / 2 }]}
           contentFit="cover"
           cachePolicy="disk"
-          onError={() => setFailedUri(source.uri)}
+          onError={() => {
+            setFailedUri(source.uri);
+          }}
         />
       ) : null}
     </View>

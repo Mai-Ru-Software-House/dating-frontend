@@ -46,14 +46,28 @@ export function CandidateProfileScreen({
   if (profile === undefined) {
     const isGone = query.isError && toApiError(query.error).code === "USER_NOT_FOUND";
     return (
-      <Screen header={<TopBar onBack={() => navigation.goBack()} />}>
+      <Screen
+        header={
+          <TopBar
+            onBack={() => {
+              navigation.goBack();
+            }}
+          />
+        }
+      >
         {query.isLoading ? (
           <ActivityIndicator style={styles.loading} color={colors.accent} />
         ) : null}
         {isGone ? (
           <EmptyState
             title={ERROR_COPY.USER_NOT_FOUND}
-            action={{ label: "Go back", onPress: () => navigation.goBack(), variant: "secondary" }}
+            action={{
+              label: "Go back",
+              onPress: () => {
+                navigation.goBack();
+              },
+              variant: "secondary",
+            }}
           />
         ) : null}
         {query.isError && !isGone ? (
@@ -71,7 +85,9 @@ export function CandidateProfileScreen({
       userId={profile.userId}
       photoUrl={profile.photoUrl}
       photoSize={CANDIDATE_PHOTO}
-      onBack={() => navigation.goBack()}
+      onBack={() => {
+        navigation.goBack();
+      }}
       onRefresh={query.refetch}
       footer={
         <ActionBar>
@@ -80,7 +96,9 @@ export function CandidateProfileScreen({
             variant="favorite"
             icon={Star}
             isIconFilled
-            onPress={() => toggle(userId)}
+            onPress={() => {
+              toggle(userId);
+            }}
             accessibilityLabel={isFav ? "Remove from favorites" : "Add to favorites"}
             isCompact
             style={styles.flex}
@@ -89,13 +107,13 @@ export function CandidateProfileScreen({
             label="Message"
             icon={MessageSquare}
             isCompact
-            onPress={() =>
+            onPress={() => {
               navigation.navigate("Conversation", {
                 userId,
                 displayName: profile.displayName,
                 photoUrl: profile.photoUrl,
-              })
-            }
+              });
+            }}
             style={styles.flex}
           />
         </ActionBar>

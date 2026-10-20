@@ -101,7 +101,9 @@ export function useNoteActions(
     isSaving,
     isDeleting,
     saveError,
-    clearSaveError: () => setSaveError(undefined),
+    clearSaveError: () => {
+      setSaveError(undefined);
+    },
     save,
     remove,
   };

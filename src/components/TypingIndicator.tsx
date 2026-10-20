@@ -34,7 +34,9 @@ export function TypingIndicator({ other }: TypingIndicatorProps): React.JSX.Elem
       Animated.timing(phase, { toValue: 3, duration: CYCLE_MS, useNativeDriver: true }),
     );
     loop.start();
-    return () => loop.stop();
+    return () => {
+      loop.stop();
+    };
   }, [phase]);
 
   if (!FEATURES.typingIndicator) {

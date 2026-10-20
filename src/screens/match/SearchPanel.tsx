@@ -130,7 +130,9 @@ export function SearchPanel({ header }: { header: ReactElement }): React.JSX.Ele
         <CandidateRow
           card={item}
           isFavorite={isFavorite(item.userId)}
-          onPress={() => navigation.navigate("CandidateProfile", { userId: item.userId })}
+          onPress={() => {
+            navigation.navigate("CandidateProfile", { userId: item.userId });
+          }}
         />
       )}
       ListHeaderComponent={form}
