@@ -144,6 +144,15 @@ export function SessionProvider({ children }: { children: ReactNode }): React.JS
 
   const logIn = useCallback(
     async (session: Session) => {
+      const old = tokens.current;
+      if (old !== null) {
+        // Creating an account while logged in (switch mode): the old session is abandoned.
+        try {
+          await sessionsApi.logOut(old.accessToken, old.refreshToken);
+        } catch {
+          // The old session is abandoned either way.
+        }
+      }
       await saveTokens({ accessToken: session.accessToken, refreshToken: session.refreshToken });
       queryClient.clear();
       await enter(session.profile ?? (await profileApi.getMe()));

@@ -2,7 +2,8 @@
  * CreateProfileScreen.tsx
  * Create profile frame (design.md 6.3): top bar, step progress, the current step, and the action
  * bar. Leaving from step 1 (Cancel, back, Android back, swipe) asks before throwing the input away;
- * back on steps 2 and 3 returns to the previous step.
+ * back on steps 2 and 3 returns to the previous step. Also opened from the switch-user login
+ * ("SwitchCreateProfile"), where the new account replaces the current session.
  * Created by Tee (Kittiphon Kijpinyochai), 6 October 2026
  */
 import { usePreventRemove, type NavigationAction } from "@react-navigation/native";
@@ -31,7 +32,7 @@ import { useCreateProfile } from "./useCreateProfile";
  */
 export function CreateProfileScreen({
   navigation,
-}: RootScreenProps<"CreateProfile">): React.JSX.Element {
+}: RootScreenProps<"CreateProfile" | "SwitchCreateProfile">): React.JSX.Element {
   const form = useCreateProfile();
   const [pendingLeave, setPendingLeave] = useState<NavigationAction | null>(null);
   const [isDiscarding, setIsDiscarding] = useState(false);

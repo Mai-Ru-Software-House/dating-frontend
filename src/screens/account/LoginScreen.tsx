@@ -1,9 +1,11 @@
 /**
  * LoginScreen.tsx
  * Log in (design.md 6.2), also used as "Login in switch mode" from Switch user (6.18): there the
- * sign-up link is hidden and the current session stays alive until the new login works.
+ * sign-up link shows only when no account was picked, and the current session stays alive until
+ * the new login works.
  * Created by Tee (Kittiphon Kijpinyochai), 6 October 2026
  */
+import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
@@ -11,11 +13,14 @@ import { ERROR_COPY, messageFor, toApiError } from "../../api/errors";
 import { sessionsApi } from "../../api/sessions";
 import { Banner } from "../../components/Banner";
 import { Button } from "../../components/Button";
+import { ConfirmDialog } from "../../components/ConfirmDialog";
 import { Screen } from "../../components/Screen";
 import { TextField } from "../../components/TextField";
 import { TopBar } from "../../components/TopBar";
 import { useToast } from "../../components/Toast";
 import type { RootScreenProps } from "../../navigation/types";
+import { forgetAccount, loadAccounts } from "../../session/knownAccounts";
+import { keys } from "../../session/queryClient";
 import { useSession } from "../../session/SessionProvider";
 import { colors, fonts, space, type } from "../../theme";
 import { MESSAGES } from "../../utils/rules";
@@ -40,11 +45,28 @@ export function LoginScreen({
   const isSwitch = route.name === "SwitchLogin";
   const session = useSession();
   const toast = useToast();
+  const queryClient = useQueryClient();
   const [username, setUsername] = useState(route.params?.username ?? "");
   const [password, setPassword] = useState("");
   const [isPasswordShown, setIsPasswordShown] = useState(false);
   const [isBusy, setIsBusy] = useState(false);
   const [errors, setErrors] = useState<LoginErrors>({});
+  const [isConfirmingRemove, setIsConfirmingRemove] = useState(false);
+  const pickedUsername = isSwitch ? route.params?.username : undefined;
+
+  const removeFromPhone = async (): Promise<void> => {
+    setIsConfirmingRemove(false);
+    try {
+      const account = (await loadAccounts()).find((a) => a.username === pickedUsername);
+      if (account !== undefined) {
+        // Switch user shows this list from the cache, so it has to be updated too.
+        queryClient.setQueryData(keys.knownAccounts, await forgetAccount(account.userId));
+      }
+      navigation.goBack();
+    } catch {
+      toast.show("Couldn't remove the account. Try again.");
+    }
+  };
 
   const submit = async (): Promise<void> => {
     const empty: LoginErrors = {
@@ -110,11 +132,21 @@ export function LoginScreen({
         <Button label="Log in" onPress={submit} isLoading={isBusy} />
         <Banner message={errors.banner} />
       </View>
-      {isSwitch ? null : (
+      {pickedUsername !== undefined ? (
+        <View style={styles.footer}>
+          <Pressable
+            onPress={() => setIsConfirmingRemove(true)}
+            accessibilityRole="button"
+            hitSlop={8}
+          >
+            <Text style={styles.remove}>Remove from this phone</Text>
+          </Pressable>
+        </View>
+      ) : (
         <View style={styles.footer}>
           <Text style={styles.footerText}>New here? </Text>
           <Pressable
-            onPress={() => navigation.replace("CreateProfile")}
+            onPress={() => navigation.replace(isSwitch ? "SwitchCreateProfile" : "CreateProfile")}
             accessibilityRole="link"
             hitSlop={8}
           >
@@ -122,6 +154,15 @@ export function LoginScreen({
           </Pressable>
         </View>
       )}
+      <ConfirmDialog
+        isVisible={isConfirmingRemove}
+        title="Remove this account?"
+        message={`@${pickedUsername} will be forgotten on this phone. You can log in to it again later.`}
+        cancelLabel="Cancel"
+        confirmLabel="Remove"
+        onCancel={() => setIsConfirmingRemove(false)}
+        onConfirm={() => void removeFromPhone()}
+      />
     </Screen>
   );
 }
@@ -175,6 +216,11 @@ const styles = StyleSheet.create({
   footerText: {
     ...type.body,
     color: colors.muted,
+  },
+  remove: {
+    ...type.body,
+    fontFamily: fonts.semibold,
+    color: colors.accent,
   },
   link: {
     ...type.body,

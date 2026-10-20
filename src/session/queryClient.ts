@@ -34,6 +34,7 @@ export const queryClient = new QueryClient({
 /** Query keys (implementation-plan.md 5.2). */
 export const keys = {
   me: ["me"] as const,
+  knownAccounts: ["knownAccounts"] as const,
   recommendations: (limit: number) => ["recommendations", limit] as const,
   recommendationsList: ["recommendations", "list"] as const,
   recommendationsAll: ["recommendations"] as const,
