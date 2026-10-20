@@ -51,9 +51,9 @@ export function TypingIndicator({ other }: TypingIndicatorProps): React.JSX.Elem
         size={26}
       />
       <View style={styles.pill}>
-        {OPACITIES.map((_, index) => (
+        {OPACITIES.map((opacity, index) => (
           <Animated.View
-            key={index}
+            key={opacity}
             style={[
               styles.dot,
               {
