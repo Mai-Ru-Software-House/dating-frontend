@@ -14,6 +14,7 @@
  * --update-existing also moves users that already exist to the location this seed gives them.
  * Logins: bkk_001 to bkk_<count>, all with the same password (default "Bangkok2026").
  */
+import { Buffer } from "node:buffer";
 import { readFileSync } from "node:fs";
 import { deflateSync } from "node:zlib";
 
