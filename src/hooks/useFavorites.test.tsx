@@ -55,8 +55,9 @@ describe("toggleFavorite", () => {
       expect([...result.current.favorites]).toEqual([CHAI, BOB]);
     });
     expect(api.add).toHaveBeenCalledWith(BOB);
-    await act(async () => {
+    await act(() => {
       finishPut();
+      return Promise.resolve();
     });
     await waitFor(() => {
       expect(invalidate).toHaveBeenCalledWith({ queryKey: keys.conversations });

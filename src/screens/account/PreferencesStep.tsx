@@ -25,7 +25,7 @@ export const TARGET_OPTIONS = TARGET_CHIPS.map((chip) => ({ value: chip, label: 
  * @returns For example "50 km".
  */
 export function kmLabel(km: number): string {
-  return `${km} km`;
+  return `${String(km)} km`;
 }
 
 /**

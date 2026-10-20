@@ -12,6 +12,7 @@ import { Screen } from "../../components/Screen";
 import type { RootScreenProps } from "../../navigation/types";
 import { colors, columnStyle, fonts, GUTTER, space, type } from "../../theme";
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports -- Metro bundles images through require()
 const HERO = require("../../../assets/landing-hero.png") as number;
 const HERO_MAX_HEIGHT = 262;
 

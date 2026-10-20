@@ -36,7 +36,7 @@ const realNotesApi: NotesApi = {
   update: (noteId, text) =>
     request<Note>("PATCH", `/notes/${encodeURIComponent(noteId)}`, { body: { text } }),
   async remove(noteId) {
-    await request<void>("DELETE", `/notes/${encodeURIComponent(noteId)}`);
+    await request<unknown>("DELETE", `/notes/${encodeURIComponent(noteId)}`);
   },
 };
 

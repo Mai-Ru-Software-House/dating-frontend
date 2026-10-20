@@ -40,8 +40,11 @@ function reply(status: number, body?: unknown): Response {
   return {
     ok: status >= 200 && status < 300,
     status,
-    text: async () => text,
-    json: async () => JSON.parse(text),
+    text: () => Promise.resolve(text),
+    json: () =>
+      new Promise((resolve) => {
+        resolve(JSON.parse(text) as unknown);
+      }),
   } as Response;
 }
 
@@ -52,8 +55,9 @@ function apiError(code: string, message = "", field?: string): unknown {
 
 const fetchMock = jest.fn<Promise<Response>, [string, RequestInit]>();
 let tokens: Tokens | null;
-const saveTokens = jest.fn(async (next: Tokens) => {
+const saveTokens = jest.fn((next: Tokens) => {
   tokens = next;
+  return Promise.resolve();
 });
 const expire = jest.fn();
 
@@ -192,7 +196,7 @@ describe("request", () => {
       await call();
 
       const [url, init] = fetchMock.mock.calls[0];
-      expect(`${init.method} ${url}`).toBe(`${method} ${BASE}${path}`);
+      expect(`${String(init.method)} ${url}`).toBe(`${method} ${BASE}${path}`);
       expect(headersOf(0).Authorization).toBe("Bearer at1");
       if (body !== undefined) {
         expect(JSON.parse(init.body as string)).toEqual(body);
@@ -201,17 +205,19 @@ describe("request", () => {
   );
 
   it("UT-API-02: sends no token to public endpoints", async () => {
-    fetchMock.mockImplementation(async (url: string) => {
+    fetchMock.mockImplementation((url: string) => {
       if (url.includes("/usernames/")) {
-        return reply(200, { isAvailable: true });
+        return Promise.resolve(reply(200, { isAvailable: true }));
       }
       if (url.includes("/places")) {
-        return reply(200, { placeName: "Bangkok, Siam" });
+        return Promise.resolve(reply(200, { placeName: "Bangkok, Siam" }));
       }
       if (url.includes("/photo-uploads")) {
-        return reply(201, { uploadId: "upl_1", expiresAt: "x", deleteToken: "d" });
+        return Promise.resolve(reply(201, { uploadId: "upl_1", expiresAt: "x", deleteToken: "d" }));
       }
-      return reply(201, { accessToken: "at9", refreshToken: "rt9", userId: "usr_mint_01" });
+      return Promise.resolve(
+        reply(201, { accessToken: "at9", refreshToken: "rt9", userId: "usr_mint_01" }),
+      );
     });
 
     await profileApi.checkUsername("mint_01");
@@ -334,14 +340,14 @@ describe("request", () => {
   });
 
   it("UT-API-07: many 401s at once share one refresh", async () => {
-    fetchMock.mockImplementation(async (url: string, init: RequestInit) => {
+    fetchMock.mockImplementation((url: string, init: RequestInit) => {
       if (url.endsWith("/sessions/refresh")) {
-        return reply(200, { accessToken: "at2", refreshToken: "rt2" });
+        return Promise.resolve(reply(200, { accessToken: "at2", refreshToken: "rt2" }));
       }
       const auth = (init.headers as Record<string, string>).Authorization;
-      return auth === "Bearer at2"
-        ? reply(200, { ok: true })
-        : reply(401, apiError("UNAUTHENTICATED"));
+      return Promise.resolve(
+        auth === "Bearer at2" ? reply(200, { ok: true }) : reply(401, apiError("UNAUTHENTICATED")),
+      );
     });
 
     const results = await Promise.all([

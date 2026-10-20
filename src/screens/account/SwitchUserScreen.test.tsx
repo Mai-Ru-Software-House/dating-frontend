@@ -39,8 +39,8 @@ describe("SwitchUser", () => {
     secureStoreData.set("mairu.refreshToken", "rt1");
     jest
       .mocked(profileApi.getMe)
-      .mockImplementation(async () =>
-        secureStoreData.get("mairu.accessToken") === "bt1" ? BOB : ALICE,
+      .mockImplementation(() =>
+        Promise.resolve(secureStoreData.get("mairu.accessToken") === "bt1" ? BOB : ALICE),
       );
     jest.mocked(sessionsApi.logIn).mockResolvedValue({
       accessToken: "bt1",

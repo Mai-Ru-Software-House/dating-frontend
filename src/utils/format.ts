@@ -103,7 +103,7 @@ export function formatHomeDate(now: Date = new Date()): string {
  * @returns For example "Fern, 19".
  */
 export function formatNameAge(displayName: string, age: number): string {
-  return `${displayName}, ${age}`;
+  return `${displayName}, ${String(age)}`;
 }
 
 /**
@@ -114,7 +114,7 @@ export function formatNameAge(displayName: string, age: number): string {
  */
 export function formatDistance(distanceKm: number, style: "card" | "row"): string {
   const km = Math.max(1, Math.round(distanceKm));
-  return style === "card" ? `${km} km away` : `${km} km`;
+  return style === "card" ? `${String(km)} km away` : `${String(km)} km`;
 }
 
 /**
@@ -126,7 +126,7 @@ export function formatUnreadCount(count: number): string | null {
   if (count <= 0) {
     return null;
   }
-  return count > UNREAD_BADGE_MAX ? `${UNREAD_BADGE_MAX}+` : String(count);
+  return count > UNREAD_BADGE_MAX ? `${String(UNREAD_BADGE_MAX)}+` : String(count);
 }
 
 /**
@@ -172,7 +172,7 @@ export function dobFromWire(wire: string): string | null {
   }
   const dd = String(date.day).padStart(2, "0");
   const mm = String(date.month).padStart(2, "0");
-  return `${dd} / ${mm} / ${date.year}`;
+  return `${dd} / ${mm} / ${String(date.year)}`;
 }
 
 /**
@@ -182,7 +182,7 @@ export function dobFromWire(wire: string): string | null {
  */
 export function formatDob(wire: string): string {
   const date = parseWireDate(wire);
-  return date === null ? "" : `${date.day} ${MONTHS[date.month - 1]} ${date.year}`;
+  return date === null ? "" : `${String(date.day)} ${MONTHS[date.month - 1]} ${String(date.year)}`;
 }
 
 /**
@@ -196,9 +196,9 @@ export function formatMatchesTile(count: number, pageLimit: number): string {
     return "No matches yet";
   }
   if (count >= pageLimit) {
-    return `${pageLimit}+ people`;
+    return `${String(pageLimit)}+ people`;
   }
-  return count === 1 ? "1 person" : `${count} people`;
+  return count === 1 ? "1 person" : `${String(count)} people`;
 }
 
 /**
@@ -207,7 +207,7 @@ export function formatMatchesTile(count: number, pageLimit: number): string {
  * @returns "3 unread" or "No new messages".
  */
 export function formatChatsTile(senders: number): string {
-  return senders > 0 ? `${senders} unread` : "No new messages";
+  return senders > 0 ? `${String(senders)} unread` : "No new messages";
 }
 
 /**
@@ -220,7 +220,7 @@ export function formatFoundCount(count: number, limit: number): string {
   if (count === 1) {
     return "1 PERSON FOUND";
   }
-  return count >= limit ? `${count}+ PEOPLE FOUND` : `${count} PEOPLE FOUND`;
+  return count >= limit ? `${String(count)}+ PEOPLE FOUND` : `${String(count)} PEOPLE FOUND`;
 }
 
 /**
@@ -230,7 +230,7 @@ export function formatFoundCount(count: number, limit: number): string {
  */
 export function formatLookingFor(prefs: LookingFor): string {
   const genders = targetGendersToLabel(prefs.targetGenders);
-  return `${genders} · ${formatAgeRange(prefs.minAge, prefs.maxAge)} · within ${prefs.radiusKm} km`;
+  return `${genders} · ${formatAgeRange(prefs.minAge, prefs.maxAge)} · within ${String(prefs.radiusKm)} km`;
 }
 
 /**
@@ -239,7 +239,7 @@ export function formatLookingFor(prefs: LookingFor): string {
  * @returns For example "92%".
  */
 export function formatScore(matchScore: number): string {
-  return `${Math.round(matchScore)}%`;
+  return `${String(Math.round(matchScore))}%`;
 }
 
 /**
@@ -248,7 +248,7 @@ export function formatScore(matchScore: number): string {
  * @returns "1 note" or "3 notes".
  */
 export function formatNoteCount(count: number): string {
-  return count === 1 ? "1 note" : `${count} notes`;
+  return count === 1 ? "1 note" : `${String(count)} notes`;
 }
 
 /**
@@ -258,7 +258,7 @@ export function formatNoteCount(count: number): string {
  * @returns "18 – 20", or "18" when both are the same.
  */
 export function formatAgeRange(min: number, max: number): string {
-  return min === max ? String(min) : `${min} – ${max}`;
+  return min === max ? String(min) : `${String(min)} – ${String(max)}`;
 }
 
 /**

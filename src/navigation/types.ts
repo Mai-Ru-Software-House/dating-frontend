@@ -67,8 +67,9 @@ export type NotesStackScreenProps<T extends keyof NotesStackParamList> = Composi
 >;
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace -- React Navigation's documented way to type useNavigation() globally
   namespace ReactNavigation {
-    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type -- adds no members; it only links RootParamList to RootStackParamList
     interface RootParamList extends RootStackParamList {}
   }
 }

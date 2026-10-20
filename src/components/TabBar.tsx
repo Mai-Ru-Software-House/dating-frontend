@@ -53,7 +53,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps): R
               style={styles.tab}
               accessibilityRole="tab"
               accessibilityState={{ selected: isActive }}
-              accessibilityLabel={badge > 0 ? `${label}, ${badge} unread` : label}
+              accessibilityLabel={badge > 0 ? `${label}, ${String(badge)} unread` : label}
             >
               <View>
                 <Icon size={size.icon} color={color} strokeWidth={ICON_STROKE} />

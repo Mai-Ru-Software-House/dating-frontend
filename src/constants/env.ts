@@ -8,7 +8,7 @@
 export const USE_MOCKS = process.env.EXPO_PUBLIC_USE_MOCKS === "1";
 
 /** Base URL of the API, for example http://10.0.2.2:3000/api/v1. No trailing slash. */
-export const API_BASE_URL = (process.env.EXPO_PUBLIC_API_BASE_URL ?? "").replace(/\/+$/, "");
+export const API_BASE_URL = String(process.env.EXPO_PUBLIC_API_BASE_URL ?? "").replace(/\/+$/, "");
 
 /** Optional mock failure: "match" or "expire" (api-integration.md 10). */
-export const MOCK_FAIL = process.env.EXPO_PUBLIC_MOCK_FAIL ?? "";
+export const MOCK_FAIL = String(process.env.EXPO_PUBLIC_MOCK_FAIL ?? "");

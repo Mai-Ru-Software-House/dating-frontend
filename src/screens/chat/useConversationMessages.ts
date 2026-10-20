@@ -90,7 +90,7 @@ export function useConversationMessages(userId: string, myId: string): Conversat
   };
 
   const send = (text: string, replyTo: MessageQuote | null): void => {
-    const clientId = `local-${Date.now()}`;
+    const clientId = `local-${String(Date.now())}`;
     const entry: ChatMessage = {
       messageId: clientId,
       clientId,

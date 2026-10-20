@@ -91,6 +91,10 @@ export function LoginScreen({
     }
   };
 
+  const onSubmit = (): void => {
+    void submit();
+  };
+
   return (
     <Screen
       header={
@@ -127,7 +131,7 @@ export function LoginScreen({
         autoComplete="current-password"
         autoCapitalize="none"
         returnKeyType="go"
-        onSubmitEditing={submit}
+        onSubmitEditing={onSubmit}
         isLocked={isBusy}
         error={errors.password}
         hasErrorBorder={errors.isPasswordRed}
@@ -140,7 +144,7 @@ export function LoginScreen({
         }}
       />
       <View style={styles.actions}>
-        <Button label="Log in" onPress={submit} isLoading={isBusy} />
+        <Button label="Log in" onPress={onSubmit} isLoading={isBusy} />
         <Banner message={errors.banner} />
       </View>
       {pickedUsername !== undefined ? (
@@ -172,7 +176,7 @@ export function LoginScreen({
       <ConfirmDialog
         isVisible={isConfirmingRemove}
         title="Remove this account?"
-        message={`@${pickedUsername} will be forgotten on this phone. You can log in to it again later.`}
+        message={`@${pickedUsername ?? ""} will be forgotten on this phone. You can log in to it again later.`}
         cancelLabel="Cancel"
         confirmLabel="Remove"
         onCancel={() => {

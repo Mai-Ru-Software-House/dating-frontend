@@ -55,8 +55,8 @@ export function fakeSession(overrides: Partial<SessionApi> = {}): SessionApi {
   return {
     status: "signedIn",
     userId: USERS.alice.userId,
-    logIn: jest.fn(async () => undefined),
-    logOut: jest.fn(async () => undefined),
+    logIn: jest.fn(() => Promise.resolve(undefined)),
+    logOut: jest.fn(() => Promise.resolve(undefined)),
     switchTo: jest.fn(),
     expire: jest.fn(),
     retry: jest.fn(),

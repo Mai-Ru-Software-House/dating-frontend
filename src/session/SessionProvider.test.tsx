@@ -18,7 +18,7 @@ import { keys } from "./queryClient";
 jest.mock("../api/profile");
 jest.mock("../api/sessions");
 
-const mockShowToast = jest.fn();
+const mockShowToast = jest.fn<undefined, [string]>();
 jest.mock("../components/Toast", () => {
   const toast = { show: (text: string) => mockShowToast(text) };
   return {

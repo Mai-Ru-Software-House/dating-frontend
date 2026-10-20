@@ -15,7 +15,7 @@
 export function gradientIndex(
   userId: string,
   count: number,
-  overrides: Readonly<Record<string, number>> = {},
+  overrides: Readonly<Partial<Record<string, number>>> = {},
 ): number {
   const fixed = overrides[userId];
   if (fixed !== undefined) {
@@ -34,6 +34,6 @@ export function gradientIndex(
  * @returns Its first character, upper case, or "?" when empty.
  */
 export function initialOf(displayName: string): string {
-  const first = Array.from(displayName.trim())[0];
+  const first = Array.from(displayName.trim())[0] as string | undefined;
   return first === undefined ? "?" : first.toLocaleUpperCase();
 }

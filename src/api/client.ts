@@ -110,8 +110,9 @@ export function buildUrl(path: string, query?: Record<string, QueryValue>): stri
 async function errorFrom(response: Response): Promise<ApiError> {
   try {
     const data: unknown = await response.json();
-    const error = (data as { error?: { code?: unknown; message?: unknown; field?: unknown } })
-      ?.error;
+    const error = (
+      data as { error?: { code?: unknown; message?: unknown; field?: unknown } } | null
+    )?.error;
     if (error !== undefined && isErrorCode(error.code)) {
       const message = typeof error.message === "string" ? error.message : "";
       const field = typeof error.field === "string" ? error.field : undefined;
@@ -126,7 +127,7 @@ async function errorFrom(response: Response): Promise<ApiError> {
   return new ApiError(
     response.status,
     "UNEXPECTED_RESPONSE",
-    `Unexpected response (${response.status})`,
+    `Unexpected response (${String(response.status)})`,
   );
 }
 
@@ -172,7 +173,11 @@ async function send(
       throw new ApiError(
         0,
         "NETWORK_ERROR",
-        isTimeout ? `Timed out after ${timeoutMs} ms` : error instanceof Error ? error.message : "",
+        isTimeout
+          ? `Timed out after ${String(timeoutMs)} ms`
+          : error instanceof Error
+            ? error.message
+            : "",
       );
     }
     throw toApiError(error);

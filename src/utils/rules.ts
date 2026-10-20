@@ -141,7 +141,11 @@ export function preferencesRule(prefs: {
   radiusKm: number;
 }): PreferencesResult {
   if (!Number.isInteger(prefs.minAge) || prefs.minAge < MIN_AGE) {
-    return { isValid: false, field: "preferences.minAge", message: `Minimum age is ${MIN_AGE}.` };
+    return {
+      isValid: false,
+      field: "preferences.minAge",
+      message: `Minimum age is ${String(MIN_AGE)}.`,
+    };
   }
   if (!Number.isInteger(prefs.maxAge) || prefs.maxAge < prefs.minAge) {
     return {

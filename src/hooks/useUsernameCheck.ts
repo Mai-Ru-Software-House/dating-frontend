@@ -30,7 +30,7 @@ export function useUsernameCheck(username: string): UsernameStatus {
       return undefined;
     }
     let isCurrent = true;
-    const timer = setTimeout(async () => {
+    const check = async (): Promise<void> => {
       try {
         const isAvailable = await profileApi.checkUsername(username);
         if (isCurrent) {
@@ -42,6 +42,9 @@ export function useUsernameCheck(username: string): UsernameStatus {
           setResult({ username, status: "idle" });
         }
       }
+    };
+    const timer = setTimeout(() => {
+      void check();
     }, USERNAME_CHECK_DEBOUNCE_MS);
     return () => {
       isCurrent = false;

@@ -51,7 +51,7 @@ const realPhotosApi: PhotosApi = {
     }),
   async deleteTemp(upload) {
     // How the delete token is sent is open (9.6); header X-Delete-Token until decided.
-    await request<void>("DELETE", `/photo-uploads/${encodeURIComponent(upload.uploadId)}`, {
+    await request<unknown>("DELETE", `/photo-uploads/${encodeURIComponent(upload.uploadId)}`, {
       isAuthenticated: false,
       headers: { "X-Delete-Token": upload.deleteToken },
     });

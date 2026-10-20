@@ -64,6 +64,7 @@ export const TextField = forwardRef<TextInput, TextFieldProps>(function TextFiel
     value,
     ...inputProps
   } = props;
+  const hasValue = value !== undefined && value !== "";
   const [isFocused, setIsFocused] = useState(false);
   const isRed = isFocused || Boolean(error) || hasErrorBorder;
 
@@ -93,15 +94,15 @@ export const TextField = forwardRef<TextInput, TextFieldProps>(function TextFiel
         onPress={onPressBox}
         disabled={onPressBox === undefined}
         accessibilityRole={onPressBox ? "button" : undefined}
-        accessibilityLabel={onPressBox ? `${label}, ${value || "not set"}` : undefined}
+        accessibilityLabel={onPressBox ? `${label}, ${hasValue ? value : "not set"}` : undefined}
         style={[styles.box, isRed && styles.boxRed]}
       >
         {onPressBox ? (
           <Text
-            style={[styles.input, styles.boxText, !value && styles.placeholder]}
+            style={[styles.input, styles.boxText, !hasValue && styles.placeholder]}
             numberOfLines={1}
           >
-            {value || inputProps.placeholder}
+            {hasValue ? value : inputProps.placeholder}
           </Text>
         ) : (
           <TextInput

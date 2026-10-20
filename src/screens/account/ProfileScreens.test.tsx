@@ -12,6 +12,7 @@ import { setAliceDefaults } from "../../../test/apiDefaults";
 import { freezeToday } from "../../../test/fixtures/clock";
 import { SQUARE_500 } from "../../../test/fixtures/photos";
 import { ownProfileOf } from "../../../test/fixtures/seed";
+import { parentOf } from "../../../test/hostElements";
 import { renderScreen, testQueryClient } from "../../../test/renderWithProviders";
 import { photosApi } from "../../api/photos";
 import { profileApi } from "../../api/profile";
@@ -56,7 +57,7 @@ describe("Profile", () => {
     const dialog = await screen.findByRole("header", { name: "Log out?" });
     const asked = session.logOut;
     const calledBeforeConfirm = jest.mocked(asked).mock.calls.length;
-    await user.press(within(dialog.parent!).getByRole("button", { name: "Log out" }));
+    await user.press(within(parentOf(dialog)).getByRole("button", { name: "Log out" }));
 
     expect(screen.getByRole("header", { name: "Teen, 18" })).toBeOnTheScreen();
     expect(screen.getByText("abcdefghij0123456789")).toBeOnTheScreen();

@@ -12,6 +12,7 @@ import * as Location from "expo-location";
 import { setPickedDate } from "../../../test/datePicker";
 import { ANIM_GIF, SQUARE_500, SQUARE_BIG } from "../../../test/fixtures/photos";
 import { MINT, ownProfileOf } from "../../../test/fixtures/seed";
+import { parentOf } from "../../../test/hostElements";
 import { currentRoute, renderScreen, type Rendered } from "../../../test/renderWithProviders";
 import { ApiError } from "../../api/errors";
 import { photosApi } from "../../api/photos";
@@ -207,8 +208,9 @@ describe("Step 1 username check", () => {
     await act(() => {
       jest.advanceTimersByTime(500);
     });
-    await act(async () => {
+    await act(() => {
       answerMint(false);
+      return Promise.resolve();
     });
 
     expect(callsForMint).toEqual(["mint"]);
@@ -293,7 +295,7 @@ describe("Step 2", () => {
 
     // A tap on the dimmed Next reaches the View around it (onTouchStart), which marks the step as
     // tried. RNTL doesn't pass touches through a disabled button, so fire on that View.
-    await fireEvent(screen.getByRole("button", { name: "Next" }).parent!, "touchStart");
+    await fireEvent(parentOf(screen.getByRole("button", { name: "Next" })), "touchStart");
 
     expect(screen.getByRole("button", { name: "Next" })).toBeDisabled();
     expect(await screen.findByText("Add a profile photo to continue.")).toBeOnTheScreen();
@@ -340,7 +342,8 @@ describe("Cancel", () => {
       expect(photos.uploadTemp).toHaveBeenCalled();
     });
     // The footer's Back (the top bar has a Back button too).
-    await user.press(screen.getAllByRole("button", { name: "Back" }).at(-1)!);
+    const backButtons = screen.getAllByRole("button", { name: "Back" });
+    await user.press(backButtons[backButtons.length - 1]);
     await screen.findByRole("header", { name: "About you" });
 
     await user.press(screen.getByRole("button", { name: "Cancel" }));

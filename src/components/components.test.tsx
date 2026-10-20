@@ -5,7 +5,7 @@
  */
 import { fireEvent, render, screen, userEvent } from "@testing-library/react-native";
 import { useState } from "react";
-import { processColor, StyleSheet, Text } from "react-native";
+import { processColor, StyleSheet, Text, type StyleProp, type ViewStyle } from "react-native";
 
 import { Avatar } from "./Avatar";
 import { Button } from "./Button";
@@ -47,7 +47,7 @@ type HostElement = ReturnType<typeof screen.getByText>;
 function hostOfType(type: string): HostElement {
   const queue: unknown[] = [screen.container];
   while (queue.length > 0) {
-    const node = queue.shift() as { type?: unknown; children?: unknown[] } | string;
+    const node = queue.shift() as { type?: unknown; children?: unknown[] } | string | null;
     if (typeof node !== "object" || node === null) {
       continue;
     }
@@ -160,7 +160,10 @@ describe("RangeSlider", () => {
     await render(<AgeRange />);
 
     await step("Minimum age", "increment", 5);
-    const afterIncrement = screen.getByLabelText("Minimum age").props.accessibilityValue.now;
+    const { accessibilityValue } = screen.getByLabelText("Minimum age").props as {
+      accessibilityValue: { now: number };
+    };
+    const afterIncrement = accessibilityValue.now;
     await step("Minimum age", "decrement", 5);
 
     expect(afterIncrement).toBe(20);
@@ -175,7 +178,13 @@ describe("Slider", () => {
     function Distance({ start }: { start: number }): React.JSX.Element {
       const [value, setValue] = useState(start);
       return (
-        <Slider label={`Distance ${start}`} min={1} max={100} value={value} onChange={setValue} />
+        <Slider
+          label={`Distance ${String(start)}`}
+          min={1}
+          max={100}
+          value={value}
+          onChange={setValue}
+        />
       );
     }
     await render(
@@ -263,7 +272,9 @@ describe("Composer", () => {
       ["1001", "a".repeat(1001)],
     ]) {
       await fireEvent.changeText(input, text);
-      states[name] = send().props.accessibilityState.disabled;
+      states[name] = (
+        send().props as { accessibilityState: { disabled: boolean } }
+      ).accessibilityState.disabled;
       if (name === "1001") {
         expect(screen.getByText("Messages can be up to 1000 characters.")).toBeOnTheScreen();
       }
@@ -307,7 +318,9 @@ describe("Screen", () => {
     );
 
     const column = screen.getByText(/Long content/).parent;
-    const style = StyleSheet.flatten(column?.props.style);
+    const style = StyleSheet.flatten(
+      (column?.props as { style?: StyleProp<ViewStyle> } | undefined)?.style,
+    );
     expect(style).toMatchObject({ maxWidth: 600, alignSelf: "center", width: "100%" });
     expect(hostOfType("RCTScrollView")).toBeTruthy();
   });

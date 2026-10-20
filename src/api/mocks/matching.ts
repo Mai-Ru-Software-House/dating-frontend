@@ -19,6 +19,7 @@ import { PEOPLE, TEE, type MockPerson } from "./fixtures";
  * @returns The card.
  */
 function toCard(person: MockPerson, withScore: boolean): CandidateCard {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- rest-sibling destructuring drops lookingFor from the card
   const { lookingFor: _lookingFor, matchScore, ...card } = person;
   return withScore ? { ...card, matchScore } : card;
 }
