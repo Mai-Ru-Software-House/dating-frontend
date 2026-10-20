@@ -62,7 +62,8 @@
     "avds:create": "bash scripts/create-avds.sh",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:ci": "jest --ci --coverage"
+    "test:ci": "jest --ci --coverage",
+    "seed:bangkok": "node scripts/seed-bangkok-users.mjs"
   },
   "private": true
 }
