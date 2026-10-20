@@ -60,13 +60,12 @@ export function useConversationMessages(userId: string, myId: string): Conversat
   );
 
   useEffect(() => {
-    const newestFromThem = server.find((m) => m.senderId === userId);
-    if (newestFromThem === undefined || !server.some((m) => m.senderId === userId && !m.isRead)) {
+    if (!server.some((m) => m.senderId === userId && !m.isRead)) {
       return;
     }
     const markRead = async (): Promise<void> => {
       try {
-        await messagingApi.markRead(userId, newestFromThem.messageId);
+        await messagingApi.markRead(userId);
         await queryClient.invalidateQueries({ queryKey: keys.conversations });
         await queryClient.invalidateQueries({ queryKey: keys.unread });
       } catch {

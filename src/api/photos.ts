@@ -4,8 +4,11 @@
  * (api-integration.md 6.2, 6.14). Photos are checked with checkProfilePhoto before calling these.
  * Created by Tee (Kittiphon Kijpinyochai), 6 October 2026
  */
+import { File } from "expo-file-system";
+
 import { USE_MOCKS } from "../constants/env";
-import { fileNameFor, photoMimeType } from "../utils/photo";
+import { UPLOAD_TIMEOUT_MS } from "../constants/limits";
+import { fileNameFor, uploadMimeType } from "../utils/photo";
 import { request } from "./client";
 import { mockPhotosApi } from "./mocks/photos";
 import type { PhotoUpload, PickedPhoto } from "./types";
@@ -22,17 +25,20 @@ export interface PhotosApi {
 
 /**
  * Builds the multipart body with one part named "photo".
+ * Expo's fetch (the global fetch in SDK 57) rejects React Native's { uri, name, type } parts
+ * ("Unsupported FormDataPart implementation"), so the part is the file itself, read lazily by
+ * expo-file-system.
  * @param photo The picked photo.
  * @returns The form data.
  */
 export function photoFormData(photo: PickedPhoto): FormData {
   const body = new FormData();
-  // React Native's FormData accepts { uri, name, type }; the cast avoids `any`.
-  body.append("photo", {
-    uri: photo.uri,
-    name: fileNameFor(photo),
-    type: photoMimeType(photo),
-  } as unknown as Blob);
+  const name = fileNameFor(photo);
+  if (__DEV__) {
+    console.log("[photo] picked", photo, "file name", name, "type", uploadMimeType(photo));
+  }
+  // File implements Blob but is not declared as one; the cast avoids `any`.
+  body.append("photo", new File(photo.uri) as unknown as Blob, name);
   return body;
 }
 
@@ -41,6 +47,7 @@ const realPhotosApi: PhotosApi = {
     request<PhotoUpload>("POST", "/photo-uploads", {
       formData: photoFormData(photo),
       isAuthenticated: false,
+      timeoutMs: UPLOAD_TIMEOUT_MS,
     }),
   async deleteTemp(upload) {
     // How the delete token is sent is open (9.6); header X-Delete-Token until decided.
@@ -50,7 +57,10 @@ const realPhotosApi: PhotosApi = {
     });
   },
   replaceMine: (photo) =>
-    request<{ photoUrl: string }>("PUT", "/users/me/photo", { formData: photoFormData(photo) }),
+    request<{ photoUrl: string }>("PUT", "/users/me/photo", {
+      formData: photoFormData(photo),
+      timeoutMs: UPLOAD_TIMEOUT_MS,
+    }),
 };
 
 /** Photo endpoints, real or mock. */

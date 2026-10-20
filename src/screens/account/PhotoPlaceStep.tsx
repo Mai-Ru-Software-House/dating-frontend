@@ -7,7 +7,7 @@
 import { useCallback, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-import { messageFor } from "../../api/errors";
+import { photoUploadMessage } from "../../api/errors";
 import { photosApi } from "../../api/photos";
 import { FieldError } from "../../components/FieldError";
 import { LocationField } from "../../components/LocationField";
@@ -18,7 +18,7 @@ import { colors, space, type } from "../../theme";
 import type { CreateProfileController } from "./useCreateProfile";
 
 /** Photo rules shown under the tile (A5). */
-export const PHOTO_HELPER = "PNG, JPG or WebP. Square, up to 1 MB.";
+export const PHOTO_HELPER = "PNG, JPG or WebP, up to 5 MB.";
 
 /**
  * Step 2: Photo & place.
@@ -58,7 +58,11 @@ export function PhotoPlaceStep({ form }: { form: CreateProfileController }): Rea
         photosApi.deleteTemp(previous.upload).catch(() => undefined);
       }
     } catch (error) {
-      setPhotoError(messageFor(error));
+      if (__DEV__) {
+        const e = error as Error & { cause?: unknown };
+        console.warn("[photo] upload failed", e?.name, e?.message, e?.cause);
+      }
+      setPhotoError(photoUploadMessage(error));
     } finally {
       setIsUploading(false);
     }

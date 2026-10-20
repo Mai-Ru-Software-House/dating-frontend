@@ -119,7 +119,7 @@ describe("Conversation", () => {
     const { queryClient } = await renderConversation("bob");
     const invalidate = jest.spyOn(queryClient, "invalidateQueries");
 
-    await waitFor(() => expect(messaging.markRead).toHaveBeenCalledWith(USERS.bob.userId, "M4"));
+    await waitFor(() => expect(messaging.markRead).toHaveBeenCalledWith(USERS.bob.userId));
     await waitFor(() => expect(invalidate).toHaveBeenCalledWith({ queryKey: keys.unread }));
     expect(invalidate).toHaveBeenCalledWith({ queryKey: keys.conversations });
   });

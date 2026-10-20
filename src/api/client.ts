@@ -7,7 +7,7 @@
  */
 import { API_BASE_URL } from "../constants/env";
 import { REQUEST_TIMEOUT_MS } from "../constants/limits";
-import { ApiError, isErrorCode } from "./errors";
+import { ApiError, isErrorCode, isNetworkFailure, toApiError } from "./errors";
 import type { RefreshResult } from "./types";
 
 /** Tokens held by the session store. */
@@ -36,6 +36,8 @@ export interface RequestOptions {
   query?: Record<string, QueryValue>;
   /** Send the access token (default true). Public endpoints pass false and never refresh. */
   isAuthenticated?: boolean;
+  /** Timeout in ms (default REQUEST_TIMEOUT_MS). */
+  timeoutMs?: number;
   /** Extra headers. */
   headers?: Record<string, string>;
 }
@@ -102,7 +104,8 @@ export function buildUrl(path: string, query?: Record<string, QueryValue>): stri
 /**
  * Reads an error body into an ApiError.
  * @param response The non-2xx response.
- * @returns The ApiError (NETWORK_ERROR when the body is not the error shape).
+ * @returns The ApiError (UNEXPECTED_RESPONSE when the body is not the error shape, for example an
+ *   HTML 413 or 502 from Nginx; the HTTP status is kept).
  */
 async function errorFrom(response: Response): Promise<ApiError> {
   try {
@@ -117,7 +120,14 @@ async function errorFrom(response: Response): Promise<ApiError> {
   } catch {
     // Not JSON: handled below.
   }
-  return new ApiError(0, "NETWORK_ERROR", `Unexpected response (${response.status})`);
+  if (__DEV__) {
+    console.warn("[api] unexpected error response", response.status, response.url);
+  }
+  return new ApiError(
+    response.status,
+    "UNEXPECTED_RESPONSE",
+    `Unexpected response (${response.status})`,
+  );
 }
 
 /**
@@ -127,7 +137,7 @@ async function errorFrom(response: Response): Promise<ApiError> {
  * @param options Body and headers.
  * @param accessToken Token to send, if any.
  * @returns The response.
- * @throws ApiError NETWORK_ERROR on no response or timeout.
+ * @throws ApiError NETWORK_ERROR on no response or timeout, UNEXPECTED_RESPONSE otherwise.
  */
 async function send(
   method: string,
@@ -136,7 +146,8 @@ async function send(
   accessToken: string | null,
 ): Promise<Response> {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  const timeoutMs = options.timeoutMs ?? REQUEST_TIMEOUT_MS;
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
   const headers: Record<string, string> = { Accept: "application/json", ...options.headers };
   if (accessToken !== null) {
     headers.Authorization = `Bearer ${accessToken}`;
@@ -151,8 +162,18 @@ async function send(
   try {
     return await fetch(url, { method, headers, body, signal: controller.signal });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Network request failed";
-    throw new ApiError(0, "NETWORK_ERROR", message);
+    if (__DEV__) {
+      console.warn("[api] fetch failed", method, url, error, { headers });
+    }
+    if (isNetworkFailure(error)) {
+      const isTimeout = error instanceof Error && error.name === "AbortError";
+      throw new ApiError(
+        0,
+        "NETWORK_ERROR",
+        isTimeout ? `Timed out after ${timeoutMs} ms` : error instanceof Error ? error.message : "",
+      );
+    }
+    throw toApiError(error);
   } finally {
     clearTimeout(timer);
   }
@@ -161,7 +182,8 @@ async function send(
 /**
  * Runs the token refresh, shared by every request that got a 401 meanwhile.
  * @returns True when new tokens were saved; false when the session is over.
- * @throws ApiError NETWORK_ERROR when the refresh could not reach the server (tokens are kept).
+ * @throws ApiError NETWORK_ERROR or UNEXPECTED_RESPONSE when the refresh got no usable answer (tokens
+ *   are kept).
  */
 async function refreshOnce(): Promise<boolean> {
   if (refreshing === null) {
@@ -178,7 +200,7 @@ async function refreshOnce(): Promise<boolean> {
       );
       if (!response.ok) {
         const error = await errorFrom(response);
-        if (error.code === "NETWORK_ERROR") {
+        if (error.code === "NETWORK_ERROR" || error.code === "UNEXPECTED_RESPONSE") {
           throw error;
         }
         return false;
@@ -206,7 +228,7 @@ async function refreshOnce(): Promise<boolean> {
  * Parses a successful response.
  * @param response A 2xx response.
  * @returns The JSON body, or undefined for an empty body.
- * @throws ApiError NETWORK_ERROR when the body is not JSON.
+ * @throws ApiError UNEXPECTED_RESPONSE when the body is not JSON.
  */
 async function parse<T>(response: Response): Promise<T> {
   const text = await response.text();
@@ -216,7 +238,7 @@ async function parse<T>(response: Response): Promise<T> {
   try {
     return JSON.parse(text) as T;
   } catch {
-    throw new ApiError(0, "NETWORK_ERROR", "Response is not JSON");
+    throw new ApiError(response.status, "UNEXPECTED_RESPONSE", "Response is not JSON");
   }
 }
 

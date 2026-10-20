@@ -4,25 +4,21 @@
  * Created by Tee (Kittiphon Kijpinyochai), 7 October 2026
  */
 import { ALICE_RECOMMENDATIONS } from "../../test/fixtures/seed";
-import { dedupeCandidates, nextLimit, splitTopMatch } from "./recommendations";
+import { dedupeCandidates, nextOffset, splitTopMatch } from "./recommendations";
 
 const [BOB, CHAI] = ALICE_RECOMMENDATIONS;
 
-describe("nextLimit", () => {
-  it("UT-REC-01: load more grows by 10 up to 50", () => {
-    const limits = [
-      [10, 10],
-      [40, 40],
-      [50, 50],
-    ].map(([limit, got]) => nextLimit(limit, got));
-
-    expect(limits).toEqual([20, 50, null]);
+describe("nextOffset", () => {
+  it("UT-REC-01: load more continues from the cards already loaded", () => {
+    expect([nextOffset(true, 10), nextOffset(true, 40)]).toEqual([10, 40]);
   });
 
-  it("UT-REC-02: a short page stops loading", () => {
-    const limit = nextLimit(20, 13);
-
-    expect(limit).toBeNull();
+  it("UT-REC-02: stops when the server has no more, or at 200 cards", () => {
+    expect([nextOffset(false, 13), nextOffset(true, 200), nextOffset(true, 195)]).toEqual([
+      null,
+      null,
+      null,
+    ]);
   });
 });
 

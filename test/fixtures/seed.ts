@@ -412,6 +412,7 @@ export function cardOf(
   const u = USERS[username];
   return {
     ...summaryOf(username),
+    username,
     age,
     gender: u.gender,
     placeName: u.placeName,
