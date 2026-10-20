@@ -1,12 +1,12 @@
 /**
  * RecommendedList.tsx
  * Matches, Recommended tab (design.md 6.8): the top match card, then "MORE FOR YOU" rows. Load more
- * asks again with a bigger limit (10 → 50) at the list's end; pull to refresh starts over at 10.
+ * loads the next 10 by offset at the list's end until hasMore is false; pull to refresh starts over.
  * Created by Tee (Kittiphon Kijpinyochai), 6 October 2026
  */
 import { useNavigation } from "@react-navigation/native";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { useState, type ReactElement } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { type ReactElement } from "react";
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from "react-native";
 
 import { matchingApi } from "../../api/matching";
@@ -21,7 +21,7 @@ import { usePullRefresh } from "../../hooks/usePullRefresh";
 import { useRefreshOnFocus } from "../../hooks/useRefreshOnFocus";
 import { keys } from "../../session/queryClient";
 import { colors, columnStyle, GUTTER, radius, space } from "../../theme";
-import { dedupeCandidates, nextLimit, splitTopMatch } from "../../utils/recommendations";
+import { dedupeCandidates, nextOffset, splitTopMatch } from "../../utils/recommendations";
 import { CandidateRow } from "./CandidateRow";
 
 /**
@@ -32,34 +32,29 @@ import { CandidateRow } from "./CandidateRow";
 export function RecommendedList({ header }: { header: ReactElement }): React.JSX.Element {
   const navigation = useNavigation();
   const { isFavorite, toggle } = useFavorites();
-  const [limit, setLimit] = useState(RECOMMENDATIONS_PAGE);
-  const query = useQuery({
-    queryKey: keys.recommendations(limit),
-    queryFn: () => matchingApi.getRecommendations(limit),
-    placeholderData: keepPreviousData,
+  const query = useInfiniteQuery({
+    queryKey: keys.recommendationsList,
+    queryFn: ({ pageParam }) => matchingApi.getRecommendations(RECOMMENDATIONS_PAGE, pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (last, pages) =>
+      nextOffset(
+        last.hasMore,
+        pages.reduce((n, page) => n + page.recommendations.length, 0),
+      ) ?? undefined,
   });
   useRefreshOnFocus(query.refetch);
-  const cards = dedupeCandidates(query.data ?? []);
+  const cards = dedupeCandidates(query.data?.pages.flatMap((page) => page.recommendations) ?? []);
   const { card, rows } = splitTopMatch(cards);
-  const isLoadingMore = query.isFetching && query.isPlaceholderData;
+  const isLoadingMore = query.isFetchingNextPage;
   const open = (userId: string): void => navigation.navigate("CandidateProfile", { userId });
 
   const loadMore = (): void => {
-    if (query.isFetching || query.data === undefined) {
+    if (query.isFetching || !query.hasNextPage) {
       return;
     }
-    const next = nextLimit(limit, query.data.length);
-    if (next !== null) {
-      setLimit(next);
-    }
+    void query.fetchNextPage();
   };
-  const pull = usePullRefresh(() => {
-    if (limit === RECOMMENDATIONS_PAGE) {
-      return query.refetch();
-    }
-    setLimit(RECOMMENDATIONS_PAGE);
-    return undefined;
-  });
+  const pull = usePullRefresh(() => query.refetch());
 
   const top = (
     <View>

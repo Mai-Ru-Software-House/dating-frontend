@@ -21,7 +21,7 @@ export const SQUARE_BIG: PickedPhoto = {
   mimeType: "image/jpeg",
   width: 1500,
   height: 1500,
-  fileSize: 1_200_000,
+  fileSize: 6_000_000,
 };
 
 export const WIDE_800X600: PickedPhoto = {

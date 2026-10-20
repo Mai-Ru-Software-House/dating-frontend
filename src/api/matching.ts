@@ -7,23 +7,19 @@ import { USE_MOCKS } from "../constants/env";
 import { SEARCH_LIMIT } from "../constants/limits";
 import { request } from "./client";
 import { mockMatchingApi } from "./mocks/matching";
-import type { CandidateCard, SearchCriteria } from "./types";
+import type { CandidateCard, RecommendationsPage, SearchCriteria } from "./types";
 
 /** Matching endpoints. */
 export interface MatchingApi {
-  /** GET /recommendations?limit=. @throws ApiError MATCH_ENGINE_UNAVAILABLE. */
-  getRecommendations: (limit: number) => Promise<CandidateCard[]>;
+  /** GET /recommendations?limit=&offset=. @throws ApiError MATCH_ENGINE_UNAVAILABLE. */
+  getRecommendations: (limit: number, offset?: number) => Promise<RecommendationsPage>;
   /** GET /candidates, nearest first. @throws ApiError INVALID_INPUT, MATCH_ENGINE_UNAVAILABLE. */
   searchCandidates: (criteria: SearchCriteria) => Promise<CandidateCard[]>;
 }
 
 const realMatchingApi: MatchingApi = {
-  async getRecommendations(limit) {
-    const result = await request<{ recommendations: CandidateCard[] }>("GET", "/recommendations", {
-      query: { limit },
-    });
-    return result.recommendations;
-  },
+  getRecommendations: (limit, offset = 0) =>
+    request<RecommendationsPage>("GET", "/recommendations", { query: { limit, offset } }),
   async searchCandidates(criteria) {
     const result = await request<{ candidates: CandidateCard[] }>("GET", "/candidates", {
       query: {

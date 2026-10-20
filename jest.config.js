@@ -6,6 +6,8 @@
  */
 module.exports = {
   preset: "jest-expo",
+  // Screen tests render full navigators; the 5 s default times out when the whole suite runs in parallel.
+  testTimeout: 20000,
   globalSetup: "<rootDir>/test/globalSetup.ts",
   setupFilesAfterEnv: ["<rootDir>/test/setup.tsx"],
   testMatch: ["<rootDir>/src/**/*.test.ts?(x)"],

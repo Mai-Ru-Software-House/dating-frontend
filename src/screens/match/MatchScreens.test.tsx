@@ -58,7 +58,7 @@ describe("RecommendedList", () => {
   });
 
   it("UT-SCR-14: with no matches, says so", async () => {
-    matching.getRecommendations.mockResolvedValue([]);
+    matching.getRecommendations.mockResolvedValue({ recommendations: [], hasMore: false });
 
     await renderWithProviders(<RecommendedList header={<View />} />);
 
@@ -114,7 +114,12 @@ describe("SearchPanel", () => {
 describe("CandidateProfile", () => {
   it("UT-SCR-16: shows public data only and opens the conversation", async () => {
     const user = userEvent.setup();
-    const bob: PublicProfile = { ...ALICE_RECOMMENDATIONS[0], isFavorite: false };
+    const bob: PublicProfile = {
+      ...ALICE_RECOMMENDATIONS[0],
+      matchScore: 88,
+      lookingFor: { minAge: 18, maxAge: 30, targetGenders: ["female"], radiusKm: 50 },
+      isFavorite: false,
+    };
     jest.mocked(profileApi.getUser).mockResolvedValueOnce(bob);
     const { navigation } = await renderScreen(CandidateProfileScreen, "CandidateProfile", {
       userId: USERS.bob.userId,

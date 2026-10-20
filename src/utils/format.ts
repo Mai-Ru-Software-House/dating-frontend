@@ -226,11 +226,11 @@ export function formatFoundCount(count: number, limit: number): string {
 /**
  * The "Looking for" line.
  * @param prefs Target genders, age range and radius.
- * @returns For example "Men · 19 – 25 · within 20 km".
+ * @returns For example "Men · 19 – 25 · within 20 km", or "Men · 19 · within 20 km" for one age.
  */
 export function formatLookingFor(prefs: LookingFor): string {
   const genders = targetGendersToLabel(prefs.targetGenders);
-  return `${genders} · ${prefs.minAge} – ${prefs.maxAge} · within ${prefs.radiusKm} km`;
+  return `${genders} · ${formatAgeRange(prefs.minAge, prefs.maxAge)} · within ${prefs.radiusKm} km`;
 }
 
 /**

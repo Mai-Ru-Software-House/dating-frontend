@@ -6,6 +6,7 @@
  */
 import type { ReactNode } from "react";
 import { StyleSheet, Text, View, type LayoutChangeEvent } from "react-native";
+import Animated, { useAnimatedStyle, type SharedValue } from "react-native-reanimated";
 
 import { colors, fonts, space, type } from "../theme";
 import { KNOB_SIZE } from "./SliderKnob";
@@ -18,9 +19,9 @@ export interface SliderFrameProps {
   valueText: string;
   startLabel: string;
   endLabel: string;
-  /** Filled part of the track: offsets from the usable track's start. */
-  fillFrom: number;
-  fillTo: number;
+  /** Filled part of the track: offsets from the usable track's start (the knobs' positions). */
+  fillFrom: SharedValue<number>;
+  fillTo: SharedValue<number>;
   /** Called with the usable track width (total minus one knob). */
   onTrackWidth: (width: number) => void;
   /** The knobs. */
@@ -38,6 +39,10 @@ export function SliderFrame(props: SliderFrameProps): React.JSX.Element {
   const onLayout = (event: LayoutChangeEvent): void => {
     onTrackWidth(Math.max(0, event.nativeEvent.layout.width - KNOB_SIZE));
   };
+  const fillStyle = useAnimatedStyle(() => ({
+    left: KNOB_SIZE / 2 + fillFrom.get(),
+    width: Math.max(0, fillTo.get() - fillFrom.get()),
+  }));
   return (
     <View style={styles.wrap}>
       <View style={styles.header}>
@@ -46,12 +51,7 @@ export function SliderFrame(props: SliderFrameProps): React.JSX.Element {
       </View>
       <View style={styles.trackArea} onLayout={onLayout}>
         <View style={styles.track} />
-        <View
-          style={[
-            styles.fill,
-            { left: KNOB_SIZE / 2 + fillFrom, width: Math.max(0, fillTo - fillFrom) },
-          ]}
-        />
+        <Animated.View style={[styles.fill, fillStyle]} />
         {children}
       </View>
       <View style={styles.ends}>

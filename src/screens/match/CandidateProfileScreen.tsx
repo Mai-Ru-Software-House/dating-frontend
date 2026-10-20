@@ -105,7 +105,7 @@ export function CandidateProfileScreen({
         <Text style={styles.name} accessibilityRole="header">
           {formatNameAge(profile.displayName, profile.age)}
         </Text>
-        {profile.matchScore === undefined ? null : <ScorePill score={profile.matchScore} />}
+        <ScorePill score={profile.matchScore} />
       </View>
       <View style={styles.placeRow}>
         <MapPin size={18} color={colors.muted} strokeWidth={ICON_STROKE} />
@@ -113,12 +113,10 @@ export function CandidateProfileScreen({
           {place === null ? distance : `${place} · ${distance}`}
         </Text>
       </View>
-      {profile.lookingFor ? (
-        <View style={styles.section}>
-          <SectionLabel label="Looking for" />
-          <Text style={styles.body}>{formatLookingFor(profile.lookingFor)}</Text>
-        </View>
-      ) : null}
+      <View style={styles.section}>
+        <SectionLabel label="Looking for" />
+        <Text style={styles.body}>{formatLookingFor(profile.lookingFor)}</Text>
+      </View>
     </ProfileLayout>
   );
 }
