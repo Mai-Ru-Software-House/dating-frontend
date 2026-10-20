@@ -25,6 +25,14 @@ function toCard(person: MockPerson, withScore: boolean): CandidateCard {
 }
 
 export const mockMatchingApi: MatchingApi = {
+  /**
+   * Mock of GET /recommendations: Tee gets the sample people, every other account gets none.
+   * @param limit How many to return.
+   * @param offset How many to skip.
+   * @returns A page of recommendations.
+   * @throws ApiError MATCH_ENGINE_UNAVAILABLE when EXPO_PUBLIC_MOCK_FAIL is "match".
+   * @throws ApiError UNAUTHENTICATED when no one is signed in.
+   */
   async getRecommendations(limit, offset = 0) {
     const me = await authed();
     if (MOCK_FAIL === "match") {
@@ -38,6 +46,12 @@ export const mockMatchingApi: MatchingApi = {
       hasMore: offset + limit < PEOPLE.length,
     };
   },
+  /**
+   * Mock of GET /candidates: filters the sample people by the criteria, nearest first.
+   * @param criteria The search; a missing value falls back to the user's preferences.
+   * @returns The matching candidates.
+   * @throws ApiError UNAUTHENTICATED when no one is signed in.
+   */
   async searchCandidates(criteria) {
     const me = await authed();
     if (me.profile.userId !== TEE.userId) {

@@ -71,9 +71,9 @@ describe("Profile", () => {
 describe("EditProfile", () => {
   it("UT-SCR-26: a new photo alone is saved with one PUT and no PATCH", async () => {
     const user = userEvent.setup();
-    const ALICE = ownProfileOf("alice");
+    const alice = ownProfileOf("alice");
     const queryClient = testQueryClient();
-    queryClient.setQueryData(keys.me, ALICE);
+    queryClient.setQueryData(keys.me, alice);
     jest
       .mocked(photosApi.replaceMine)
       .mockResolvedValueOnce({ photoUrl: "/api/v1/photos/pho_new" });

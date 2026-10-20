@@ -29,12 +29,8 @@ export interface ActionRowProps {
  * @param props See ActionRowProps.
  * @returns The row.
  */
-export function ActionRow({
-  icon: Icon,
-  label,
-  onPress,
-  isDestructive = false,
-}: ActionRowProps): React.JSX.Element {
+export function ActionRow(props: ActionRowProps): React.JSX.Element {
+  const { icon: Icon, label, onPress, isDestructive = false } = props;
   const color = isDestructive ? colors.accent : colors.ink;
   return (
     <Pressable

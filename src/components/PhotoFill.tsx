@@ -41,7 +41,7 @@ export function PhotoFill({
   const source = usePhotoSource(photoUrl);
   const [failedUri, setFailedUri] = useState<string | null>(null);
   const [box, setBox] = useState({ width: 0, height: 0 });
-  const showPhoto = source !== null && failedUri !== source.uri;
+  const isPhotoShown = source !== null && failedUri !== source.uri;
   const onLayout = (event: LayoutChangeEvent): void => {
     const { width, height } = event.nativeEvent.layout;
     setBox({ width, height });
@@ -74,7 +74,7 @@ export function PhotoFill({
           />
         </View>
       ) : null}
-      {showPhoto ? (
+      {isPhotoShown ? (
         <Image
           source={source}
           style={[StyleSheet.absoluteFill, { borderRadius }]}

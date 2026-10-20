@@ -43,16 +43,41 @@ export const queryClient = new QueryClient({
 export const keys = {
   me: ["me"] as const,
   knownAccounts: ["knownAccounts"] as const,
+  /**
+   * Key of the recommendations page of this size.
+   * @param limit The page size.
+   * @returns The query key.
+   */
   recommendations: (limit: number) => ["recommendations", limit] as const,
   recommendationsList: ["recommendations", "list"] as const,
   recommendationsAll: ["recommendations"] as const,
+  /**
+   * Key of the search results for these criteria.
+   * @param criteria The search criteria.
+   * @returns The query key.
+   */
   candidates: (criteria: object) => ["candidates", criteria] as const,
   candidatesAll: ["candidates"] as const,
+  /**
+   * Key of one person's profile.
+   * @param userId The person.
+   * @returns The query key.
+   */
   user: (userId: string) => ["user", userId] as const,
   favorites: ["favorites"] as const,
   conversations: ["conversations"] as const,
+  /**
+   * Key of the messages of one conversation.
+   * @param userId The other person.
+   * @returns The query key.
+   */
   messages: (userId: string) => ["messages", userId] as const,
   unread: ["unread"] as const,
+  /**
+   * Key of my notes about one person.
+   * @param userId The person.
+   * @returns The query key.
+   */
   notes: (userId: string) => ["notes", userId] as const,
   notePeople: ["notePeople"] as const,
 };

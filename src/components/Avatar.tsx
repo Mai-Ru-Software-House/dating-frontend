@@ -33,7 +33,7 @@ export interface AvatarProps {
 export function Avatar({ userId, displayName, photoUrl, size }: AvatarProps): React.JSX.Element {
   const source = usePhotoSource(photoUrl);
   const [failedUri, setFailedUri] = useState<string | null>(null);
-  const showPhoto = source !== null && failedUri !== source.uri;
+  const isPhotoShown = source !== null && failedUri !== source.uri;
   const box = { width: size, height: size, borderRadius: size / 2 };
 
   return (
@@ -51,7 +51,7 @@ export function Avatar({ userId, displayName, photoUrl, size }: AvatarProps): Re
           {initialOf(displayName)}
         </Text>
       </LinearGradient>
-      {showPhoto ? (
+      {isPhotoShown ? (
         <Image
           testID="avatar-image"
           source={source}

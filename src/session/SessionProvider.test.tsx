@@ -47,7 +47,10 @@ const REFRESH = "mairu.refreshToken";
 async function renderSession(): Promise<{ session: () => SessionApi; queryClient: QueryClient }> {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   let current: SessionApi | null = null;
-  /** Reads the session on every render. */
+  /**
+   * Reads the session on every render.
+   * @returns Nothing is drawn.
+   */
   function Probe(): null {
     current = useSession();
     return null;

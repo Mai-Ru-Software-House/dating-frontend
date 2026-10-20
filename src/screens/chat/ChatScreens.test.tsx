@@ -276,14 +276,14 @@ describe("Notes", () => {
 
     await user.press(screen.getByRole("button", { name: "New note" }));
     const save = (): HostElement => screen.getByRole("button", { name: "Save" });
-    const whenEmpty = isDisabled(save());
+    const isDisabledWhenEmpty = isDisabled(save());
     await user.type(screen.getByLabelText("New note"), "   ");
-    const whenSpaces = isDisabled(save());
+    const isDisabledWhenSpaces = isDisabled(save());
     await user.clear(screen.getByLabelText("New note"));
     await user.type(screen.getByLabelText("New note"), created.text);
     await user.press(save());
 
-    expect([whenEmpty, whenSpaces]).toEqual([true, true]);
+    expect([isDisabledWhenEmpty, isDisabledWhenSpaces]).toEqual([true, true]);
     expect(notes.create).toHaveBeenCalledWith(USERS.bob.userId, created.text);
     expect(await screen.findByRole("button", { name: "New note" })).toBeOnTheScreen();
     const cards = screen.getAllByText(/Met at/).map(textOf);

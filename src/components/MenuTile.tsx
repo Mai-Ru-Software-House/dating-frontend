@@ -24,13 +24,8 @@ export interface MenuTileProps {
  * @param props See MenuTileProps.
  * @returns The tile.
  */
-export function MenuTile({
-  icon: Icon,
-  tint,
-  title,
-  subtitle,
-  onPress,
-}: MenuTileProps): React.JSX.Element {
+export function MenuTile(props: MenuTileProps): React.JSX.Element {
+  const { icon: Icon, tint, title, subtitle, onPress } = props;
   return (
     <Pressable
       onPress={onPress}

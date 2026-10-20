@@ -34,7 +34,12 @@ jest.mock("expo-file-system", () => ({
 
 const BASE = "http://10.0.2.2:3000/api/v1";
 
-/** A fake fetch response. A string body is sent as-is (not JSON). */
+/**
+ * A fake fetch response. A string body is sent as-is (not JSON).
+ * @param status The HTTP status.
+ * @param body The body: undefined for none, a string as-is, anything else as JSON.
+ * @returns The response.
+ */
 function reply(status: number, body?: unknown): Response {
   const text = body === undefined ? "" : typeof body === "string" ? body : JSON.stringify(body);
   return {
@@ -48,7 +53,13 @@ function reply(status: number, body?: unknown): Response {
   } as Response;
 }
 
-/** An error body as the API sends it. */
+/**
+ * An error body as the API sends it.
+ * @param code The error code.
+ * @param message The error message.
+ * @param field The field the error is about, if any.
+ * @returns The body.
+ */
 function apiError(code: string, message = "", field?: string): unknown {
   return { error: { code, message, field } };
 }
@@ -61,7 +72,11 @@ const saveTokens = jest.fn((next: Tokens) => {
 });
 const expire = jest.fn();
 
-/** The headers of the n-th fetch call. */
+/**
+ * The headers of the n-th fetch call.
+ * @param call The call's index.
+ * @returns Its request headers.
+ */
 function headersOf(call: number): Record<string, string> {
   return fetchMock.mock.calls[call][1].headers as Record<string, string>;
 }
@@ -89,8 +104,8 @@ describe("request", () => {
     expect(headersOf(0).Authorization).toBe("Bearer at1");
   });
 
-  /** [name, call, method, path after the base URL, JSON body or undefined]. */
-  const AUTHENTICATED: [string, () => Promise<unknown>, string, string, unknown][] = [
+  // [name, call, method, path after the base URL, JSON body or undefined].
+  const authenticatedCalls: [string, () => Promise<unknown>, string, string, unknown][] = [
     ["getMe", () => profileApi.getMe(), "GET", "/users/me", undefined],
     ["getUser", () => profileApi.getUser("usr_bob"), "GET", "/users/usr_bob", undefined],
     [
@@ -178,7 +193,7 @@ describe("request", () => {
     ["remove note", () => notesApi.remove("not_1"), "DELETE", "/notes/not_1", undefined],
   ];
 
-  it.each(AUTHENTICATED)(
+  it.each(authenticatedCalls)(
     "UT-API-01: %s calls the contract's endpoint with the base URL and the access token",
     async (_name, call, method, path, body) => {
       fetchMock.mockResolvedValueOnce(

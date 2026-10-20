@@ -33,20 +33,20 @@ beforeEach(() => {
 describe("SwitchUser", () => {
   it("UT-SCR-25: after switching to bob, none of alice's screens are left to go back to", async () => {
     const user = userEvent.setup();
-    const ALICE = ownProfileOf("alice");
-    const BOB = ownProfileOf("bob");
+    const alice = ownProfileOf("alice");
+    const bob = ownProfileOf("bob");
     secureStoreData.set("mairu.accessToken", "at1");
     secureStoreData.set("mairu.refreshToken", "rt1");
     jest
       .mocked(profileApi.getMe)
       .mockImplementation(() =>
-        Promise.resolve(secureStoreData.get("mairu.accessToken") === "bt1" ? BOB : ALICE),
+        Promise.resolve(secureStoreData.get("mairu.accessToken") === "bt1" ? bob : alice),
       );
     jest.mocked(sessionsApi.logIn).mockResolvedValue({
       accessToken: "bt1",
       refreshToken: "brt1",
-      userId: BOB.userId,
-      profile: BOB,
+      userId: bob.userId,
+      profile: bob,
     });
     jest.mocked(sessionsApi.logOut).mockResolvedValue(undefined);
     await render(<App />);

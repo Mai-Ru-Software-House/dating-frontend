@@ -48,16 +48,16 @@ jest.mock("expo-image-picker", () => ({
 // The native date picker has no Jest renderer: a button stands in for it and picks the date set
 // with setPickedDate (test/datePicker.ts).
 jest.mock("@react-native-community/datetimepicker", () => {
-  const { Pressable, Text } = jest.requireActual<typeof import("react-native")>("react-native");
+  const native = jest.requireActual<typeof import("react-native")>("react-native");
   const { pickedDate } = jest.requireActual<typeof import("./datePicker")>("./datePicker");
   const Picker = (props: { onValueChange?: (event: object, date: Date) => void }) => (
-    <Pressable
+    <native.Pressable
       accessibilityRole="button"
       accessibilityLabel="Choose test date"
       onPress={() => props.onValueChange?.({}, pickedDate())}
     >
-      <Text>Choose test date</Text>
-    </Pressable>
+      <native.Text>Choose test date</native.Text>
+    </native.Pressable>
   );
   return {
     __esModule: true,
@@ -82,12 +82,13 @@ jest.mock("react-native-safe-area-context", () => {
   const mock = jest.requireActual<{ default: object }>(
     "react-native-safe-area-context/jest/mock",
   ).default;
-  const { SAFE_AREA_METRICS } = jest.requireActual<typeof import("./safeArea")>("./safeArea");
+  const { SAFE_AREA_METRICS: metrics } =
+    jest.requireActual<typeof import("./safeArea")>("./safeArea");
   return {
     ...mock,
-    initialWindowMetrics: SAFE_AREA_METRICS,
-    useSafeAreaInsets: () => SAFE_AREA_METRICS.insets,
-    useSafeAreaFrame: () => SAFE_AREA_METRICS.frame,
+    initialWindowMetrics: metrics,
+    useSafeAreaInsets: () => metrics.insets,
+    useSafeAreaFrame: () => metrics.frame,
   };
 });
 

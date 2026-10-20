@@ -48,7 +48,11 @@ type ParamList = Record<string, object | undefined>;
 
 const Stack = createNativeStackNavigator<ParamList>();
 
-/** A fake session: signed in as alice, with every action a jest.fn. */
+/**
+ * A fake session: signed in as alice, with every action a jest.fn.
+ * @param overrides Values to replace.
+ * @returns The session.
+ */
 export function fakeSession(overrides: Partial<SessionApi> = {}): SessionApi {
   return {
     status: "signedIn",
@@ -62,7 +66,10 @@ export function fakeSession(overrides: Partial<SessionApi> = {}): SessionApi {
   };
 }
 
-/** A fresh query client that never retries. */
+/**
+ * A fresh query client that never retries.
+ * @returns The query client.
+ */
 export function testQueryClient(): QueryClient {
   return new QueryClient({
     defaultOptions: { queries: { retry: false, gcTime: Infinity }, mutations: { retry: 0 } },
@@ -162,7 +169,11 @@ export function createWrapper(options: RenderOptions = {}): {
 } {
   const queryClient = options.queryClient ?? testQueryClient();
   const session = options.session ?? fakeSession();
-  /** The providers around the hook. */
+  /**
+   * The providers around the hook.
+   * @param props.children The hook's test component.
+   * @returns The wrapped children.
+   */
   function Wrapper({ children }: { children: ReactNode }): React.JSX.Element {
     return (
       <Providers queryClient={queryClient} session={session}>

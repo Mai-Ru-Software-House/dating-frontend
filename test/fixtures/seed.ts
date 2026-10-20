@@ -384,11 +384,11 @@ export const MINT = {
  */
 export const DAN_THREAD: Message[] = Array.from({ length: 60 }, (_, i) => {
   const sentAt = new Date(Date.parse("2026-10-06T02:59:00Z") - i * 60_000).toISOString();
-  const fromDan = i % 2 === 0;
+  const isFromDan = i % 2 === 0;
   return message(
     `dan_${String(60 - i)}`,
-    fromDan ? "dan" : "alice",
-    fromDan ? "alice" : "dan",
+    isFromDan ? "dan" : "alice",
+    isFromDan ? "alice" : "dan",
     `Message ${String(60 - i)}`,
     sentAt,
     true,
