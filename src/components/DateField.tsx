@@ -8,6 +8,7 @@ import DateTimePicker, { DateTimePickerAndroid } from "@react-native-community/d
 import { useState } from "react";
 import { Modal, Platform, Pressable, StyleSheet, View } from "react-native";
 
+import { MIN_AGE } from "../constants/limits";
 import { colors, radius, space } from "../theme";
 import { parseWireDate, toWireDate, yearsAgo } from "../utils/age";
 import { dobFromWire } from "../utils/format";
@@ -26,14 +27,17 @@ export interface DateFieldProps {
   isLocked?: boolean;
 }
 
+/** Hour of day the picker date is set to, so a time zone shift can't move it to another day. */
+const NOON_HOUR = 12;
+
 /**
  * A wire date as a local Date for the picker.
  * @param wire YYYY-MM-DD.
  * @returns The date at local noon.
  */
 function toPickerDate(wire: string): Date {
-  const date = parseWireDate(wire) ?? parseWireDate(yearsAgo(18));
-  return date === null ? new Date() : new Date(date.year, date.month - 1, date.day, 12);
+  const date = parseWireDate(wire) ?? parseWireDate(yearsAgo(MIN_AGE));
+  return date === null ? new Date() : new Date(date.year, date.month - 1, date.day, NOON_HOUR);
 }
 
 /**
@@ -65,7 +69,9 @@ export function DateField(props: DateFieldProps): React.JSX.Element {
         value: start,
         mode: "date",
         maximumDate: new Date(),
-        onValueChange: (_event, date) => onChange(fromPickerDate(date)),
+        onValueChange: (_event, date) => {
+          onChange(fromPickerDate(date));
+        },
       });
       return;
     }
@@ -86,9 +92,16 @@ export function DateField(props: DateFieldProps): React.JSX.Element {
         visible={isSheetOpen}
         transparent
         animationType="slide"
-        onRequestClose={() => setIsSheetOpen(false)}
+        onRequestClose={() => {
+          setIsSheetOpen(false);
+        }}
       >
-        <Pressable style={styles.dim} onPress={() => setIsSheetOpen(false)} />
+        <Pressable
+          style={styles.dim}
+          onPress={() => {
+            setIsSheetOpen(false);
+          }}
+        />
         <View style={styles.sheet}>
           <DateTimePicker
             value={draft}
@@ -97,7 +110,9 @@ export function DateField(props: DateFieldProps): React.JSX.Element {
             themeVariant="light"
             textColor={colors.ink}
             maximumDate={new Date()}
-            onValueChange={(_event, date) => setDraft(date)}
+            onValueChange={(_event, date) => {
+              setDraft(date);
+            }}
           />
           <Button
             label="Done"

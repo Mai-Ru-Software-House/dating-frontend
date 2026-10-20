@@ -28,7 +28,7 @@ export function StepProgress({ steps, current }: StepProgressProps): React.JSX.E
     <View
       style={styles.row}
       accessible
-      accessibilityLabel={`Step ${current} of ${steps.length}: ${steps[current - 1] ?? ""}`}
+      accessibilityLabel={`Step ${String(current)} of ${String(steps.length)}: ${steps[current - 1] ?? ""}`}
     >
       {steps.map((label, index) => {
         const step = index + 1;

@@ -29,16 +29,14 @@ let hasExpiredOnce = false;
  * @returns The state.
  */
 export function db(): MockState {
-  if (state === null) {
-    state = {
-      accounts: ACCOUNTS.map((a) => ({ ...a })),
-      messages: buildMessages(),
-      notes: buildNotes(),
-      favorites: new Map([["usr_tee", new Set(FAVORITES)]]),
-      uploads: new Map(),
-      nextId: 100,
-    };
-  }
+  state ??= {
+    accounts: ACCOUNTS.map((a) => ({ ...a })),
+    messages: buildMessages(),
+    notes: buildNotes(),
+    favorites: new Map([["usr_tee", new Set(FAVORITES)]]),
+    uploads: new Map(),
+    nextId: 100,
+  };
   return state;
 }
 
@@ -50,7 +48,7 @@ export function db(): MockState {
 export function newId(prefix: string): string {
   const s = db();
   s.nextId += 1;
-  return `${prefix}_${s.nextId}`;
+  return `${prefix}_${String(s.nextId)}`;
 }
 
 /**

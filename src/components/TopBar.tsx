@@ -7,7 +7,7 @@
 import type { ReactNode } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-import { colors, columnStyle, GUTTER, size, type } from "../theme";
+import { colors, columnStyle, GUTTER, size, space, type } from "../theme";
 import { BackButton } from "./BackButton";
 
 /** Props for TopBar. */
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: GUTTER,
   },
   side: {
-    width: size.touch + 8,
+    width: size.touch + space.sm,
   },
   right: {
     alignItems: "flex-end",

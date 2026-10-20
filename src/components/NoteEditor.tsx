@@ -50,8 +50,12 @@ export function NoteEditor({
           multiline
           editable={!isSaving}
           accessibilityLabel="New note"
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
+          onFocus={() => {
+            setIsFocused(true);
+          }}
+          onBlur={() => {
+            setIsFocused(false);
+          }}
           style={styles.input}
         />
         <View style={styles.footer}>

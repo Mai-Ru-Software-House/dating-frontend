@@ -5,6 +5,9 @@
  * Created by Tee (Kittiphon Kijpinyochai), 6 October 2026
  */
 
+/** Multiplier of the string hash that picks a placeholder gradient. */
+const HASH_MULTIPLIER = 31;
+
 /**
  * A stable index for a userId.
  * @param userId The user's ID.
@@ -15,7 +18,7 @@
 export function gradientIndex(
   userId: string,
   count: number,
-  overrides: Readonly<Record<string, number>> = {},
+  overrides: Readonly<Partial<Record<string, number>>> = {},
 ): number {
   const fixed = overrides[userId];
   if (fixed !== undefined) {
@@ -23,7 +26,7 @@ export function gradientIndex(
   }
   let hash = 0;
   for (const char of userId) {
-    hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+    hash = (hash * HASH_MULTIPLIER + char.charCodeAt(0)) >>> 0;
   }
   return hash % count;
 }
@@ -34,6 +37,6 @@ export function gradientIndex(
  * @returns Its first character, upper case, or "?" when empty.
  */
 export function initialOf(displayName: string): string {
-  const first = Array.from(displayName.trim())[0];
+  const first = Array.from(displayName.trim())[0] as string | undefined;
   return first === undefined ? "?" : first.toLocaleUpperCase();
 }

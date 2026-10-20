@@ -8,6 +8,13 @@ import type { PlacesApi } from "../places";
 import { mockDelay } from "./db";
 
 export const mockPlacesApi: PlacesApi = {
+  /**
+   * Mock of GET /places: every point is "Bangkok, Lat Krabang" except 12.500, 100.900.
+   * @param lat Latitude.
+   * @param lon Longitude.
+   * @returns The place name.
+   * @throws ApiError PLACE_NOT_FOUND for the sample point 12.500, 100.900.
+   */
   async lookup(lat, lon) {
     await mockDelay();
     if (lat.toFixed(3) === "12.500" && lon.toFixed(3) === "100.900") {

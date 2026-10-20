@@ -36,17 +36,27 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@eslint-community/eslint-plugin-eslint-comments": "^4.8.1",
+    "@eslint/compat": "^2.1.1",
+    "@eslint/js": "^9.39.5",
     "@testing-library/react-native": "^14.0.1",
     "@types/jest": "29.5.14",
     "@types/react": "~19.2.2",
     "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import-x": "^4.17.1",
+    "eslint-plugin-jsdoc": "^65.3.15",
     "eslint-plugin-prettier": "^5.5.6",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-native": "^5.0.0",
+    "globals": "^16.5.0",
     "jest": "~29.7.0",
     "jest-expo": "~57.0.5",
     "prettier": "^3.9.9",
     "test-renderer": "~1.2.0",
-    "typescript": "~6.0.3"
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.71.1"
   },
   "scripts": {
     "start": "EXPO_PUBLIC_USE_MOCKS=0 expo start",
@@ -63,7 +73,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:ci": "jest --ci --coverage",
-    "seed:bangkok": "node scripts/seed-bangkok-users.mjs"
+    "seed:bangkok": "node scripts/seed-bangkok-users.mjs",
+    "lint:quality": "eslint --config eslint.quality.config.mjs ."
   },
   "private": true
 }

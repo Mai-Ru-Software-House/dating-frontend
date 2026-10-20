@@ -12,6 +12,7 @@ import { Screen } from "../../components/Screen";
 import type { RootScreenProps } from "../../navigation/types";
 import { colors, columnStyle, fonts, GUTTER, space, type } from "../../theme";
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports -- Metro bundles images through require()
 const HERO = require("../../../assets/landing-hero.png") as number;
 const HERO_MAX_HEIGHT = 262;
 
@@ -41,8 +42,19 @@ export function LandingScreen({ navigation }: RootScreenProps<"Landing">): React
           </Text>
         </View>
         <View style={styles.buttons}>
-          <Button label="Create profile" onPress={() => navigation.navigate("CreateProfile")} />
-          <Button label="Log in" variant="secondary" onPress={() => navigation.navigate("Login")} />
+          <Button
+            label="Create profile"
+            onPress={() => {
+              navigation.navigate("CreateProfile");
+            }}
+          />
+          <Button
+            label="Log in"
+            variant="secondary"
+            onPress={() => {
+              navigation.navigate("Login");
+            }}
+          />
         </View>
       </View>
     </Screen>

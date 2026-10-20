@@ -30,6 +30,41 @@ export interface LocationFieldProps {
 }
 
 /**
+ * The "Found: coordinates" row, with a retry link when a retry is possible.
+ * @param lookup The location lookup state.
+ * @param coords The found coordinates.
+ * @returns The row.
+ */
+function renderFound(lookup: LocationLookup, coords: Coordinates): React.JSX.Element {
+  return (
+    <View style={styles.found}>
+      <MapPin size={16} color={colors.ok} strokeWidth={ICON_STROKE} />
+      <Text style={styles.foundText}>Found: {formatCoordinates(coords.lat, coords.lon)}</Text>
+      {lookup.canRetry ? (
+        <Pressable onPress={() => void lookup.retry()} hitSlop={8} accessibilityRole="button">
+          <Text style={styles.link}>Try again</Text>
+        </Pressable>
+      ) : null}
+    </View>
+  );
+}
+
+/**
+ * The message shown when location permission was refused, with a link to the settings.
+ * @returns The message and link.
+ */
+function renderDenied(): React.JSX.Element {
+  return (
+    <View>
+      <FieldError message={DENIED} />
+      <Pressable onPress={() => void Linking.openSettings()} hitSlop={8} accessibilityRole="link">
+        <Text style={[styles.link, styles.settings]}>Open Settings</Text>
+      </Pressable>
+    </View>
+  );
+}
+
+/**
  * A location field.
  * @param props See LocationFieldProps.
  * @returns The field.
@@ -60,29 +95,8 @@ export function LocationField({
         trailing={{ label: "Use GPS", onPress: locate }}
         helper={hasFix || lookup.phase === "denied" ? undefined : helper}
       />
-      {hasFix && coords !== null ? (
-        <View style={styles.found}>
-          <MapPin size={16} color={colors.ok} strokeWidth={ICON_STROKE} />
-          <Text style={styles.foundText}>Found: {formatCoordinates(coords.lat, coords.lon)}</Text>
-          {lookup.canRetry ? (
-            <Pressable onPress={() => void lookup.retry()} hitSlop={8} accessibilityRole="button">
-              <Text style={styles.link}>Try again</Text>
-            </Pressable>
-          ) : null}
-        </View>
-      ) : null}
-      {lookup.phase === "denied" ? (
-        <View>
-          <FieldError message={DENIED} />
-          <Pressable
-            onPress={() => void Linking.openSettings()}
-            hitSlop={8}
-            accessibilityRole="link"
-          >
-            <Text style={[styles.link, styles.settings]}>Open Settings</Text>
-          </Pressable>
-        </View>
-      ) : null}
+      {hasFix && coords !== null ? renderFound(lookup, coords) : null}
+      {lookup.phase === "denied" ? renderDenied() : null}
       <FieldError message={error} />
     </View>
   );

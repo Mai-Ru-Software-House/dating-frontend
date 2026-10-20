@@ -15,12 +15,14 @@ export interface PersonParams {
 }
 
 /** Stack inside the Notes tab: the people list, then one person's notes. */
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- React Navigation param lists must be type aliases; an interface has no index signature
 export type NotesStackParamList = {
   NotesPeople: undefined;
   NotesInTab: PersonParams;
 };
 
 /** The four tabs. */
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- React Navigation param lists must be type aliases; an interface has no index signature
 export type TabParamList = {
   HomeTab: undefined;
   MatchesTab: { segment?: "recommended" | "search" } | undefined;
@@ -29,6 +31,7 @@ export type TabParamList = {
 };
 
 /** Root stack: Auth screens when signed out, Main screens when signed in. */
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- React Navigation param lists must be type aliases; an interface has no index signature
 export type RootStackParamList = {
   Landing: undefined;
   Login: undefined;
@@ -64,8 +67,9 @@ export type NotesStackScreenProps<T extends keyof NotesStackParamList> = Composi
 >;
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace -- React Navigation's documented way to type useNavigation() globally
   namespace ReactNavigation {
-    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type -- adds no members; it only links RootParamList to RootStackParamList
     interface RootParamList extends RootStackParamList {}
   }
 }

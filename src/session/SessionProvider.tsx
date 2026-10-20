@@ -139,7 +139,9 @@ export function SessionProvider({ children }: { children: ReactNode }): React.JS
     queueMicrotask(() => {
       void check();
     });
-    return () => setSessionBridge(null);
+    return () => {
+      setSessionBridge(null);
+    };
   }, [check, expire, saveTokens]);
 
   const logIn = useCallback(

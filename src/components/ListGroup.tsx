@@ -29,8 +29,8 @@ export function ListGroup({
   const rows = Children.toArray(children);
   return (
     <View style={styles.card}>
-      {rows.map((row, index) => (
-        <Fragment key={index}>
+      {Children.map(rows, (row, index) => (
+        <Fragment>
           {index > 0 ? <View style={[styles.divider, { marginLeft: dividerInset }]} /> : null}
           {row}
         </Fragment>

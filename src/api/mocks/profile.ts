@@ -22,10 +22,22 @@ function isTaken(username: string): boolean {
 }
 
 export const mockProfileApi: ProfileApi = {
+  /**
+   * Mock of GET /users/me.
+   * @returns The signed-in user's profile.
+   * @throws ApiError UNAUTHENTICATED when no one is signed in.
+   */
   async getMe() {
     const account = await authed();
     return { ...account.profile };
   },
+  /**
+   * Mock of GET /users/{userId}.
+   * @param userId The person.
+   * @returns Their profile, with whether I favorited them.
+   * @throws ApiError USER_NOT_FOUND for an unknown person.
+   * @throws ApiError UNAUTHENTICATED when no one is signed in.
+   */
   async getUser(userId) {
     const me = await authed();
     const person = PEOPLE.find((p) => p.userId === userId);
@@ -34,6 +46,12 @@ export const mockProfileApi: ProfileApi = {
     }
     return { ...person, isFavorite: favoritesOf(me.profile.userId).has(userId) };
   },
+  /**
+   * Mock of GET /usernames/{username}.
+   * @param username The username to check.
+   * @returns True when the name is free.
+   * @throws ApiError INVALID_INPUT when the name has the wrong format.
+   */
   async checkUsername(username) {
     await mockDelay();
     if (!usernameRule(username).isValid) {
@@ -41,6 +59,13 @@ export const mockProfileApi: ProfileApi = {
     }
     return !isTaken(username);
   },
+  /**
+   * Mock of POST /users.
+   * @param body The new profile and its photo upload ID.
+   * @returns The new session and profile.
+   * @throws ApiError USERNAME_TAKEN when the name is in use.
+   * @throws ApiError INVALID_INPUT when the person is under 18 or the photo upload expired.
+   */
   async createProfile(body) {
     await mockDelay();
     if (isTaken(body.username)) {
@@ -68,6 +93,12 @@ export const mockProfileApi: ProfileApi = {
     db().accounts.push({ password: body.password, profile });
     return { accessToken: mockTokenFor(userId), refreshToken: "mock-rt", userId, profile };
   },
+  /**
+   * Mock of PATCH /users/me.
+   * @param body The fields to change.
+   * @returns The updated profile.
+   * @throws ApiError UNAUTHENTICATED when no one is signed in.
+   */
   async updateMe(body) {
     const account = await authed();
     const next = { ...account.profile, ...body };

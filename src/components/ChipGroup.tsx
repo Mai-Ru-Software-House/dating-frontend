@@ -47,7 +47,9 @@ export function ChipGroup<T extends string>(props: ChipGroupProps<T>): React.JSX
             key={option.value}
             label={option.label}
             isSelected={option.value === value}
-            onPress={() => onChange(option.value)}
+            onPress={() => {
+              onChange(option.value);
+            }}
             isDisabled={isDisabled}
           />
         ))}

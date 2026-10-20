@@ -7,6 +7,9 @@ import { StyleSheet, View } from "react-native";
 
 import { colors, size, space } from "../theme";
 
+/** Rows drawn when the caller gives no count. */
+const DEFAULT_ROW_COUNT = 3;
+
 /** Props for RowSkeleton. */
 export interface RowSkeletonProps {
   /** Number of rows (default 3). */
@@ -18,7 +21,7 @@ export interface RowSkeletonProps {
  * @param props.count How many rows.
  * @returns The placeholder rows.
  */
-export function RowSkeleton({ count = 3 }: RowSkeletonProps): React.JSX.Element {
+export function RowSkeleton({ count = DEFAULT_ROW_COUNT }: RowSkeletonProps): React.JSX.Element {
   return (
     <View accessibilityLabel="Loading" accessibilityRole="progressbar">
       {Array.from({ length: count }, (_, index) => (

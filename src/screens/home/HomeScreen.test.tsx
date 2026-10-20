@@ -62,11 +62,17 @@ describe("HomeScreen", () => {
     await screen.findByText("There is a jazz night at Siam on Saturday.");
     getUnread.mockResolvedValue({ messages: [], hasMore: false });
 
-    await act(() => navigation.navigate("Conversation", { userId: "usr_bob" }));
-    await act(() => navigation.goBack());
+    await act(() => {
+      navigation.navigate("Conversation", { userId: "usr_bob" });
+    });
+    await act(() => {
+      navigation.goBack();
+    });
 
     expect(await screen.findByText("You're all caught up.")).toBeOnTheScreen();
-    await waitFor(() => expect(getUnread).toHaveBeenCalledTimes(2));
+    await waitFor(() => {
+      expect(getUnread).toHaveBeenCalledTimes(2);
+    });
     expect(ALICE_UNREAD).toHaveLength(3);
   });
 });

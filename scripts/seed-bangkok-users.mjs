@@ -14,8 +14,17 @@
  * --update-existing also moves users that already exist to the location this seed gives them.
  * Logins: bkk_001 to bkk_<count>, all with the same password (default "Bangkok2026").
  */
+import { Buffer } from "node:buffer";
 import { readFileSync } from "node:fs";
 import { deflateSync } from "node:zlib";
+
+/**
+ * Writes one line to standard output (the script's report, not debug output).
+ * @param {string} line The text to print.
+ */
+function print(line) {
+  process.stdout.write(`${line}\n`);
+}
 
 const GENDERS = ["female", "male", "non_binary", "prefer_not_to_say"];
 
@@ -118,11 +127,58 @@ function randomFrom(seed) {
   };
 }
 
+/** Options that take a value: flag, then the option it sets and how to convert the text. */
+const VALUE_FLAGS = {
+  "--base-url": ["baseUrl", (text) => text],
+  "--count": ["count", Number],
+  "--concurrency": ["concurrency", Number],
+  "--image-size": ["imageSize", Number],
+  "--seed": ["seed", Number],
+  "--password": ["password", (text) => text],
+};
+
+/**
+ * Applies the command-line arguments to the options.
+ * @param {string[]} argv Arguments after the script name.
+ * @param {object} options The options to fill in.
+ * @throws {Error} When an argument is not a known option.
+ */
+function applyArguments(argv, options) {
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i];
+    if (arg === "--update-existing") {
+      options.isUpdatingExisting = true;
+    } else if (arg === "--dry-run") {
+      options.isDryRun = true;
+    } else if (Object.hasOwn(VALUE_FLAGS, arg)) {
+      const [name, convert] = VALUE_FLAGS[arg];
+      options[name] = convert(argv[++i]);
+    } else {
+      throw new Error(`Unknown option ${arg}`);
+    }
+  }
+}
+
+/**
+ * Checks that an option is a whole number in a range.
+ * @param {number} value The option's value.
+ * @param {string} flag The option's flag, for the message.
+ * @param {number} min Smallest allowed value.
+ * @param {number} max Largest allowed value.
+ * @throws {Error} When the value is outside the range.
+ */
+function checkWholeNumber(value, flag, min, max) {
+  if (!Number.isInteger(value) || value < min || value > max) {
+    throw new Error(`${flag} must be a whole number from ${min} to ${max}`);
+  }
+}
+
 /**
  * Reads the command line.
  * @param {string[]} argv Arguments after the script name.
  * @returns {{ baseUrl: string, count: number, seed: number, password: string, concurrency: number,
  *   imageSize: number, isDryRun: boolean }}
+ * @throws {Error} When an option is unknown, out of range or the base URL is missing.
  */
 function readOptions(argv) {
   const options = {
@@ -135,45 +191,14 @@ function readOptions(argv) {
     password: "Bangkok2026",
     isDryRun: false,
   };
-  for (let i = 0; i < argv.length; i++) {
-    const arg = argv[i];
-    if (arg === "--update-existing") {
-      options.isUpdatingExisting = true;
-    } else if (arg === "--dry-run") {
-      options.isDryRun = true;
-    } else if (arg === "--base-url") {
-      options.baseUrl = argv[++i];
-    } else if (arg === "--count") {
-      options.count = Number(argv[++i]);
-    } else if (arg === "--concurrency") {
-      options.concurrency = Number(argv[++i]);
-    } else if (arg === "--image-size") {
-      options.imageSize = Number(argv[++i]);
-    } else if (arg === "--seed") {
-      options.seed = Number(argv[++i]);
-    } else if (arg === "--password") {
-      options.password = argv[++i];
-    } else {
-      throw new Error(`Unknown option ${arg}`);
-    }
-  }
+  applyArguments(argv, options);
   if (options.baseUrl === "") {
     options.baseUrl =
       process.env.EXPO_PUBLIC_API_BASE_URL ?? envFileValue("EXPO_PUBLIC_API_BASE_URL");
   }
-  if (!Number.isInteger(options.count) || options.count < 1 || options.count > 99999) {
-    throw new Error("--count must be a whole number from 1 to 99999");
-  }
-  if (
-    !Number.isInteger(options.concurrency) ||
-    options.concurrency < 1 ||
-    options.concurrency > 64
-  ) {
-    throw new Error("--concurrency must be a whole number from 1 to 64");
-  }
-  if (!Number.isInteger(options.imageSize) || options.imageSize < 8 || options.imageSize > 1024) {
-    throw new Error("--image-size must be a whole number from 8 to 1024");
-  }
+  checkWholeNumber(options.count, "--count", 1, 99999);
+  checkWholeNumber(options.concurrency, "--concurrency", 1, 64);
+  checkWholeNumber(options.imageSize, "--image-size", 8, 1024);
   if (options.baseUrl === "" && !options.isDryRun) {
     throw new Error("No base URL: pass --base-url or set EXPO_PUBLIC_API_BASE_URL in .env");
   }
@@ -458,15 +483,15 @@ async function main() {
   if (options.isDryRun) {
     for (const p of people) {
       const { username, gender, dateOfBirth, location, preferences } = p.body;
-      console.log(
+      print(
         `${username} ${gender.padEnd(17)} ${dateOfBirth} ${location.lat},${location.lon} -> ${preferences.targetGenders.join("/")} ${preferences.minAge}-${preferences.maxAge} ${preferences.radiusKm} km`,
       );
     }
-    console.log(`Dry run: ${people.length} users, nothing sent.`);
+    print(`Dry run: ${people.length} users, nothing sent.`);
     return;
   }
 
-  console.log(`Seeding ${people.length} users at ${options.baseUrl} (seed ${options.seed})`);
+  print(`Seeding ${people.length} users at ${options.baseUrl} (seed ${options.seed})`);
   const counts = { created: 0, exists: 0, updated: 0, failed: 0 };
   let next = 0;
   let finished = 0;
@@ -483,17 +508,17 @@ async function main() {
       }
       finished++;
       if (finished % 100 === 0 || finished === people.length) {
-        console.log(
+        print(
           `${finished}/${people.length} (${counts.created} created, ${counts.exists} existed, ${counts.updated} moved, ${counts.failed} failed)`,
         );
       }
     }
   };
   await Promise.all(Array.from({ length: options.concurrency }, worker));
-  console.log(
+  print(
     `Done: ${counts.created} created, ${counts.exists} already existed, ${counts.updated} moved, ${counts.failed} failed.`,
   );
-  console.log(
+  print(
     `Log in as ${people[0].body.username} to ${people[people.length - 1].body.username} with password "${options.password}".`,
   );
   process.exitCode = counts.failed > 0 ? 1 : 0;

@@ -67,6 +67,50 @@ const LOOKS: Record<ButtonVariant, { bg: string; fg: string; border?: string }> 
 };
 
 /**
+ * The icon and label inside the pill; hidden (but still taking space) while loading.
+ * @param props The button's props.
+ * @param look The variant's colors.
+ * @returns The content row.
+ */
+function renderContent(props: ButtonProps, look: { fg: string }): React.JSX.Element {
+  const { label, icon: Icon, isIconFilled = false, isSmall = false, isLoading = false } = props;
+  return (
+    <View style={[styles.content, isLoading && styles.hidden]}>
+      {Icon ? (
+        <Icon
+          size={size.iconSmall}
+          color={look.fg}
+          strokeWidth={ICON_STROKE}
+          fill={isIconFilled ? look.fg : "none"}
+        />
+      ) : null}
+      <Text
+        style={[styles.label, isSmall && styles.smallLabel, { color: look.fg }]}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.6}
+        maxFontSizeMultiplier={MAX_FONT_SCALE}
+      >
+        {label}
+      </Text>
+    </View>
+  );
+}
+
+/**
+ * Horizontal padding of the pill: compact and small buttons are tighter.
+ * @param isCompact Whether the button is compact.
+ * @param isSmall Whether the button is small.
+ * @returns The padding in points.
+ */
+function pillPadding(isCompact: boolean, isSmall: boolean): number {
+  if (isCompact) {
+    return space.sm;
+  }
+  return isSmall ? space.lg : space.xl;
+}
+
+/**
  * A pill button.
  * @param props See ButtonProps.
  * @returns The button.
@@ -77,8 +121,6 @@ export function Button(props: ButtonProps): React.JSX.Element {
     onPress,
     variant = "primary",
     isSmall = false,
-    icon: Icon,
-    isIconFilled = false,
     isDisabled = false,
     isLoading = false,
     isCompact = false,
@@ -106,32 +148,14 @@ export function Button(props: ButtonProps): React.JSX.Element {
           backgroundColor: look.bg,
           borderWidth: look.border === undefined ? 0 : 1,
           borderColor: look.border,
-          paddingHorizontal: isCompact ? space.sm : isSmall ? space.lg : space.xl,
+          paddingHorizontal: pillPadding(isCompact, isSmall),
         },
         pressed && styles.pressed,
         isDisabled && styles.disabled,
         style,
       ]}
     >
-      <View style={[styles.content, isLoading && styles.hidden]}>
-        {Icon ? (
-          <Icon
-            size={size.iconSmall}
-            color={look.fg}
-            strokeWidth={ICON_STROKE}
-            fill={isIconFilled ? look.fg : "none"}
-          />
-        ) : null}
-        <Text
-          style={[styles.label, isSmall && styles.smallLabel, { color: look.fg }]}
-          numberOfLines={1}
-          adjustsFontSizeToFit
-          minimumFontScale={0.6}
-          maxFontSizeMultiplier={MAX_FONT_SCALE}
-        >
-          {label}
-        </Text>
-      </View>
+      {renderContent(props, look)}
       {isLoading ? <ActivityIndicator style={styles.spinner} color={look.fg} /> : null}
     </Pressable>
   );

@@ -61,7 +61,9 @@ export function ProfileScreen({ navigation }: RootScreenProps<"Profile">): React
       userId={me.userId}
       photoUrl={me.photoUrl}
       photoSize={PROFILE_PHOTO}
-      onBack={() => navigation.goBack()}
+      onBack={() => {
+        navigation.goBack();
+      }}
       onRefresh={refresh}
     >
       <Text style={styles.name} accessibilityRole="header">
@@ -80,7 +82,9 @@ export function ProfileScreen({ navigation }: RootScreenProps<"Profile">): React
           label="Edit profile"
           icon={Pencil}
           variant="secondary"
-          onPress={() => navigation.navigate("EditProfile")}
+          onPress={() => {
+            navigation.navigate("EditProfile");
+          }}
           style={styles.edit}
         />
       ) : null}
@@ -101,13 +105,17 @@ export function ProfileScreen({ navigation }: RootScreenProps<"Profile">): React
           <ActionRow
             icon={Users}
             label="Switch user"
-            onPress={() => navigation.navigate("SwitchUser")}
+            onPress={() => {
+              navigation.navigate("SwitchUser");
+            }}
           />
           <ActionRow
             icon={LogOut}
             label="Log out"
             isDestructive
-            onPress={() => setIsLogOutOpen(true)}
+            onPress={() => {
+              setIsLogOutOpen(true);
+            }}
           />
         </ListGroup>
       </View>
@@ -116,7 +124,9 @@ export function ProfileScreen({ navigation }: RootScreenProps<"Profile">): React
         title="Log out?"
         message="You'll need your username and password to get back in."
         confirmLabel="Log out"
-        onCancel={() => setIsLogOutOpen(false)}
+        onCancel={() => {
+          setIsLogOutOpen(false);
+        }}
         onConfirm={() => void logOut()}
         isBusy={isLoggingOut}
       />

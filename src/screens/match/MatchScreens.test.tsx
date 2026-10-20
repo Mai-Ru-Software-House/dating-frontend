@@ -89,13 +89,17 @@ describe("SearchPanel", () => {
     await renderWithProviders(<SearchPanel header={<View />} />, { queryClient });
 
     await user.press(screen.getByRole("button", { name: "Search" }));
-    await waitFor(() => expect(matching.searchCandidates).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(matching.searchCandidates).toHaveBeenCalledTimes(1);
+    });
     await stepKnob("Minimum age", "increment", 1);
     await stepKnob("Maximum age", "decrement", 6);
     await stepKnob("Within", "decrement", 30);
     await user.press(screen.getByRole("button", { name: "Search" }));
 
-    await waitFor(() => expect(matching.searchCandidates).toHaveBeenCalledTimes(2));
+    await waitFor(() => {
+      expect(matching.searchCandidates).toHaveBeenCalledTimes(2);
+    });
     expect(matching.searchCandidates.mock.calls[0][0]).toMatchObject({
       minAge: 24,
       maxAge: 32,

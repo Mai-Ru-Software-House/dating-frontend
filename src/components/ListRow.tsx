@@ -9,16 +9,9 @@ import { Star } from "lucide-react-native";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import type { UserSummary } from "../api/types";
-import { colors, fonts, ICON_STROKE, PRESSED_OPACITY, size, space, type } from "../theme";
+import { colors, ICON_STROKE, PRESSED_OPACITY, size, space, type } from "../theme";
 import { Avatar } from "./Avatar";
-import { ScorePill } from "./ScorePill";
-import { UnreadBadge } from "./UnreadBadge";
-
-/** What sits at the right of the row. */
-export type ListRowRight =
-  | { kind: "conversation"; time: string; unreadCount: number }
-  | { kind: "candidate"; score?: number }
-  | { kind: "person"; time: string; countLabel: string };
+import { RowRight, type ListRowRight } from "./RowRight";
 
 /** Props for ListRow. */
 export interface ListRowProps {
@@ -87,40 +80,6 @@ export function ListRow(props: ListRowProps): React.JSX.Element {
   );
 }
 
-/**
- * The right side of a row.
- * @param props.right What to show.
- * @param props.isUnread Red time when unread.
- * @returns The right column, or null.
- */
-function RowRight({
-  right,
-  isUnread,
-}: {
-  right: ListRowRight;
-  isUnread: boolean;
-}): React.JSX.Element | null {
-  if (right.kind === "candidate") {
-    return right.score === undefined ? null : <ScorePill score={right.score} />;
-  }
-  if (right.kind === "person") {
-    return (
-      <View style={styles.right}>
-        <Text style={styles.personTime}>{right.time}</Text>
-        <Text style={styles.count}>{right.countLabel}</Text>
-      </View>
-    );
-  }
-  return (
-    <View style={styles.right}>
-      <Text style={[styles.time, { color: isUnread ? colors.accent : colors.muted }]}>
-        {right.time}
-      </Text>
-      <UnreadBadge count={right.unreadCount} />
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
@@ -163,21 +122,5 @@ const styles = StyleSheet.create({
   subUnread: {
     ...type.rowSubUnread,
     color: colors.ink,
-  },
-  right: {
-    alignItems: "flex-end",
-    gap: 6,
-  },
-  time: {
-    ...type.caption,
-  },
-  personTime: {
-    ...type.captionMedium,
-    color: colors.muted,
-  },
-  count: {
-    ...type.caption,
-    color: colors.muted,
-    fontFamily: fonts.regular,
   },
 });

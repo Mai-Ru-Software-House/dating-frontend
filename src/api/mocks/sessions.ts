@@ -9,6 +9,14 @@ import type { SessionsApi } from "../sessions";
 import { db, mockDelay, mockTokenFor } from "./db";
 
 export const mockSessionsApi: SessionsApi = {
+  /**
+   * Mock of POST /sessions.
+   * @param username The username.
+   * @param password The password.
+   * @returns The new session.
+   * @throws ApiError INVALID_INPUT when the username is empty.
+   * @throws ApiError INVALID_CREDENTIALS when the username or password is wrong.
+   */
   async logIn(username, password) {
     await mockDelay();
     if (username.trim() === "") {
@@ -29,6 +37,10 @@ export const mockSessionsApi: SessionsApi = {
       userId: account.profile.userId,
     };
   },
+  /**
+   * Mock of DELETE /sessions/current; there is nothing to revoke.
+   * @returns After the mock delay.
+   */
   async logOut() {
     await mockDelay();
   },

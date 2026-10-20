@@ -58,9 +58,15 @@ export function ConversationScreen({
         <ConversationHeader
           other={other}
           isFavorite={isFavorite(other.userId)}
-          onBack={() => navigation.goBack()}
-          onToggleFavorite={() => toggle(other.userId)}
-          onOpenNotes={() => navigation.navigate("Notes", other)}
+          onBack={() => {
+            navigation.goBack();
+          }}
+          onToggleFavorite={() => {
+            toggle(other.userId);
+          }}
+          onOpenNotes={() => {
+            navigation.navigate("Notes", other);
+          }}
         />
       }
       footer={
@@ -69,7 +75,9 @@ export function ConversationScreen({
           onChangeText={setDraft}
           onSend={send}
           replyTo={replyTo ? { name: nameOf(replyTo.senderId), text: replyTo.text } : null}
-          onCancelReply={() => setReplyTo(null)}
+          onCancelReply={() => {
+            setReplyTo(null);
+          }}
         />
       }
     >
@@ -96,15 +104,20 @@ export function ConversationScreen({
               onLongPress={
                 item.message.sendState
                   ? undefined
-                  : () =>
+                  : () => {
                       setReplyTo({
                         messageId: item.message.messageId,
                         senderId: item.message.senderId,
                         text: item.message.text,
-                      })
+                      });
+                    }
               }
               onRetry={
-                item.message.clientId ? () => chat.retry(item.message.clientId ?? "") : undefined
+                item.message.clientId
+                  ? () => {
+                      chat.retry(item.message.clientId ?? "");
+                    }
+                  : undefined
               }
             />
           )

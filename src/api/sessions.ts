@@ -55,7 +55,7 @@ const realSessionsApi: SessionsApi = {
     return toSession(raw);
   },
   async logOut(accessToken, refreshToken) {
-    await request<void>("DELETE", "/sessions/current", {
+    await request<unknown>("DELETE", "/sessions/current", {
       isAuthenticated: false,
       headers: { Authorization: `Bearer ${accessToken}` },
       body: refreshToken === "" ? undefined : { refreshToken },

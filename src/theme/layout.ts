@@ -16,8 +16,8 @@ export const MAX_DIALOG_WIDTH = 360;
 const DIALOG_SIDE_SPACE = 40;
 
 /** Match card proportion from design 07 (353 × 330) and its height cap. */
-const MATCH_CARD_RATIO = 353 / 330;
-const MATCH_CARD_MAX_HEIGHT = 420;
+export const MATCH_CARD_RATIO = 353 / 330;
+export const MATCH_CARD_MAX_HEIGHT = 420;
 
 /** Photo sizing on the candidate profile (09) and the own profile (19). */
 export const CANDIDATE_PHOTO = { share: 0.5, maxRatio: 1.1 } as const;

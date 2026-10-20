@@ -12,16 +12,14 @@ import {
   type NavigationContainerRefWithCurrent,
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
 import { render } from "@testing-library/react-native";
 import type { ComponentType, ReactElement, ReactNode } from "react";
-import { Text } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import { ToastProvider } from "../src/components/Toast";
-import { SessionContext, type SessionApi } from "../src/session/SessionProvider";
+import type { SessionApi } from "../src/session/SessionProvider";
 import { USERS } from "./fixtures/seed";
-import { SAFE_AREA_METRICS } from "./safeArea";
+import { Providers } from "./Providers";
+import { StubScreen } from "./StubScreen";
 
 /** Every route name in the app (root stack, tabs and the Notes tab's stack). */
 const ROUTE_NAMES = [
@@ -50,13 +48,17 @@ type ParamList = Record<string, object | undefined>;
 
 const Stack = createNativeStackNavigator<ParamList>();
 
-/** A fake session: signed in as alice, with every action a jest.fn. */
+/**
+ * A fake session: signed in as alice, with every action a jest.fn.
+ * @param overrides Values to replace.
+ * @returns The session.
+ */
 export function fakeSession(overrides: Partial<SessionApi> = {}): SessionApi {
   return {
     status: "signedIn",
     userId: USERS.alice.userId,
-    logIn: jest.fn(async () => undefined),
-    logOut: jest.fn(async () => undefined),
+    logIn: jest.fn(() => Promise.resolve(undefined)),
+    logOut: jest.fn(() => Promise.resolve(undefined)),
     switchTo: jest.fn(),
     expire: jest.fn(),
     retry: jest.fn(),
@@ -64,7 +66,10 @@ export function fakeSession(overrides: Partial<SessionApi> = {}): SessionApi {
   };
 }
 
-/** A fresh query client that never retries. */
+/**
+ * A fresh query client that never retries.
+ * @returns The query client.
+ */
 export function testQueryClient(): QueryClient {
   return new QueryClient({
     defaultOptions: { queries: { retry: false, gcTime: Infinity }, mutations: { retry: 0 } },
@@ -84,38 +89,6 @@ export interface Rendered {
   queryClient: QueryClient;
   session: SessionApi;
   navigation: NavigationContainerRefWithCurrent<ParamList>;
-}
-
-/**
- * The app's providers around some content.
- * @param props.children The content.
- * @param props.queryClient The query client.
- * @param props.session The session.
- * @returns The wrapped content.
- */
-function Providers(props: {
-  children: ReactNode;
-  queryClient: QueryClient;
-  session: SessionApi;
-}): React.JSX.Element {
-  return (
-    <SafeAreaProvider initialMetrics={SAFE_AREA_METRICS}>
-      <QueryClientProvider client={props.queryClient}>
-        <ToastProvider>
-          <SessionContext.Provider value={props.session}>{props.children}</SessionContext.Provider>
-        </ToastProvider>
-      </QueryClientProvider>
-    </SafeAreaProvider>
-  );
-}
-
-/**
- * A stub screen that shows its route name and params.
- * @param props.route The route.
- * @returns The stub.
- */
-function StubScreen({ route }: { route: { name: string; params?: object } }): React.JSX.Element {
-  return <Text>{`Screen: ${route.name} ${JSON.stringify(route.params ?? {})}`}</Text>;
 }
 
 /**
@@ -196,7 +169,11 @@ export function createWrapper(options: RenderOptions = {}): {
 } {
   const queryClient = options.queryClient ?? testQueryClient();
   const session = options.session ?? fakeSession();
-  /** The providers around the hook. */
+  /**
+   * The providers around the hook.
+   * @param props.children The hook's test component.
+   * @returns The wrapped children.
+   */
   function Wrapper({ children }: { children: ReactNode }): React.JSX.Element {
     return (
       <Providers queryClient={queryClient} session={session}>

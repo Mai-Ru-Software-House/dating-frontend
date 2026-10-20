@@ -24,6 +24,71 @@ import { NoteSubject } from "./NoteSubject";
 import { useNoteActions } from "./useNoteActions";
 
 /**
+ * The error under the note: the length rule while editing, else the last save error.
+ * @param isEditing Whether the note is being edited.
+ * @param rule The result of the note length rule for the draft.
+ * @param saveError The last save error, if any.
+ * @returns The message, or undefined.
+ */
+function bodyError(
+  isEditing: boolean,
+  rule: ReturnType<typeof noteRule>,
+  saveError: string | undefined,
+): string | undefined {
+  return (isEditing ? ruleMessage(rule) : undefined) ?? saveError;
+}
+
+/** What the note page's bottom bar needs. */
+interface FooterOptions {
+  /** False hides the bar (notes can't be managed, or the note is not loaded). */
+  isShown: boolean;
+  isEditing: boolean;
+  isSaveEnabled: boolean;
+  isSaving: boolean;
+  onCancel: () => void;
+  onSave: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+}
+
+/**
+ * The bottom bar: Cancel and Save while editing, Delete and Edit otherwise.
+ * @param options What the bar shows and does.
+ * @returns The bar, or undefined when it is hidden.
+ */
+function renderFooter(options: FooterOptions): React.JSX.Element | undefined {
+  if (!options.isShown) {
+    return undefined;
+  }
+  if (options.isEditing) {
+    return (
+      <ActionBar>
+        <Button
+          label="Cancel"
+          variant="secondary"
+          onPress={options.onCancel}
+          isDisabled={options.isSaving}
+          style={styles.flex}
+        />
+        <Button
+          label="Save"
+          onPress={options.onSave}
+          isDisabled={!options.isSaveEnabled}
+          isLoading={options.isSaving}
+          style={styles.flex}
+        />
+      </ActionBar>
+    );
+  }
+  return (
+    <ActionBar>
+      <Button label="Delete" variant="danger" onPress={options.onDelete} style={styles.flex} />
+      <Button label="Edit" onPress={options.onEdit} style={styles.flex} />
+    </ActionBar>
+  );
+}
+
+/**
  * The note page.
  * @param props Navigation and route ({ noteId, aboutUserId, displayName, photoUrl }).
  * @returns The screen.
@@ -40,7 +105,9 @@ export function NoteDetailScreen({
   const [dialog, setDialog] = useState<"delete" | "discard" | null>(null);
   const [pendingLeave, setPendingLeave] = useState<NavigationAction | null>(null);
   const [isLeaving, setIsLeaving] = useState(false);
-  const actions = useNoteActions(noteId, aboutUserId, () => setIsLeaving(true));
+  const actions = useNoteActions(noteId, aboutUserId, () => {
+    setIsLeaving(true);
+  });
   const isChanged = isEditing && note !== undefined && draft !== note.text;
   const isMissing = notes.isSuccess && note === undefined;
 
@@ -63,7 +130,13 @@ export function NoteDetailScreen({
     setDraft(note?.text ?? "");
     setIsEditing(true);
   };
-  const cancelEdit = (): void => (isChanged ? setDialog("discard") : setIsEditing(false));
+  const cancelEdit = (): void => {
+    if (isChanged) {
+      setDialog("discard");
+    } else {
+      setIsEditing(false);
+    }
+  };
   const save = async (): Promise<void> => {
     if (await actions.save(draft.trim())) {
       setIsEditing(false);
@@ -84,38 +157,31 @@ export function NoteDetailScreen({
     }
   };
 
-  const footer =
-    !FEATURES.manageNotes || note === undefined ? undefined : isEditing ? (
-      <ActionBar>
-        <Button
-          label="Cancel"
-          variant="secondary"
-          onPress={cancelEdit}
-          isDisabled={actions.isSaving}
-          style={styles.flex}
-        />
-        <Button
-          label="Save"
-          onPress={() => void save()}
-          isDisabled={!isChanged || !rule.isValid}
-          isLoading={actions.isSaving}
-          style={styles.flex}
-        />
-      </ActionBar>
-    ) : (
-      <ActionBar>
-        <Button
-          label="Delete"
-          variant="danger"
-          onPress={() => setDialog("delete")}
-          style={styles.flex}
-        />
-        <Button label="Edit" onPress={startEdit} style={styles.flex} />
-      </ActionBar>
-    );
+  const footer = renderFooter({
+    isShown: FEATURES.manageNotes && note !== undefined,
+    isEditing,
+    isSaveEnabled: isChanged && rule.isValid,
+    isSaving: actions.isSaving,
+    onCancel: cancelEdit,
+    onSave: () => void save(),
+    onEdit: startEdit,
+    onDelete: () => {
+      setDialog("delete");
+    },
+  });
 
   return (
-    <Screen header={<TopBar title="Note" onBack={() => navigation.goBack()} />} footer={footer}>
+    <Screen
+      header={
+        <TopBar
+          title="Note"
+          onBack={() => {
+            navigation.goBack();
+          }}
+        />
+      }
+      footer={footer}
+    >
       <NoteSubject
         user={{ userId: aboutUserId, displayName, photoUrl }}
         caption="Only you can see this note."
@@ -131,7 +197,7 @@ export function NoteDetailScreen({
             actions.clearSaveError();
           }}
           isSaving={actions.isSaving}
-          error={(isEditing ? ruleMessage(rule) : undefined) ?? actions.saveError}
+          error={bodyError(isEditing, rule, actions.saveError)}
         />
       ) : null}
       <ConfirmDialog
@@ -140,7 +206,9 @@ export function NoteDetailScreen({
         title="Delete this note?"
         message="This can't be undone."
         confirmLabel="Delete"
-        onCancel={() => setDialog(null)}
+        onCancel={() => {
+          setDialog(null);
+        }}
         onConfirm={() => void confirmDelete()}
         isBusy={actions.isDeleting}
       />

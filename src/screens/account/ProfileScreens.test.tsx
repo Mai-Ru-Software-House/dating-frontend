@@ -12,6 +12,7 @@ import { setAliceDefaults } from "../../../test/apiDefaults";
 import { freezeToday } from "../../../test/fixtures/clock";
 import { SQUARE_500 } from "../../../test/fixtures/photos";
 import { ownProfileOf } from "../../../test/fixtures/seed";
+import { parentOf } from "../../../test/hostElements";
 import { renderScreen, testQueryClient } from "../../../test/renderWithProviders";
 import { photosApi } from "../../api/photos";
 import { profileApi } from "../../api/profile";
@@ -56,21 +57,23 @@ describe("Profile", () => {
     const dialog = await screen.findByRole("header", { name: "Log out?" });
     const asked = session.logOut;
     const calledBeforeConfirm = jest.mocked(asked).mock.calls.length;
-    await user.press(within(dialog.parent!).getByRole("button", { name: "Log out" }));
+    await user.press(within(parentOf(dialog)).getByRole("button", { name: "Log out" }));
 
     expect(screen.getByRole("header", { name: "Teen, 18" })).toBeOnTheScreen();
     expect(screen.getByText("abcdefghij0123456789")).toBeOnTheScreen();
     expect(calledBeforeConfirm).toBe(0);
-    await waitFor(() => expect(session.logOut).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(session.logOut).toHaveBeenCalledTimes(1);
+    });
   });
 });
 
 describe("EditProfile", () => {
   it("UT-SCR-26: a new photo alone is saved with one PUT and no PATCH", async () => {
     const user = userEvent.setup();
-    const ALICE = ownProfileOf("alice");
+    const alice = ownProfileOf("alice");
     const queryClient = testQueryClient();
-    queryClient.setQueryData(keys.me, ALICE);
+    queryClient.setQueryData(keys.me, alice);
     jest
       .mocked(photosApi.replaceMine)
       .mockResolvedValueOnce({ photoUrl: "/api/v1/photos/pho_new" });
@@ -84,12 +87,14 @@ describe("EditProfile", () => {
     await user.press(screen.getAllByRole("button", { name: "Change photo" })[0]);
     await user.press(screen.getByRole("button", { name: "Save" }));
 
-    await waitFor(() => expect(photosApi.replaceMine).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(photosApi.replaceMine).toHaveBeenCalledTimes(1);
+    });
     expect(profileApi.updateMe).not.toHaveBeenCalled();
-    await waitFor(() =>
+    await waitFor(() => {
       expect(queryClient.getQueryData<OwnProfile>(keys.me)?.photoUrl).toBe(
         "/api/v1/photos/pho_new",
-      ),
-    );
+      );
+    });
   });
 });

@@ -5,25 +5,34 @@
  * Created by Tee (Kittiphon Kijpinyochai), 6 October 2026
  */
 import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text } from "react-native";
 
 import { messageFor } from "../../api/errors";
 import type { NotePerson } from "../../api/types";
 import { EmptyState } from "../../components/EmptyState";
 import { ListRow } from "../../components/ListRow";
+import { ListSection } from "../../components/ListSection";
 import { LoadError } from "../../components/LoadError";
 import { RowSkeleton } from "../../components/RowSkeleton";
 import { Screen } from "../../components/Screen";
 import { SearchBar } from "../../components/SearchBar";
-import { SectionLabel } from "../../components/SectionLabel";
 import { useFavorites } from "../../hooks/useFavorites";
-import { useNotePeople } from "../../hooks/useNotes";
+import { useNotePeople, type NotePeopleResult } from "../../hooks/useNotes";
 import { useRefreshOnFocus } from "../../hooks/useRefreshOnFocus";
 import type { NotesStackScreenProps } from "../../navigation/types";
 import { colors, fonts, space, type } from "../../theme";
 import { filterByName } from "../../utils/chatList";
 import { firstLine, formatListTime, formatNoteCount } from "../../utils/format";
 import { splitNotePeople } from "../../utils/notes";
+
+/**
+ * The people to list and whether the list is the fallback built from the chat list.
+ * @param data The Notes people query result, if loaded.
+ * @returns The people (none while loading) and the fallback flag.
+ */
+function peopleOf(data: NotePeopleResult | undefined): NotePeopleResult {
+  return { people: data?.people ?? [], isFallback: data?.isFallback ?? false };
+}
 
 /**
  * The Notes tab screen.
@@ -37,8 +46,7 @@ export function NotesPeopleScreen({
   const query = useNotePeople();
   const [search, setSearch] = useState("");
   useRefreshOnFocus(query.refetch);
-  const all = query.data?.people ?? [];
-  const isFallback = query.data?.isFallback ?? false;
+  const { people: all, isFallback } = peopleOf(query.data);
   const sections = splitNotePeople(
     filterByName(all, (p) => p.user.displayName, search),
     favorites,
@@ -59,7 +67,9 @@ export function NotesPeopleScreen({
           : formatListTime(person.lastNote.updatedAt ?? person.lastNote.createdAt, now),
         countLabel: isFallback ? "" : formatNoteCount(person.noteCount),
       }}
-      onPress={() => navigation.navigate("NotesInTab", person.user)}
+      onPress={() => {
+        navigation.navigate("NotesInTab", person.user);
+      }}
     />
   );
 
@@ -81,7 +91,9 @@ export function NotesPeopleScreen({
           detail="Open a chat and tap the note icon to write about someone."
           action={{
             label: "Go to Chats",
-            onPress: () => navigation.navigate("ChatsTab"),
+            onPress: () => {
+              navigation.navigate("ChatsTab");
+            },
             variant: "secondary",
           }}
         />
@@ -89,18 +101,13 @@ export function NotesPeopleScreen({
       {all.length > 0 && sections.favorites.length + sections.others.length === 0 ? (
         <EmptyState title={`No one called "${search.trim()}".`} />
       ) : null}
-      {sections.favorites.length > 0 ? (
-        <View style={styles.section}>
-          <SectionLabel label="Favorites" hasStar />
-          {sections.favorites.map((p) => row(p, true))}
-        </View>
-      ) : null}
-      {sections.others.length > 0 ? (
-        <View style={styles.section}>
-          <SectionLabel label="Other people" />
-          {sections.others.map((p) => row(p, false))}
-        </View>
-      ) : null}
+      <ListSection
+        label="Favorites"
+        hasStar
+        items={sections.favorites}
+        renderItem={(p) => row(p, true)}
+      />
+      <ListSection label="Other people" items={sections.others} renderItem={(p) => row(p, false)} />
       {all.length > 0 ? <Text style={styles.footer}>Only you can see your notes.</Text> : null}
     </Screen>
   );
@@ -112,9 +119,6 @@ const styles = StyleSheet.create({
     color: colors.ink,
     paddingTop: space.xxxl,
     marginBottom: space.xl,
-  },
-  section: {
-    marginTop: space.xl,
   },
   footer: {
     ...type.label,

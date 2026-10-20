@@ -104,8 +104,8 @@ export function groupMessages(
   const myLatest = [...oldestFirst].reverse().find((m) => m.senderId === myUserId && !m.sendState);
   const rows: ChatRow[] = [];
   oldestFirst.forEach((message, index) => {
-    const previous = oldestFirst[index - 1];
-    const next = oldestFirst[index + 1];
+    const previous = oldestFirst[index - 1] as ChatMessage | undefined;
+    const next = oldestFirst[index + 1] as ChatMessage | undefined;
     if (previous === undefined || !isSameDay(new Date(previous.sentAt), new Date(message.sentAt))) {
       rows.push({
         kind: "divider",

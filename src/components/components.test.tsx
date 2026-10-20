@@ -4,8 +4,7 @@
  * Created by Tee (Kittiphon Kijpinyochai), 7 October 2026
  */
 import { fireEvent, render, screen, userEvent } from "@testing-library/react-native";
-import { useState } from "react";
-import { processColor, StyleSheet, Text } from "react-native";
+import { processColor, StyleSheet, Text, type StyleProp, type ViewStyle } from "react-native";
 
 import { Avatar } from "./Avatar";
 import { Button } from "./Button";
@@ -18,6 +17,7 @@ import { RangeSlider } from "./RangeSlider";
 import { Screen } from "./Screen";
 import { Slider } from "./Slider";
 import { TextField } from "./TextField";
+import { Stateful } from "../../test/Stateful";
 import { avatarGradients } from "../theme";
 import { gradientIndex } from "../utils/avatar";
 
@@ -47,9 +47,13 @@ type HostElement = ReturnType<typeof screen.getByText>;
 function hostOfType(type: string): HostElement {
   const queue: unknown[] = [screen.container];
   while (queue.length > 0) {
-    const node = queue.shift() as { type?: unknown; children?: unknown[] } | string;
-    if (typeof node !== "object" || node === null) continue;
-    if (node.type === type) return node as unknown as HostElement;
+    const node = queue.shift() as { type?: unknown; children?: unknown[] } | string | null;
+    if (typeof node !== "object" || node === null) {
+      continue;
+    }
+    if (node.type === type) {
+      return node as unknown as HostElement;
+    }
     queue.push(...(node.children ?? []));
   }
   throw new Error(`No ${type} rendered`);
@@ -80,22 +84,27 @@ describe("Button", () => {
 describe("TextField", () => {
   it("UT-CMP-02: shows its error and switches Show to Hide on a password", async () => {
     const user = userEvent.setup();
-    /** A password field with a working Show / Hide. */
-    function PasswordField(): React.JSX.Element {
-      const [isHidden, setIsHidden] = useState(true);
-      return (
-        <>
-          <TextField label="Username" value="" error="Username is required." />
-          <TextField
-            label="Password"
-            value="Mint2026"
-            secureTextEntry={isHidden}
-            trailing={{ label: isHidden ? "Show" : "Hide", onPress: () => setIsHidden(!isHidden) }}
-          />
-        </>
-      );
-    }
-    await render(<PasswordField />);
+    await render(
+      <Stateful
+        initial={true}
+        render={(isHidden, setIsHidden) => (
+          <>
+            <TextField label="Username" value="" error="Username is required." />
+            <TextField
+              label="Password"
+              value="Mint2026"
+              secureTextEntry={isHidden}
+              trailing={{
+                label: isHidden ? "Show" : "Hide",
+                onPress: () => {
+                  setIsHidden(!isHidden);
+                },
+              }}
+            />
+          </>
+        )}
+      />,
+    );
 
     await user.press(screen.getByRole("button", { name: "Show" }));
 
@@ -108,15 +117,15 @@ describe("TextField", () => {
 describe("ChipGroup", () => {
   it("UT-CMP-03: only one chip is chosen at a time", async () => {
     const user = userEvent.setup();
-    /** Interested in, with state. */
-    function InterestedIn(): React.JSX.Element {
-      const [value, setValue] = useState<string | null>(null);
-      const options = ["Women", "Men", "Everyone"].map((v) => ({ value: v, label: v }));
-      return (
-        <ChipGroup label="Interested in" options={options} value={value} onChange={setValue} />
-      );
-    }
-    await render(<InterestedIn />);
+    const options = ["Women", "Men", "Everyone"].map((v) => ({ value: v, label: v }));
+    await render(
+      <Stateful<string | null>
+        initial={null}
+        render={(value, setValue) => (
+          <ChipGroup label="Interested in" options={options} value={value} onChange={setValue} />
+        )}
+      />,
+    );
 
     await user.press(screen.getByRole("radio", { name: "Men" }));
     await user.press(screen.getByRole("radio", { name: "Women" }));
@@ -130,28 +139,31 @@ describe("ChipGroup", () => {
 describe("RangeSlider", () => {
   it("UT-CMP-04: the knobs stay in range and never cross", async () => {
     const seen: [number, number][] = [];
-    /** Age range with state. */
-    function AgeRange(): React.JSX.Element {
-      const [value, setValue] = useState<[number, number]>([18, 20]);
-      return (
-        <RangeSlider
-          label="Age"
-          min={18}
-          max={40}
-          value={value}
-          onChange={(next) => {
-            seen.push(next);
-            setValue(next);
-          }}
-          lowLabel="Minimum age"
-          highLabel="Maximum age"
-        />
-      );
-    }
-    await render(<AgeRange />);
+    await render(
+      <Stateful<[number, number]>
+        initial={[18, 20]}
+        render={(value, setValue) => (
+          <RangeSlider
+            label="Age"
+            min={18}
+            max={40}
+            value={value}
+            onChange={(next) => {
+              seen.push(next);
+              setValue(next);
+            }}
+            lowLabel="Minimum age"
+            highLabel="Maximum age"
+          />
+        )}
+      />,
+    );
 
     await step("Minimum age", "increment", 5);
-    const afterIncrement = screen.getByLabelText("Minimum age").props.accessibilityValue.now;
+    const { accessibilityValue } = screen.getByLabelText("Minimum age").props as {
+      accessibilityValue: { now: number };
+    };
+    const afterIncrement = accessibilityValue.now;
     await step("Minimum age", "decrement", 5);
 
     expect(afterIncrement).toBe(20);
@@ -162,17 +174,24 @@ describe("RangeSlider", () => {
 
 describe("Slider", () => {
   it("UT-CMP-05: the distance stays between 1 and 100", async () => {
-    /** Distance with state. */
-    function Distance({ start }: { start: number }): React.JSX.Element {
-      const [value, setValue] = useState(start);
-      return (
-        <Slider label={`Distance ${start}`} min={1} max={100} value={value} onChange={setValue} />
-      );
-    }
+    const distance = (start: number): React.JSX.Element => (
+      <Stateful
+        initial={start}
+        render={(value, setValue) => (
+          <Slider
+            label={`Distance ${String(start)}`}
+            min={1}
+            max={100}
+            value={value}
+            onChange={setValue}
+          />
+        )}
+      />
+    );
     await render(
       <>
-        <Distance start={1} />
-        <Distance start={100} />
+        {distance(1)}
+        {distance(100)}
       </>,
     );
 
@@ -236,12 +255,14 @@ describe("Composer", () => {
   it("UT-CMP-08: Send follows the message rules and sends the text unchanged", async () => {
     const user = userEvent.setup();
     const onSend = jest.fn();
-    /** Composer with state. */
-    function Chat(): React.JSX.Element {
-      const [value, setValue] = useState("");
-      return <Composer value={value} onChangeText={setValue} onSend={onSend} />;
-    }
-    await render(<Chat />);
+    await render(
+      <Stateful
+        initial=""
+        render={(value, setValue) => (
+          <Composer value={value} onChangeText={setValue} onSend={onSend} />
+        )}
+      />,
+    );
     const input = screen.getByLabelText("Message");
     const send = (): ReturnType<typeof screen.getByRole> =>
       screen.getByRole("button", { name: "Send" });
@@ -254,7 +275,9 @@ describe("Composer", () => {
       ["1001", "a".repeat(1001)],
     ]) {
       await fireEvent.changeText(input, text);
-      states[name] = send().props.accessibilityState.disabled;
+      states[name] = (
+        send().props as { accessibilityState: { disabled: boolean } }
+      ).accessibilityState.disabled;
       if (name === "1001") {
         expect(screen.getByText("Messages can be up to 1000 characters.")).toBeOnTheScreen();
       }
@@ -298,7 +321,9 @@ describe("Screen", () => {
     );
 
     const column = screen.getByText(/Long content/).parent;
-    const style = StyleSheet.flatten(column?.props.style);
+    const style = StyleSheet.flatten(
+      (column?.props as { style?: StyleProp<ViewStyle> } | undefined)?.style,
+    );
     expect(style).toMatchObject({ maxWidth: 600, alignSelf: "center", width: "100%" });
     expect(hostOfType("RCTScrollView")).toBeTruthy();
   });

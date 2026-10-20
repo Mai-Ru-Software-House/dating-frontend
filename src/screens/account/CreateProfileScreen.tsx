@@ -17,6 +17,7 @@ import { ConfirmDialog } from "../../components/ConfirmDialog";
 import { Screen } from "../../components/Screen";
 import { StepProgress } from "../../components/StepProgress";
 import { TopBar } from "../../components/TopBar";
+import { LAST_PROFILE_STEP } from "../../constants/limits";
 import type { RootScreenProps } from "../../navigation/types";
 import { colors, space, type } from "../../theme";
 import { AboutYouStep } from "./AboutYouStep";
@@ -59,19 +60,36 @@ export function CreateProfileScreen({
     setPendingLeave(null);
     setIsDiscarding(false);
   };
-  const isLast = form.step === 3;
+  const isLast = form.step === LAST_PROFILE_STEP;
   // A tap on the dimmed Next still counts as trying to move on, so the messages show (CP22).
-  const onPrimaryTouch = form.isStepValid ? undefined : () => form.next();
+  const onPrimaryTouch = form.isStepValid
+    ? undefined
+    : () => {
+        form.next();
+      };
 
   return (
     <Screen
-      header={<TopBar title="Create profile" onBack={() => navigation.goBack()} />}
+      header={
+        <TopBar
+          title="Create profile"
+          onBack={() => {
+            navigation.goBack();
+          }}
+        />
+      }
       footer={
         <ActionBar top={<Banner message={form.banner} />}>
           <Button
             label={form.step === 1 ? "Cancel" : "Back"}
             variant="secondary"
-            onPress={() => (form.step === 1 ? navigation.goBack() : form.back())}
+            onPress={() => {
+              if (form.step === 1) {
+                navigation.goBack();
+              } else {
+                form.back();
+              }
+            }}
             isDisabled={form.isSubmitting}
             style={styles.flex}
           />
@@ -94,14 +112,16 @@ export function CreateProfileScreen({
       </Text>
       {form.step === 1 ? <AboutYouStep form={form} /> : null}
       {form.step === 2 ? <PhotoPlaceStep form={form} /> : null}
-      {form.step === 3 ? <PreferencesStep form={form} /> : null}
+      {form.step === LAST_PROFILE_STEP ? <PreferencesStep form={form} /> : null}
       <ConfirmDialog
         isVisible={pendingLeave !== null}
         title="Discard your profile?"
         message="What you've entered will be lost."
         cancelLabel="Keep editing"
         confirmLabel="Discard"
-        onCancel={() => setPendingLeave(null)}
+        onCancel={() => {
+          setPendingLeave(null);
+        }}
         onConfirm={() => void discard()}
         isBusy={isDiscarding}
       />

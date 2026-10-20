@@ -18,9 +18,13 @@ import { keys } from "./queryClient";
 jest.mock("../api/profile");
 jest.mock("../api/sessions");
 
-const mockShowToast = jest.fn();
+const mockShowToast = jest.fn<undefined, [string]>();
 jest.mock("../components/Toast", () => {
-  const toast = { show: (text: string) => mockShowToast(text) };
+  const toast = {
+    show: (text: string) => {
+      mockShowToast(text);
+    },
+  };
   return {
     ToastProvider: ({ children }: { children: React.ReactNode }) => children,
     useToast: () => toast,
@@ -43,7 +47,10 @@ const REFRESH = "mairu.refreshToken";
 async function renderSession(): Promise<{ session: () => SessionApi; queryClient: QueryClient }> {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   let current: SessionApi | null = null;
-  /** Reads the session on every render. */
+  /**
+   * Reads the session on every render.
+   * @returns Nothing is drawn.
+   */
   function Probe(): null {
     current = useSession();
     return null;
@@ -57,7 +64,9 @@ async function renderSession(): Promise<{ session: () => SessionApi; queryClient
   );
   return {
     session: () => {
-      if (current === null) throw new Error("Not rendered");
+      if (current === null) {
+        throw new Error("Not rendered");
+      }
       return current;
     },
     queryClient,
@@ -73,7 +82,9 @@ async function signedInAsAlice(): ReturnType<typeof renderSession> {
   secureStoreData.set(REFRESH, "rt1");
   getMe.mockResolvedValueOnce(ALICE);
   const rendered = await renderSession();
-  await waitFor(() => expect(rendered.session().status).toBe("signedIn"));
+  await waitFor(() => {
+    expect(rendered.session().status).toBe("signedIn");
+  });
   return rendered;
 }
 
@@ -85,7 +96,9 @@ describe("app start", () => {
   it("UT-SES-01: with no stored token, shows Landing without calling the API", async () => {
     const { session } = await renderSession();
 
-    await waitFor(() => expect(session().status).toBe("signedOut"));
+    await waitFor(() => {
+      expect(session().status).toBe("signedOut");
+    });
     expect(getMe).not.toHaveBeenCalled();
   });
 
@@ -103,7 +116,9 @@ describe("app start", () => {
 
     const { session } = await renderSession();
 
-    await waitFor(() => expect(session().status).toBe("signedOut"));
+    await waitFor(() => {
+      expect(session().status).toBe("signedOut");
+    });
     expect(secureStoreData.has(ACCESS)).toBe(false);
     expect(secureStoreData.has(REFRESH)).toBe(false);
   });
@@ -115,7 +130,9 @@ describe("app start", () => {
 
     const { session } = await renderSession();
 
-    await waitFor(() => expect(session().status).toBe("offline"));
+    await waitFor(() => {
+      expect(session().status).toBe("offline");
+    });
     expect(secureStoreData.get(ACCESS)).toBe("at1");
     expect(secureStoreData.get(REFRESH)).toBe("rt1");
   });
@@ -124,7 +141,9 @@ describe("app start", () => {
 describe("logIn", () => {
   it("UT-SES-05: keeps the tokens in secure storage only", async () => {
     const { session } = await renderSession();
-    await waitFor(() => expect(session().status).toBe("signedOut"));
+    await waitFor(() => {
+      expect(session().status).toBe("signedOut");
+    });
 
     await act(() =>
       session().logIn({
@@ -204,7 +223,9 @@ describe("expire", () => {
       session().expire();
     });
 
-    await waitFor(() => expect(session().status).toBe("signedOut"));
+    await waitFor(() => {
+      expect(session().status).toBe("signedOut");
+    });
     expect(mockShowToast).toHaveBeenCalledTimes(1);
     expect(mockShowToast).toHaveBeenCalledWith("You've been logged out. Log in again.");
     expect(clear).toHaveBeenCalledTimes(1);

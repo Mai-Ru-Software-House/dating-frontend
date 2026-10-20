@@ -50,7 +50,9 @@ export function MatchCard({
   const place = formatPlace(card.placeName, "short");
   const distance = formatDistance(card.distanceKm, "card");
   const placeLine = place === null ? distance : `${place} · ${distance}`;
-  const onLayout = (event: LayoutChangeEvent): void => setWidth(event.nativeEvent.layout.width);
+  const onLayout = (event: LayoutChangeEvent): void => {
+    setWidth(event.nativeEvent.layout.width);
+  };
 
   return (
     <Pressable

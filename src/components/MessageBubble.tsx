@@ -37,12 +37,83 @@ export interface MessageBubbleProps {
 }
 
 /**
+ * The avatar column on the left of their bubbles; the avatar shows on the last bubble of a group.
+ * @param other The other person.
+ * @param isGroupEnd Whether this is the last bubble of its group.
+ * @returns The column.
+ */
+function renderAvatarColumn(other: UserSummary, isGroupEnd: boolean): React.JSX.Element {
+  return (
+    <View style={styles.avatarColumn}>
+      {isGroupEnd ? (
+        <Avatar
+          userId={other.userId}
+          displayName={other.displayName}
+          photoUrl={other.photoUrl}
+          size={26}
+        />
+      ) : null}
+    </View>
+  );
+}
+
+/**
+ * The quoted strip above a reply.
+ * @param replyTo The quoted message's text, when this message is a reply.
+ * @param quotedName The quoted sender's name.
+ * @param isMine Whether the bubble is mine (accent fill).
+ * @returns The strip, or null when the message is not a reply.
+ */
+function renderQuote(
+  replyTo: ChatMessage["replyTo"],
+  quotedName: string | undefined,
+  isMine: boolean,
+): React.JSX.Element | null {
+  if (!replyTo) {
+    return null;
+  }
+  return (
+    <View style={[styles.quote, isMine ? styles.quoteMine : styles.quoteTheirs]}>
+      <Text style={[styles.quoteName, isMine && styles.onAccent]} numberOfLines={1}>
+        {quotedName ?? ""}
+      </Text>
+      <Text style={[styles.quoteText, isMine && styles.onAccent]} numberOfLines={1}>
+        {firstLine(replyTo.text)}
+      </Text>
+    </View>
+  );
+}
+
+/**
+ * The line under a bubble: the retry prompt when sending failed, else the time on the last bubble
+ * of a group.
+ * @param props The bubble's props.
+ * @returns The line, or null.
+ */
+function renderMeta(props: MessageBubbleProps): React.JSX.Element | null {
+  const { message, isMine, isGroupEnd, timeLabel } = props;
+  if (message.sendState === "failed") {
+    return (
+      <Pressable onPress={props.onRetry} accessibilityRole="button" style={styles.metaMine}>
+        <Text style={styles.failed}>Not sent. Tap to retry.</Text>
+      </Pressable>
+    );
+  }
+  if (isGroupEnd && timeLabel !== "" && message.sendState !== "pending") {
+    return (
+      <Text style={[styles.time, isMine ? styles.metaMine : styles.metaTheirs]}>{timeLabel}</Text>
+    );
+  }
+  return null;
+}
+
+/**
  * A chat bubble.
  * @param props See MessageBubbleProps.
  * @returns The bubble row.
  */
 export function MessageBubble(props: MessageBubbleProps): React.JSX.Element {
-  const { message, isMine, isGroupStart, isGroupEnd, timeLabel, other, quotedName } = props;
+  const { message, isMine, isGroupStart, isGroupEnd, other, quotedName } = props;
   const isPending = message.sendState === "pending";
   const isFailed = message.sendState === "failed";
   const window = useWindowDimensions();
@@ -51,18 +122,7 @@ export function MessageBubble(props: MessageBubbleProps): React.JSX.Element {
   return (
     <View style={[styles.wrap, { marginTop: isGroupStart ? GROUP_GAP : BUBBLE_GAP }]}>
       <View style={[styles.row, isMine ? styles.rowMine : styles.rowTheirs]}>
-        {!isMine ? (
-          <View style={styles.avatarColumn}>
-            {isGroupEnd ? (
-              <Avatar
-                userId={other.userId}
-                displayName={other.displayName}
-                photoUrl={other.photoUrl}
-                size={26}
-              />
-            ) : null}
-          </View>
-        ) : null}
+        {isMine ? null : renderAvatarColumn(other, isGroupEnd)}
         <Pressable
           onLongPress={props.onLongPress}
           onPress={isFailed ? props.onRetry : undefined}
@@ -76,28 +136,13 @@ export function MessageBubble(props: MessageBubbleProps): React.JSX.Element {
             isPending && styles.pending,
           ]}
         >
-          {message.replyTo ? (
-            <View style={[styles.quote, isMine ? styles.quoteMine : styles.quoteTheirs]}>
-              <Text style={[styles.quoteName, isMine && styles.onAccent]} numberOfLines={1}>
-                {quotedName ?? ""}
-              </Text>
-              <Text style={[styles.quoteText, isMine && styles.onAccent]} numberOfLines={1}>
-                {firstLine(message.replyTo.text)}
-              </Text>
-            </View>
-          ) : null}
+          {renderQuote(message.replyTo, quotedName, isMine)}
           <Text style={[styles.text, isMine ? styles.onAccent : styles.onSurface]}>
             {message.text}
           </Text>
         </Pressable>
       </View>
-      {isFailed ? (
-        <Pressable onPress={props.onRetry} accessibilityRole="button" style={styles.metaMine}>
-          <Text style={styles.failed}>Not sent. Tap to retry.</Text>
-        </Pressable>
-      ) : isGroupEnd && timeLabel !== "" && !isPending ? (
-        <Text style={[styles.time, isMine ? styles.metaMine : styles.metaTheirs]}>{timeLabel}</Text>
-      ) : null}
+      {renderMeta(props)}
     </View>
   );
 }
