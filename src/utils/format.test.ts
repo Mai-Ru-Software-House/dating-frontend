@@ -179,4 +179,15 @@ describe("formatLookingFor", () => {
     expect(everyone).toBe("Everyone · 19 – 25 · within 20 km");
     expect(both).toBe("Women and Men · 19 – 25 · within 20 km");
   });
+
+  it("UT-FMT-17: shows one age when the range is a single age", () => {
+    const line = formatLookingFor({
+      minAge: 19,
+      maxAge: 19,
+      radiusKm: 20,
+      targetGenders: ["male"],
+    });
+
+    expect(line).toBe("Men · 19 · within 20 km");
+  });
 });
