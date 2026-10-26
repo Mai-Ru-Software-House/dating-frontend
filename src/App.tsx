@@ -12,12 +12,14 @@ import { useFonts } from "@expo-google-fonts/inter/useFonts";
 import { QueryClientProvider } from "@tanstack/react-query";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
 import { StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { ToastProvider } from "./components/Toast";
 import { AppContent } from "./AppContent";
+import { watchAppFocus } from "./session/appFocus";
 import { queryClient } from "./session/queryClient";
 import { SessionProvider } from "./session/SessionProvider";
 import { colors } from "./theme";
@@ -37,6 +39,8 @@ export default function App(): React.JSX.Element {
     Inter_600SemiBold,
     Inter_700Bold,
   });
+
+  useEffect(watchAppFocus, []);
 
   return (
     <GestureHandlerRootView style={styles.root}>
