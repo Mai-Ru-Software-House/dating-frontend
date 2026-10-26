@@ -5,6 +5,9 @@
  * Created by Tee (Kittiphon Kijpinyochai), 6 October 2026
  */
 
+/** Decimal places shown for a latitude or longitude. */
+const COORDINATE_DECIMALS = 3;
+
 /** "short": district only (cards, rows). "full": district, then province (profiles). */
 export type PlaceStyle = "short" | "full";
 
@@ -39,5 +42,5 @@ export function formatPlace(
 export function formatCoordinates(lat: number, lon: number): string {
   const ns = lat >= 0 ? "N" : "S";
   const ew = lon >= 0 ? "E" : "W";
-  return `${Math.abs(lat).toFixed(3)}° ${ns}, ${Math.abs(lon).toFixed(3)}° ${ew}`;
+  return `${Math.abs(lat).toFixed(COORDINATE_DECIMALS)}° ${ns}, ${Math.abs(lon).toFixed(COORDINATE_DECIMALS)}° ${ew}`;
 }

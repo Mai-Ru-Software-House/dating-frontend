@@ -1,0 +1,669 @@
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/scripts/seed-bangkok-users.mjs
+  127:1  warning  Function 'readOptions' has too many lines (56). Maximum allowed is 50              max-lines-per-function
+  127:1  warning  Function 'readOptions' has a complexity of 23. Maximum allowed is 10               complexity
+  461:7  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  465:5  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  469:3  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  486:9  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  493:3  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  496:3  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/App.tsx
+  73:16  warning  Declare only one React component per file  react/no-multi-comp
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/api/client.test.ts
+   37:1   warning  Missing JSDoc @param "status" declaration                                                                           jsdoc/require-param
+   37:1   warning  Missing JSDoc @param "body" declaration                                                                             jsdoc/require-param
+   37:1   warning  Missing JSDoc @returns declaration                                                                                  jsdoc/require-returns
+   43:5   error    Async method 'text' has no 'await' expression                                                                       @typescript-eslint/require-await
+   44:5   error    Async method 'json' has no 'await' expression                                                                       @typescript-eslint/require-await
+   44:23  error    Unsafe return of a value of type `any`                                                                              @typescript-eslint/no-unsafe-return
+   48:1   warning  Missing JSDoc @param "code" declaration                                                                             jsdoc/require-param
+   48:1   warning  Missing JSDoc @param "message" declaration                                                                          jsdoc/require-param
+   48:1   warning  Missing JSDoc @param "field" declaration                                                                            jsdoc/require-param
+   48:1   warning  Missing JSDoc @returns declaration                                                                                  jsdoc/require-returns
+   55:49  error    Async arrow function has no 'await' expression                                                                      @typescript-eslint/require-await
+   60:1   warning  Missing JSDoc @param "call" declaration                                                                             jsdoc/require-param
+   60:1   warning  Missing JSDoc @returns declaration                                                                                  jsdoc/require-returns
+   88:3   warning  Missing JSDoc @returns declaration                                                                                  jsdoc/require-returns
+   88:3   warning  Missing JSDoc @returns declaration                                                                                  jsdoc/require-returns
+   88:3   warning  Missing JSDoc @returns declaration                                                                                  jsdoc/require-returns
+   88:3   warning  Missing JSDoc @returns declaration                                                                                  jsdoc/require-returns
+   88:3   warning  Missing JSDoc @returns declaration                                                                                  jsdoc/require-returns
+   88:3   warning  Missing JSDoc @returns declaration                                                                                  jsdoc/require-returns
+   88:3   warning  Missing JSDoc @returns declaration                                                                                  jsdoc/require-returns
+   88:3   warning  Missing JSDoc @returns declaration                                                                                  jsdoc/require-returns
+   88:3   warning  Missing JSDoc @returns declaration                                                                                  jsdoc/require-returns
+   88:3   warning  Missing JSDoc @returns declaration                                                                                  jsdoc/require-returns
+   88:3   warning  Missing JSDoc @returns declaration                                                                                  jsdoc/require-returns
+   88:3   warning  Missing JSDoc @returns declaration                                                                                  jsdoc/require-returns
+   88:3   warning  Missing JSDoc @returns declaration                                                                                  jsdoc/require-returns
+   88:3   warning  Missing JSDoc @returns declaration                                                                                  jsdoc/require-returns
+   88:3   warning  Missing JSDoc @returns declaration                                                                                  jsdoc/require-returns
+   88:3   warning  Missing JSDoc @returns declaration                                                                                  jsdoc/require-returns
+   88:3   warning  Missing JSDoc @returns declaration                                                                                  jsdoc/require-returns
+   88:3   warning  Missing JSDoc @returns declaration                                                                                  jsdoc/require-returns
+   88:3   warning  Missing JSDoc @returns declaration                                                                                  jsdoc/require-returns
+   89:9   error    Variable name `AUTHENTICATED` must match one of the following formats: camelCase                                    @typescript-eslint/naming-convention
+  195:17  error    Invalid type "string | undefined" of template literal expression                                                    @typescript-eslint/restrict-template-expressions
+  197:31  error    Expected { after 'if' condition                                                                                     curly
+  202:54  error    Async arrow function has no 'await' expression                                                                      @typescript-eslint/require-await
+  203:40  error    Expected { after 'if' condition                                                                                     curly
+  204:36  error    Expected { after 'if' condition                                                                                     curly
+  225:44  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  270:13  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  288:13  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  329:73  error    Async arrow function has no 'await' expression                                                                      @typescript-eslint/require-await
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/api/client.ts
+   80:45  error    Unsafe argument of type `any` assigned to a parameter of type `string`                                              @typescript-eslint/no-unsafe-argument
+  101:13  error    Invalid type "any" of template literal expression                                                                   @typescript-eslint/restrict-template-expressions
+  114:7   error    Unnecessary optional chain on a non-nullish value                                                                   @typescript-eslint/no-unnecessary-condition
+  129:29  error    Invalid type "number" of template literal expression                                                                @typescript-eslint/restrict-template-expressions
+  142:1   warning  Async function 'send' has a complexity of 11. Maximum allowed is 10                                                 complexity
+  150:34  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  173:40  error    Invalid type "number" of template literal expression                                                                @typescript-eslint/restrict-template-expressions
+  253:8   warning  Async function 'request' has a complexity of 18. Maximum allowed is 10                                              complexity
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/api/errors.ts
+  165:66  warning  No magic number: 3  @typescript-eslint/no-magic-numbers
+  177:12  warning  No magic number: 3  @typescript-eslint/no-magic-numbers
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/api/favorites.ts
+  30:19  error  void is only valid as a return type or generic type argument  @typescript-eslint/no-invalid-void-type
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/api/mocks/db.ts
+  32:3   error  Prefer using nullish coalescing operator (`??=`) instead of an assignment expression, as it is simpler to read  @typescript-eslint/prefer-nullish-coalescing
+  53:23  error  Invalid type "number" of template literal expression                                                            @typescript-eslint/restrict-template-expressions
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/api/mocks/favorites.ts
+  10:21  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  14:12  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  18:15  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/api/mocks/fixtures.ts
+  172:57  error  Invalid type "number" of template literal expression  @typescript-eslint/restrict-template-expressions
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/api/mocks/matching.ts
+  22:23  error    '_lookingFor' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  27:27  warning  Missing JSDoc comment                             jsdoc/require-jsdoc
+  40:25  warning  Missing JSDoc comment                             jsdoc/require-jsdoc
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/api/mocks/messaging.ts
+   69:25  warning  Missing JSDoc comment            jsdoc/require-jsdoc
+   74:30  error    Expected { after 'if' condition  curly
+   75:32  error    Expected { after 'if' condition  curly
+   98:20  warning  Missing JSDoc comment            jsdoc/require-jsdoc
+  106:20  warning  Missing JSDoc comment            jsdoc/require-jsdoc
+  111:14  warning  Missing JSDoc comment            jsdoc/require-jsdoc
+  120:17  warning  Missing JSDoc comment            jsdoc/require-jsdoc
+  128:18  warning  Missing JSDoc comment            jsdoc/require-jsdoc
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/api/mocks/notes.ts
+  41:18  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  63:17  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  70:15  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  83:15  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  90:15  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/api/mocks/photos.ts
+  13:19  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  23:19  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  27:20  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/api/mocks/places.ts
+  11:15  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/api/mocks/profile.ts
+  25:14  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  29:16  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  37:22  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  44:22  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  71:17  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/api/mocks/sessions.ts
+  12:14  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  32:15  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/api/notes.ts
+  39:19  error  void is only valid as a return type or generic type argument  @typescript-eslint/no-invalid-void-type
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/api/photos.ts
+  38:5   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  54:19  error    void is only valid as a return type or generic type argument                       @typescript-eslint/no-invalid-void-type
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/api/sessions.ts
+  58:19  error  void is only valid as a return type or generic type argument  @typescript-eslint/no-invalid-void-type
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/components/ActionRow.tsx
+  30:9   error    Parameter name `Icon` must match one of the following formats: camelCase  @typescript-eslint/naming-convention
+  60:45  warning  No magic number: 22                                                       @typescript-eslint/no-magic-numbers
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/components/Avatar.tsx
+  33:9   error    Variable name `showPhoto` must have one of the following prefixes: is, has, can, should, was, did, are              @typescript-eslint/naming-convention
+  44:58  warning  No magic number: 0.4                                                                                                @typescript-eslint/no-magic-numbers
+  55:26  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/components/Button.tsx
+  74:8  warning  Function 'Button' has a complexity of 15. Maximum allowed is 10  complexity
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/components/ChipGroup.tsx
+  50:28  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/components/Composer.tsx
+  26:26  warning  No magic number: 4                                                                                                  @typescript-eslint/no-magic-numbers
+  26:30  warning  No magic number: 21                                                                                                 @typescript-eslint/no-magic-numbers
+  26:35  warning  No magic number: 24                                                                                                 @typescript-eslint/no-magic-numbers
+  95:28  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/components/DateField.tsx
+   35:62  warning  No magic number: 18                                                                                                 @typescript-eslint/no-magic-numbers
+   36:85  warning  No magic number: 12                                                                                                 @typescript-eslint/no-magic-numbers
+   68:42  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+   89:31  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+   91:54  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  100:46  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/components/FavoriteButton.tsx
+  32:31  warning  No magic number: 10  @typescript-eslint/no-magic-numbers
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/components/ListGroup.tsx
+  33:24  error  Do not use Array index in keys  react/no-array-index-key
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/components/ListRow.tsx
+  96:1  warning  Declare only one React component per file  react/no-multi-comp
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/components/LocationField.tsx
+  37:8  warning  Function 'LocationField' has a complexity of 11. Maximum allowed is 10  complexity
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/components/MatchCard.tsx
+  53:56  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/components/MenuTile.tsx
+  28:9  error  Parameter name `Icon` must match one of the following formats: camelCase  @typescript-eslint/naming-convention
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/components/MessageBubble.tsx
+  44:8  warning  Function 'MessageBubble' has a complexity of 21. Maximum allowed is 10  complexity
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/components/NoteEditor.tsx
+  53:26  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  54:25  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/components/PhotoFill.tsx
+  38:9   error    Variable name `showPhoto` must have one of the following prefixes: is, has, can, should, was, did, are              @typescript-eslint/naming-convention
+  43:50  warning  No magic number: 0.26                                                                                               @typescript-eslint/no-magic-numbers
+  44:23  warning  No magic number: 1.45                                                                                               @typescript-eslint/no-magic-numbers
+  61:51  warning  No magic number: 0.42                                                                                               @typescript-eslint/no-magic-numbers
+  62:67  warning  No magic number: 0.2                                                                                                @typescript-eslint/no-magic-numbers
+  73:26  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/components/RowSkeleton.tsx
+  21:39  warning  No magic number: 3  @typescript-eslint/no-magic-numbers
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/components/Screen.tsx
+   55:8   warning  Function 'Screen' has a complexity of 14. Maximum allowed is 10                                                complexity
+   71:9   error    Variable name `needsBottomInset` must have one of the following prefixes: is, has, can, should, was, did, are  @typescript-eslint/naming-convention
+   75:32  warning  Inline style: { paddingTop: 'hasTopInset ? insets.top : 0' }                                                   react-native/no-inline-styles
+  103:38  warning  Inline style: { paddingBottom: 'needsBottomInset ? insets.bottom : 0' }                                        react-native/no-inline-styles
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/components/SegmentedControl.tsx
+  36:28  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/components/StepProgress.tsx
+  31:35  error  Invalid type "number" of template literal expression  @typescript-eslint/restrict-template-expressions
+  31:49  error  Invalid type "number" of template literal expression  @typescript-eslint/restrict-template-expressions
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/components/TabBar.tsx
+  56:60  error    Invalid type "number" of template literal expression  @typescript-eslint/restrict-template-expressions
+  90:30  warning  No magic number: 12                                   @typescript-eslint/no-magic-numbers
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/components/TextField.tsx
+   51:64  warning  Function 'TextField' has a complexity of 23. Maximum allowed is 10                                         complexity
+   96:61  error    Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator  @typescript-eslint/prefer-nullish-coalescing
+  104:20  error    Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator  @typescript-eslint/prefer-nullish-coalescing
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/components/Toast.tsx
+  54:17  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/components/TopBar.tsx
+  57:25  warning  No magic number: 8  @typescript-eslint/no-magic-numbers
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/components/TypingIndicator.tsx
+  17:20  warning  No magic number: 0.9                                                                                                @typescript-eslint/no-magic-numbers
+  17:25  warning  No magic number: 0.6                                                                                                @typescript-eslint/no-magic-numbers
+  17:30  warning  No magic number: 0.35                                                                                               @typescript-eslint/no-magic-numbers
+  37:18  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  40:7   error    Unnecessary conditional, value is always truthy                                                                     @typescript-eslint/no-unnecessary-condition
+  54:18  error    Do not use Array index in keys                                                                                      react/no-array-index-key
+  59:41  warning  No magic number: 3                                                                                                  @typescript-eslint/no-magic-numbers
+  60:42  warning  No magic number: 3                                                                                                  @typescript-eslint/no-magic-numbers
+  60:80  warning  No magic number: 3                                                                                                  @typescript-eslint/no-magic-numbers
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/components/UnreadBadge.tsx
+  24:45  warning  No magic number: 20                                  @typescript-eslint/no-magic-numbers
+  35:34  warning  Inline style: { fontSize: 'size === 20 ? 11 : 10' }  react-native/no-inline-styles
+  35:55  warning  No magic number: 20                                  @typescript-eslint/no-magic-numbers
+  35:60  warning  No magic number: 11                                  @typescript-eslint/no-magic-numbers
+  35:65  warning  No magic number: 10                                  @typescript-eslint/no-magic-numbers
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/components/components.test.tsx
+   51:37  error    Unnecessary conditional, the types have no overlap                                                                  @typescript-eslint/no-unnecessary-condition
+   51:52  error    Expected { after 'if' condition                                                                                     curly
+   52:29  error    Expected { after 'if' condition                                                                                     curly
+   83:5   warning  Missing JSDoc @returns declaration                                                                                  jsdoc/require-returns
+   93:75  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  111:5   warning  Missing JSDoc @returns declaration                                                                                  jsdoc/require-returns
+  112:5   warning  Declare only one React component per file                                                                           react/no-multi-comp
+  133:5   warning  Missing JSDoc @returns declaration                                                                                  jsdoc/require-returns
+  134:5   warning  Declare only one React component per file                                                                           react/no-multi-comp
+  154:11  error    Unsafe assignment of an `any` value                                                                                 @typescript-eslint/no-unsafe-assignment
+  154:90  error    Unsafe member access .now on an `any` value                                                                         @typescript-eslint/no-unsafe-member-access
+  165:5   warning  Missing JSDoc @returns declaration                                                                                  jsdoc/require-returns
+  166:5   warning  Declare only one React component per file                                                                           react/no-multi-comp
+  169:36  error    Invalid type "number" of template literal expression                                                                @typescript-eslint/restrict-template-expressions
+  239:5   warning  Missing JSDoc @returns declaration                                                                                  jsdoc/require-returns
+  240:5   warning  Declare only one React component per file                                                                           react/no-multi-comp
+  257:7   error    Unsafe assignment of an `any` value                                                                                 @typescript-eslint/no-unsafe-assignment
+  257:54  error    Unsafe member access .disabled on an `any` value                                                                    @typescript-eslint/no-unsafe-member-access
+  301:11  error    Unsafe assignment of an `any` value                                                                                 @typescript-eslint/no-unsafe-assignment
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/constants/env.ts
+  11:14  error  Unsafe assignment of an `any` value              @typescript-eslint/no-unsafe-assignment
+  11:29  error  Unsafe call of an `any` typed value              @typescript-eslint/no-unsafe-call
+  11:74  error  Unsafe member access .replace on an `any` value  @typescript-eslint/no-unsafe-member-access
+  14:14  error  Unsafe assignment of an `any` value              @typescript-eslint/no-unsafe-assignment
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/hooks/useFavorites.test.tsx
+  33:23  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  48:21  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  50:25  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  52:24  error  Async arrow function has no 'await' expression                                                                      @typescript-eslint/require-await
+  52:27  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  53:25  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  65:25  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  74:21  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  76:25  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  84:21  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  86:25  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/hooks/useFavorites.ts
+  60:25  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/hooks/useKeyboardVisible.ts
+  17:64  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  18:64  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/hooks/useLocationLookup.ts
+  65:8  warning  Function 'useLocationLookup' has too many lines (56). Maximum allowed is 50  max-lines-per-function
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/hooks/useUsernameCheck.ts
+  33:30  error  Promise returned in function argument where a void return was expected  @typescript-eslint/no-misused-promises
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/navigation/MainTabs.tsx
+  25:67  error  Do not define components during render. React will see a new component type on every render and destroy the entire subtree’s DOM nodes and state (https://reactjs.org/docs/reconciliation.html#elements-of-different-types). Instead, move this component definition out of the parent component “MainTabs” and pass data as props. If you want to allow component creation in props, set allowAsProps option to true  react/no-unstable-nested-components
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/navigation/types.ts
+  18:13  error  Use an `interface` instead of a `type`                                                                  @typescript-eslint/consistent-type-definitions
+  24:13  error  Use an `interface` instead of a `type`                                                                  @typescript-eslint/consistent-type-definitions
+  32:13  error  Use an `interface` instead of a `type`                                                                  @typescript-eslint/consistent-type-definitions
+  67:3   error  ES2015 module syntax is preferred over namespaces                                                       @typescript-eslint/no-namespace
+  68:0   error  Unexpected undescribed directive comment. Include descriptions to explain why the comment is necessary  @eslint-community/eslint-comments/require-description
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/account/AboutYouStep.tsx
+  17:53  error  This assertion is unnecessary since it does not change the type of the expression                                   @typescript-eslint/no-unnecessary-type-assertion
+  46:20  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  55:33  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  56:23  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  63:33  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  64:23  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  75:33  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  76:23  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  87:33  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  88:23  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/account/CreateProfileScreen.test.tsx
+   61:5   error  Expected { after 'if' condition                                                                                     curly
+   62:24  error  Expected { after 'if' condition                                                                                     curly
+   73:27  error  Expected { after 'if' condition                                                                                     curly
+  197:21  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  200:21  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  201:24  error  Async arrow function has no 'await' expression                                                                      @typescript-eslint/require-await
+  201:27  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  241:25  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  283:21  error  Forbidden non-null assertion                                                                                        @typescript-eslint/no-non-null-assertion
+  310:25  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  324:25  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  326:22  error  Forbidden non-null assertion                                                                                        @typescript-eslint/no-non-null-assertion
+  336:25  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/account/CreateProfileScreen.tsx
+   62:32  warning  No magic number: 3                                                                                                  @typescript-eslint/no-magic-numbers
+   64:63  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+   68:60  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+   74:47  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+   74:69  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+   97:22  warning  No magic number: 3                                                                                                  @typescript-eslint/no-magic-numbers
+  104:25  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/account/EditProfileScreen.tsx
+   42:53  error    This assertion is unnecessary since it does not change the type of the expression                                   @typescript-eslint/no-unnecessary-type-assertion
+   59:1   warning  Function 'EditProfileForm' has too many lines (153). Maximum allowed is 150                                         max-lines-per-function
+   59:1   warning  Declare only one React component per file                                                                           react/no-multi-comp
+   79:5   error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  101:58  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  107:28  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  125:28  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  140:30  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  141:23  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  160:26  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  177:26  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  197:27  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  206:25  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/account/LandingScreen.tsx
+  15:14  error  A `require()` style import is forbidden                                                                             @typescript-eslint/no-require-imports
+  44:57  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  45:69  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/account/LoginScreen.test.tsx
+   31:24  error  Expected { after 'if' condition                                                                                     curly
+   32:24  error  Expected { after 'if' condition                                                                                     curly
+   79:25  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  101:31  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  102:25  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/account/LoginScreen.tsx
+   95:43  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  121:25  error  Promise-returning function provided to attribute where a void return was expected                                   @typescript-eslint/no-misused-promises
+  127:26  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  132:40  error  Promise-returning function provided to attribute where a void return was expected                                   @typescript-eslint/no-misused-promises
+  138:28  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  149:28  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  160:22  error  Invalid type "string | undefined" of template literal expression                                                    @typescript-eslint/restrict-template-expressions
+  163:25  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/account/PhotoPlaceStep.tsx
+  63:48  error  Unnecessary optional chain on a non-nullish value                                  @typescript-eslint/no-unnecessary-condition
+  63:57  error  Unnecessary optional chain on a non-nullish value                                  @typescript-eslint/no-unnecessary-condition
+  63:69  error  Unnecessary optional chain on a non-nullish value                                  @typescript-eslint/no-unnecessary-condition
+  74:82  error  Promise-returning function provided to attribute where a void return was expected  @typescript-eslint/no-misused-promises
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/account/PreferencesStep.tsx
+  28:13  error  Invalid type "number" of template literal expression                                                                @typescript-eslint/restrict-template-expressions
+  44:29  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  64:27  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/account/ProfileScreen.tsx
+   64:21  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+   78:8   error  Unnecessary conditional, value is always truthy                                                                     @typescript-eslint/no-unnecessary-condition
+   83:26  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  104:28  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  110:28  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  119:25  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/account/ProfileScreens.test.tsx
+  59:29  error  Forbidden non-null assertion                                                                                        @typescript-eslint/no-non-null-assertion
+  64:25  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  71:11  error  Variable name `ALICE` must match one of the following formats: camelCase                                            @typescript-eslint/naming-convention
+  87:25  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  90:7   error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/account/SwitchUserScreen.test.tsx
+  36:11  error  Variable name `ALICE` must match one of the following formats: camelCase  @typescript-eslint/naming-convention
+  37:11  error  Variable name `BOB` must match one of the following formats: camelCase    @typescript-eslint/naming-convention
+  42:36  error  Async arrow function has no 'await' expression                            @typescript-eslint/require-await
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/account/SwitchUserScreen.tsx
+   49:63  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+   83:28  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+   95:32  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  105:24  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/account/useCreateProfile.ts
+   73:8   warning  Function 'useCreateProfile' has too many lines (115). Maximum allowed is 50                                         max-lines-per-function
+   94:39  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  104:11  error    Variable name `mayShow` must have one of the following prefixes: is, has, can, should, was, did, are                @typescript-eslint/naming-convention
+  112:25  warning  No magic number: 3                                                                                                  @typescript-eslint/no-magic-numbers
+  114:28  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/account/useEditProfile.ts
+   79:8   warning  Function 'changedFields' has a complexity of 11. Maximum allowed is 10                                              complexity
+   81:41  error    Expected { after 'if' condition                                                                                     curly
+   82:41  error    Expected { after 'if' condition                                                                                     curly
+   83:31  error    Expected { after 'if' condition                                                                                     curly
+   85:5   error    Expected { after 'if' condition                                                                                     curly
+   99:23  error    Expected { after 'if' condition                                                                                     curly
+  122:8   warning  Function 'useEditProfile' has too many lines (71). Maximum allowed is 50                                            max-lines-per-function
+  188:21  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/chat/ChatListScreen.tsx
+  33:8   warning  Function 'ChatListScreen' has a complexity of 12. Maximum allowed is 10                                             complexity
+  56:22  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  78:30  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/chat/ChatScreens.test.tsx
+   60:37  error  Unnecessary conditional, the types have no overlap                                                                  @typescript-eslint/no-unnecessary-condition
+   60:92  error  Expected { after 'if' condition                                                                                     curly
+   61:29  error  Expected { after 'if' condition                                                                                     curly
+   83:10  error  Use a ! assertion to more succinctly remove null and undefined from the type                                        @typescript-eslint/non-nullable-type-assertion-style
+  102:14  error  Forbidden non-null assertion                                                                                        @typescript-eslint/no-non-null-assertion
+  102:14  error  Forbidden non-null assertion                                                                                        @typescript-eslint/no-non-null-assertion
+  102:14  error  Forbidden non-null assertion                                                                                        @typescript-eslint/no-non-null-assertion
+  107:70  error  Unsafe return of a value of type `any`                                                                              @typescript-eslint/no-unsafe-return
+  131:25  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  132:25  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  141:70  error  Async arrow function has no 'await' expression                                                                      @typescript-eslint/require-await
+  149:25  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  151:7   error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  176:11  error  Unsafe assignment of an `any` value                                                                                 @typescript-eslint/no-unsafe-assignment
+  188:7   error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  189:82  error  Unsafe member access .opacity on an `any` value                                                                     @typescript-eslint/no-unsafe-member-access
+  197:25  error  Unsafe member access .opacity on an `any` value                                                                     @typescript-eslint/no-unsafe-member-access
+  198:25  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  201:7   error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  240:11  error  Unsafe assignment of an `any` value                                                                                 @typescript-eslint/no-unsafe-assignment
+  240:56  error  Unsafe member access .disabled on an `any` value                                                                    @typescript-eslint/no-unsafe-member-access
+  242:11  error  Unsafe assignment of an `any` value                                                                                 @typescript-eslint/no-unsafe-assignment
+  242:57  error  Unsafe member access .disabled on an `any` value                                                                    @typescript-eslint/no-unsafe-member-access
+  250:60  error  Unsafe return of a value of type `any`                                                                              @typescript-eslint/no-unsafe-return
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/chat/ConversationHeader.tsx
+  43:42  warning  No magic number: 4  @typescript-eslint/no-magic-numbers
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/chat/ConversationScreen.tsx
+   61:25  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+   62:35  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+   63:30  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+   72:32  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  100:23  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  107:47  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/chat/NoteDetailScreen.tsx
+   31:8   warning  Function 'NoteDetailScreen' has a complexity of 13. Maximum allowed is 10                                           complexity
+   43:61  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+   66:47  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+   66:70  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+   88:5   error    Unnecessary conditional, value is always falsy                                                                      @typescript-eslint/no-unnecessary-condition
+  110:26  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  118:56  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  143:25  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/chat/NotesPeopleScreen.tsx
+  33:8   warning  Function 'NotesPeopleScreen' has a complexity of 16. Maximum allowed is 10                                          complexity
+  62:22  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  84:28  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/chat/NotesScreen.tsx
+   37:8   warning  Function 'NotesScreen' has a complexity of 11. Maximum allowed is 10                                                complexity
+   64:51  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+   94:17  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  111:25  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/chat/useConversationMessages.ts
+  37:8   warning  Function 'useConversationMessages' has too many lines (91). Maximum allowed is 50  max-lines-per-function
+  93:31  error    Invalid type "number" of template literal expression                               @typescript-eslint/restrict-template-expressions
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/chat/useNewNote.ts
+  71:17  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/chat/useNoteActions.ts
+   36:8   warning  Function 'useNoteActions' has too many lines (69). Maximum allowed is 50                                            max-lines-per-function
+  104:27  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/home/HomeScreen.test.tsx
+  65:21  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  66:21  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  69:25  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/home/HomeScreen.tsx
+   40:8   warning  Function 'HomeScreen' has a complexity of 11. Maximum allowed is 10                                                 complexity
+   68:28  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+   85:26  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+   86:25  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+   87:24  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+   88:24  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+   94:26  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  116:28  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/match/CandidateProfileScreen.tsx
+  49:45  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  56:56  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  74:21  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  83:28  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  93:15  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/match/MatchScreens.test.tsx
+  92:25  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  98:25  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/match/MatchesScreen.tsx
+  41:29  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/match/RecommendedList.tsx
+   32:8   warning  Function 'RecommendedList' has a complexity of 11. Maximum allowed is 10                                            complexity
+   49:42  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+   85:35  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+   86:26  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  105:26  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  135:18  warning  No magic number: 353                                                                                                @typescript-eslint/no-magic-numbers
+  135:24  warning  No magic number: 330                                                                                                @typescript-eslint/no-magic-numbers
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/screens/match/SearchPanel.tsx
+  133:26  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/session/SessionProvider.test.tsx
+   23:43  error    Unsafe return of a value of type `any`                                                                              @typescript-eslint/no-unsafe-return
+   46:3   warning  Missing JSDoc @returns declaration                                                                                  jsdoc/require-returns
+   60:29  error    Expected { after 'if' condition                                                                                     curly
+   76:23  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+   88:25  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  106:25  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  118:25  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  127:25  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  207:25  error    Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/session/SessionProvider.tsx
+  142:18  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/session/queryClient.ts
+  20:52  warning  No magic number: 400   @typescript-eslint/no-magic-numbers
+  20:74  warning  No magic number: 500   @typescript-eslint/no-magic-numbers
+  38:20  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  41:15  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  43:9   warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  46:13  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  48:10  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/utils/age.ts
+  27:28  warning  No magic number: 3  @typescript-eslint/no-magic-numbers
+  44:40  warning  No magic number: 4  @typescript-eslint/no-magic-numbers
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/utils/avatar.ts
+  21:7   error    Unnecessary conditional, the types have no overlap  @typescript-eslint/no-unnecessary-condition
+  26:20  warning  No magic number: 31                                 @typescript-eslint/no-magic-numbers
+  38:10  error    Unnecessary conditional, the types have no overlap  @typescript-eslint/no-unnecessary-condition
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/utils/format.ts
+  106:29  error    Invalid type "number" of template literal expression  @typescript-eslint/restrict-template-expressions
+  117:32  error    Invalid type "number" of template literal expression  @typescript-eslint/restrict-template-expressions
+  117:50  error    Invalid type "number" of template literal expression  @typescript-eslint/restrict-template-expressions
+  129:40  error    Invalid type "9" of template literal expression       @typescript-eslint/restrict-template-expressions
+  156:24  warning  No magic number: 3                                    @typescript-eslint/no-magic-numbers
+  175:29  error    Invalid type "number" of template literal expression  @typescript-eslint/restrict-template-expressions
+  185:34  error    Invalid type "number" of template literal expression  @typescript-eslint/restrict-template-expressions
+  185:72  error    Invalid type "number" of template literal expression  @typescript-eslint/restrict-template-expressions
+  199:15  error    Invalid type "number" of template literal expression  @typescript-eslint/restrict-template-expressions
+  201:40  error    Invalid type "number" of template literal expression  @typescript-eslint/restrict-template-expressions
+  210:27  error    Invalid type "number" of template literal expression  @typescript-eslint/restrict-template-expressions
+  223:30  error    Invalid type "number" of template literal expression  @typescript-eslint/restrict-template-expressions
+  223:57  error    Invalid type "number" of template literal expression  @typescript-eslint/restrict-template-expressions
+  233:81  error    Invalid type "number" of template literal expression  @typescript-eslint/restrict-template-expressions
+  242:13  error    Invalid type "number" of template literal expression  @typescript-eslint/restrict-template-expressions
+  251:38  error    Invalid type "number" of template literal expression  @typescript-eslint/restrict-template-expressions
+  261:41  error    Invalid type "number" of template literal expression  @typescript-eslint/restrict-template-expressions
+  261:50  error    Invalid type "number" of template literal expression  @typescript-eslint/restrict-template-expressions
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/utils/groupMessages.ts
+  109:9   error  Unnecessary conditional, the types have no overlap  @typescript-eslint/no-unnecessary-condition
+  116:24  error  Unnecessary conditional, the types have no overlap  @typescript-eslint/no-unnecessary-condition
+  125:21  error  Unnecessary conditional, the types have no overlap  @typescript-eslint/no-unnecessary-condition
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/utils/place.ts
+  42:35  warning  No magic number: 3  @typescript-eslint/no-magic-numbers
+  42:71  warning  No magic number: 3  @typescript-eslint/no-magic-numbers
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/src/utils/rules.ts
+  144:86  error  Invalid type "18" of template literal expression  @typescript-eslint/restrict-template-expressions
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/test/fixtures/seed.ts
+  387:9   error  Variable name `fromDan` must have one of the following prefixes: is, has, can, should, was, did, are  @typescript-eslint/naming-convention
+  389:12  error  Invalid type "number" of template literal expression                                                  @typescript-eslint/restrict-template-expressions
+  392:16  error  Invalid type "number" of template literal expression                                                  @typescript-eslint/restrict-template-expressions
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/test/renderWithProviders.tsx
+   53:1   warning  Missing JSDoc @param "overrides" declaration    jsdoc/require-param
+   53:1   warning  Missing JSDoc @returns declaration              jsdoc/require-returns
+   58:29  error    Async arrow function has no 'await' expression  @typescript-eslint/require-await
+   59:30  error    Async arrow function has no 'await' expression  @typescript-eslint/require-await
+   67:1   warning  Missing JSDoc @returns declaration              jsdoc/require-returns
+  117:1   warning  Declare only one React component per file       react/no-multi-comp
+  199:3   warning  Missing JSDoc @returns declaration              jsdoc/require-returns
+  200:3   warning  Declare only one React component per file       react/no-multi-comp
+
+/home/kittiphon/Documents/CMKL/SEN-201/Dating App/test/setup.tsx
+  16:9   error  Unsafe assignment of an `any` value                                                                                 @typescript-eslint/no-unsafe-assignment
+  16:74  error  Unsafe member access .secureStoreData on an `any` value                                                             @typescript-eslint/no-unsafe-member-access
+  18:47  error  Async arrow function has no 'await' expression                                                                      @typescript-eslint/require-await
+  19:62  error  Async arrow function has no 'await' expression                                                                      @typescript-eslint/require-await
+  22:50  error  Async arrow function has no 'await' expression                                                                      @typescript-eslint/require-await
+  34:45  error  Async arrow function has no 'await' expression                                                                      @typescript-eslint/require-await
+  41:57  error  Async arrow function has no 'await' expression                                                                      @typescript-eslint/require-await
+  47:9   error  Unsafe assignment of an `any` value                                                                                 @typescript-eslint/no-unsafe-assignment
+  47:11  error  Variable name `Pressable` must match one of the following formats: camelCase                                        @typescript-eslint/naming-convention
+  47:22  error  Variable name `Text` must match one of the following formats: camelCase                                             @typescript-eslint/naming-convention
+  48:9   error  Unsafe assignment of an `any` value                                                                                 @typescript-eslint/no-unsafe-assignment
+  53:48  error  Unsafe argument of type `any` assigned to a parameter of type `Date`                                                @typescript-eslint/no-unsafe-argument
+  53:48  error  Unsafe call of an `any` typed value                                                                                 @typescript-eslint/no-unsafe-call
+  63:37  error  Unsafe argument of type `any` assigned to a parameter of type `Date`                                                @typescript-eslint/no-unsafe-argument
+  63:37  error  Unsafe call of an `any` typed value                                                                                 @typescript-eslint/no-unsafe-call
+  70:3   error  Unsafe return of a value of type `any`                                                                              @typescript-eslint/no-unsafe-return
+  73:44  error  Unsafe return of a value of type `any`                                                                              @typescript-eslint/no-unsafe-return
+  76:9   error  Unsafe assignment of an `any` value                                                                                 @typescript-eslint/no-unsafe-assignment
+  76:79  error  Unsafe member access .default on an `any` value                                                                     @typescript-eslint/no-unsafe-member-access
+  77:9   error  Unsafe assignment of an `any` value                                                                                 @typescript-eslint/no-unsafe-assignment
+  77:11  error  Variable name `SAFE_AREA_METRICS` must match one of the following formats: camelCase                                @typescript-eslint/naming-convention
+  78:3   error  Unsafe return of a value of type `any`                                                                              @typescript-eslint/no-unsafe-return
+  80:5   error  Unsafe assignment of an `any` value                                                                                 @typescript-eslint/no-unsafe-assignment
+  81:30  error  Unsafe return of a value of type `any`                                                                              @typescript-eslint/no-unsafe-return
+  81:48  error  Unsafe member access .insets on an `any` value                                                                      @typescript-eslint/no-unsafe-member-access
+  82:29  error  Unsafe return of a value of type `any`                                                                              @typescript-eslint/no-unsafe-return
+  82:47  error  Unsafe member access .frame on an `any` value                                                                       @typescript-eslint/no-unsafe-member-access
+  95:25  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  95:38  error  Use a ! assertion to more succinctly remove null and undefined from the type                                        @typescript-eslint/non-nullable-type-assertion-style
+  97:26  error  Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function  @typescript-eslint/no-confusing-void-expression
+  97:40  error  Use a ! assertion to more succinctly remove null and undefined from the type                                        @typescript-eslint/non-nullable-type-assertion-style
+
+✖ 471 problems (319 errors, 152 warnings)
+  178 errors and 39 warnings potentially fixable with the `--fix` option.
+

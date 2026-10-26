@@ -4,6 +4,7 @@
  * from a server field to its Create profile step (4.3).
  * Created by Tee (Kittiphon Kijpinyochai), 6 October 2026
  */
+import { LAST_PROFILE_STEP, type ProfileStep } from "../constants/limits";
 
 /** Every error code the app knows. NETWORK_ERROR and UNEXPECTED_RESPONSE are app-only. */
 export type ApiErrorCode =
@@ -95,12 +96,17 @@ export function isErrorCode(code: unknown): code is ApiErrorCode {
 }
 
 /**
- * Whether fetch itself failed: a rejected request (TypeError) or a timeout (AbortError).
+ * Whether fetch itself failed: a rejected request (TypeError), a timeout (AbortError), or Expo's
+ * fetch, which reports a lost connection as a plain Error whose message starts with "fetch failed".
  * @param error What was caught.
  * @returns True for a network failure.
  */
 export function isNetworkFailure(error: unknown): boolean {
-  return error instanceof TypeError || (error instanceof Error && error.name === "AbortError");
+  return (
+    error instanceof TypeError ||
+    (error instanceof Error &&
+      (error.name === "AbortError" || error.message.startsWith("fetch failed")))
+  );
 }
 
 /**
@@ -162,7 +168,7 @@ const STEP_TWO_FIELDS = ["photoUploadId", "location", "location.lat", "location.
  * @param field The error's field.
  * @returns 1, 2 or 3, or null when unknown (show a banner instead).
  */
-export function stepForField(field: string | undefined): 1 | 2 | 3 | null {
+export function stepForField(field: string | undefined): ProfileStep | null {
   if (field === undefined) {
     return null;
   }
@@ -174,7 +180,7 @@ export function stepForField(field: string | undefined): 1 | 2 | 3 | null {
     return 2;
   }
   if (clean.startsWith("preferences.") || clean === "preferences") {
-    return 3;
+    return LAST_PROFILE_STEP;
   }
   return null;
 }

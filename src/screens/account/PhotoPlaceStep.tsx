@@ -59,7 +59,7 @@ export function PhotoPlaceStep({ form }: { form: CreateProfileController }): Rea
       }
     } catch (error) {
       if (__DEV__) {
-        const e = error as Error & { cause?: unknown };
+        const e = error instanceof Error ? error : undefined;
         console.warn("[photo] upload failed", e?.name, e?.message, e?.cause);
       }
       setPhotoError(photoUploadMessage(error));
@@ -68,10 +68,14 @@ export function PhotoPlaceStep({ form }: { form: CreateProfileController }): Rea
     }
   };
 
+  const onChoosePhoto = (): void => {
+    void choosePhoto();
+  };
+
   return (
     <>
       <Text style={styles.label}>Profile photo</Text>
-      <PhotoTile localUri={values.photo?.local.uri} isBusy={isUploading} onPress={choosePhoto} />
+      <PhotoTile localUri={values.photo?.local.uri} isBusy={isUploading} onPress={onChoosePhoto} />
       <View style={styles.photoNotes}>
         <Text style={styles.helper}>{PHOTO_HELPER}</Text>
         <FieldError message={photoError ?? errorFor("photo")} />

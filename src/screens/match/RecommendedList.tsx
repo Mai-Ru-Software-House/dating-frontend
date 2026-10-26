@@ -5,11 +5,16 @@
  * Created by Tee (Kittiphon Kijpinyochai), 6 October 2026
  */
 import { useNavigation } from "@react-navigation/native";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  type InfiniteData,
+  type UseInfiniteQueryResult,
+} from "@tanstack/react-query";
 import { type ReactElement } from "react";
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from "react-native";
 
 import { matchingApi } from "../../api/matching";
+import type { RecommendationsPage } from "../../api/types";
 import { EmptyState } from "../../components/EmptyState";
 import { LoadError } from "../../components/LoadError";
 import { MatchCard } from "../../components/MatchCard";
@@ -20,9 +25,55 @@ import { useFavorites } from "../../hooks/useFavorites";
 import { usePullRefresh } from "../../hooks/usePullRefresh";
 import { useRefreshOnFocus } from "../../hooks/useRefreshOnFocus";
 import { keys } from "../../session/queryClient";
-import { colors, columnStyle, GUTTER, radius, space } from "../../theme";
+import {
+  colors,
+  columnStyle,
+  GUTTER,
+  MATCH_CARD_MAX_HEIGHT,
+  MATCH_CARD_RATIO,
+  radius,
+  space,
+} from "../../theme";
 import { dedupeCandidates, nextOffset, splitTopMatch } from "../../utils/recommendations";
 import { CandidateRow } from "./CandidateRow";
+
+/**
+ * The loading, error and empty states above the list.
+ * @param query The recommendations query.
+ * @param cardCount How many cards are loaded.
+ * @returns The state to show, or null when there are cards.
+ */
+function renderStatus(
+  query: UseInfiniteQueryResult<InfiniteData<RecommendationsPage>>,
+  cardCount: number,
+): React.JSX.Element | null {
+  if (query.isLoading) {
+    return (
+      <>
+        <View style={styles.cardSkeleton} />
+        <RowSkeleton />
+      </>
+    );
+  }
+  if (query.isError && query.data === undefined) {
+    return (
+      <LoadError
+        message="Couldn't load your matches."
+        onRetry={() => void query.refetch()}
+        isRetrying={query.isFetching}
+      />
+    );
+  }
+  if (query.isSuccess && cardCount === 0) {
+    return (
+      <EmptyState
+        title="No one fits your preferences yet."
+        detail="Try a wider age range or distance."
+      />
+    );
+  }
+  return null;
+}
 
 /**
  * The Recommended list.
@@ -46,7 +97,9 @@ export function RecommendedList({ header }: { header: ReactElement }): React.JSX
   const cards = dedupeCandidates(query.data?.pages.flatMap((page) => page.recommendations) ?? []);
   const { card, rows } = splitTopMatch(cards);
   const isLoadingMore = query.isFetchingNextPage;
-  const open = (userId: string): void => navigation.navigate("CandidateProfile", { userId });
+  const open = (userId: string): void => {
+    navigation.navigate("CandidateProfile", { userId });
+  };
 
   const loadMore = (): void => {
     if (query.isFetching || !query.hasNextPage) {
@@ -59,31 +112,17 @@ export function RecommendedList({ header }: { header: ReactElement }): React.JSX
   const top = (
     <View>
       {header}
-      {query.isLoading ? (
-        <>
-          <View style={styles.cardSkeleton} />
-          <RowSkeleton />
-        </>
-      ) : null}
-      {query.isError && query.data === undefined ? (
-        <LoadError
-          message="Couldn't load your matches."
-          onRetry={() => void query.refetch()}
-          isRetrying={query.isFetching}
-        />
-      ) : null}
-      {query.isSuccess && cards.length === 0 ? (
-        <EmptyState
-          title="No one fits your preferences yet."
-          detail="Try a wider age range or distance."
-        />
-      ) : null}
+      {renderStatus(query, cards.length)}
       {card !== null ? (
         <MatchCard
           card={card}
           isFavorite={isFavorite(card.userId)}
-          onToggleFavorite={() => toggle(card.userId)}
-          onPress={() => open(card.userId)}
+          onToggleFavorite={() => {
+            toggle(card.userId);
+          }}
+          onPress={() => {
+            open(card.userId);
+          }}
         />
       ) : null}
       {rows.length > 0 ? (
@@ -102,7 +141,9 @@ export function RecommendedList({ header }: { header: ReactElement }): React.JSX
         <CandidateRow
           card={item}
           isFavorite={isFavorite(item.userId)}
-          onPress={() => open(item.userId)}
+          onPress={() => {
+            open(item.userId);
+          }}
         />
       )}
       ListHeaderComponent={top}
@@ -132,8 +173,8 @@ const styles = StyleSheet.create({
   },
   cardSkeleton: {
     width: "100%",
-    aspectRatio: 353 / 330,
-    maxHeight: 420,
+    aspectRatio: MATCH_CARD_RATIO,
+    maxHeight: MATCH_CARD_MAX_HEIGHT,
     borderRadius: radius.hero,
     backgroundColor: colors.chip,
     marginBottom: space.xxl,

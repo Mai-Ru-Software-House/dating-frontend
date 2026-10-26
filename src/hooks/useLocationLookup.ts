@@ -57,6 +57,51 @@ async function readPosition(): Promise<Location.LocationObject | null> {
   }
 }
 
+/** What a place-name lookup came back with. */
+interface PlaceNameResult {
+  /** The name, or null when none could be found. */
+  placeName: string | null;
+  /** True when trying again may help (anything but PLACE_NOT_FOUND). */
+  canRetry: boolean;
+}
+
+/**
+ * Looks up the place name for a point, repeating while the geocoder is unavailable.
+ * @param point The coordinates.
+ * @param retries How many more tries after the first when the geocoder is unavailable.
+ * @returns The name, or null with whether a retry may help.
+ */
+async function lookupPlaceName(point: Coordinates, retries: number): Promise<PlaceNameResult> {
+  for (let attempt = 0; ; attempt += 1) {
+    try {
+      return { placeName: await placesApi.lookup(point.lat, point.lon), canRetry: false };
+    } catch (error) {
+      const code = toApiError(error).code;
+      if (code === "GEOCODER_UNAVAILABLE" && attempt < retries) {
+        await wait(PLACE_RETRY_DELAY_MS);
+        continue;
+      }
+      return { placeName: null, canRetry: code !== "PLACE_NOT_FOUND" };
+    }
+  }
+}
+
+/**
+ * Asks for permission and reads the device position.
+ * @returns The coordinates, or null when permission is refused or no position can be read.
+ */
+async function readCoordinates(): Promise<Coordinates | null> {
+  const permission = await Location.requestForegroundPermissionsAsync();
+  if (!permission.granted) {
+    return null;
+  }
+  const position = await readPosition();
+  if (position === null) {
+    return null;
+  }
+  return { lat: position.coords.latitude, lon: position.coords.longitude };
+}
+
 /**
  * The GPS lookup.
  * @param onFix Called with the coordinates and the place name (null when there is none).
@@ -69,25 +114,10 @@ export function useLocationLookup(onFix: (fix: LocationFix) => void): LocationLo
 
   const name = useCallback(
     async (point: Coordinates, retries: number): Promise<void> => {
-      for (let attempt = 0; ; attempt += 1) {
-        try {
-          const placeName = await placesApi.lookup(point.lat, point.lon);
-          setCanRetry(false);
-          setPhase("found");
-          onFix({ coords: point, placeName });
-          return;
-        } catch (error) {
-          const code = toApiError(error).code;
-          if (code === "GEOCODER_UNAVAILABLE" && attempt < retries) {
-            await wait(PLACE_RETRY_DELAY_MS);
-            continue;
-          }
-          setCanRetry(code !== "PLACE_NOT_FOUND");
-          setPhase("noName");
-          onFix({ coords: point, placeName: null });
-          return;
-        }
-      }
+      const result = await lookupPlaceName(point, retries);
+      setCanRetry(result.canRetry);
+      setPhase(result.placeName === null ? "noName" : "found");
+      onFix({ coords: point, placeName: result.placeName });
     },
     [onFix],
   );
@@ -95,17 +125,11 @@ export function useLocationLookup(onFix: (fix: LocationFix) => void): LocationLo
   const locate = useCallback(async () => {
     setPhase("locating");
     try {
-      const permission = await Location.requestForegroundPermissionsAsync();
-      if (!permission.granted) {
+      const point = await readCoordinates();
+      if (point === null) {
         setPhase("denied");
         return;
       }
-      const position = await readPosition();
-      if (position === null) {
-        setPhase("denied");
-        return;
-      }
-      const point = { lat: position.coords.latitude, lon: position.coords.longitude };
       setCoords(point);
       await name(point, 1);
     } catch {

@@ -25,7 +25,7 @@ export const TARGET_OPTIONS = TARGET_CHIPS.map((chip) => ({ value: chip, label: 
  * @returns For example "50 km".
  */
 export function kmLabel(km: number): string {
-  return `${km} km`;
+  return `${String(km)} km`;
 }
 
 /**
@@ -41,7 +41,9 @@ export function PreferencesStep({ form }: { form: CreateProfileController }): Re
         label="Interested in"
         options={TARGET_OPTIONS}
         value={values.targetChip}
-        onChange={(chip) => set("targetChip", chip)}
+        onChange={(chip) => {
+          set("targetChip", chip);
+        }}
         error={errorFor("targetChip")}
       />
       <RangeSlider
@@ -61,7 +63,9 @@ export function PreferencesStep({ form }: { form: CreateProfileController }): Re
         min={DISTANCE_SLIDER_MIN}
         max={DISTANCE_SLIDER_MAX}
         value={values.radiusKm}
-        onChange={(km) => set("radiusKm", km)}
+        onChange={(km) => {
+          set("radiusKm", km);
+        }}
         format={kmLabel}
       />
     </>

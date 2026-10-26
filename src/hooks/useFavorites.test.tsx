@@ -30,7 +30,9 @@ async function renderFavorites(): Promise<{
   api.getFavorites.mockResolvedValue([CHAI]);
   const { wrapper, queryClient } = createWrapper();
   const { result } = await renderHook(() => useFavorites(), { wrapper });
-  await waitFor(() => expect(result.current.isFavorite(CHAI)).toBe(true));
+  await waitFor(() => {
+    expect(result.current.isFavorite(CHAI)).toBe(true);
+  });
   return { result, queryClient };
 }
 
@@ -45,12 +47,21 @@ describe("toggleFavorite", () => {
     const { result, queryClient } = await renderFavorites();
     const invalidate = jest.spyOn(queryClient, "invalidateQueries");
 
-    await act(() => result.current.toggle(BOB));
+    await act(() => {
+      result.current.toggle(BOB);
+    });
 
-    await waitFor(() => expect([...result.current.favorites]).toEqual([CHAI, BOB]));
+    await waitFor(() => {
+      expect([...result.current.favorites]).toEqual([CHAI, BOB]);
+    });
     expect(api.add).toHaveBeenCalledWith(BOB);
-    await act(async () => finishPut());
-    await waitFor(() => expect(invalidate).toHaveBeenCalledWith({ queryKey: keys.conversations }));
+    await act(() => {
+      finishPut();
+      return Promise.resolve();
+    });
+    await waitFor(() => {
+      expect(invalidate).toHaveBeenCalledWith({ queryKey: keys.conversations });
+    });
   });
 
   it("UT-FAV-02: adding twice keeps one entry", async () => {
@@ -62,7 +73,9 @@ describe("toggleFavorite", () => {
       result.current.toggle(BOB);
     });
 
-    await waitFor(() => expect(api.add).toHaveBeenCalledTimes(2));
+    await waitFor(() => {
+      expect(api.add).toHaveBeenCalledTimes(2);
+    });
     expect([...result.current.favorites].filter((id) => id === BOB)).toHaveLength(1);
     expect(screen.queryByText("Couldn't update favorites. Try again.")).not.toBeOnTheScreen();
   });
@@ -71,9 +84,13 @@ describe("toggleFavorite", () => {
     api.remove.mockResolvedValueOnce(undefined);
     const { result } = await renderFavorites();
 
-    await act(() => result.current.toggle(CHAI));
+    await act(() => {
+      result.current.toggle(CHAI);
+    });
 
-    await waitFor(() => expect(result.current.isFavorite(CHAI)).toBe(false));
+    await waitFor(() => {
+      expect(result.current.isFavorite(CHAI)).toBe(false);
+    });
     expect(api.remove).toHaveBeenCalledWith(CHAI);
   });
 
@@ -81,9 +98,13 @@ describe("toggleFavorite", () => {
     api.add.mockRejectedValueOnce(new ApiError(0, "NETWORK_ERROR", "offline"));
     const { result } = await renderFavorites();
 
-    await act(() => result.current.toggle(BOB));
+    await act(() => {
+      result.current.toggle(BOB);
+    });
 
-    await waitFor(() => expect([...result.current.favorites]).toEqual([CHAI]));
+    await waitFor(() => {
+      expect([...result.current.favorites]).toEqual([CHAI]);
+    });
     expect(await screen.findByText("Couldn't update favorites. Try again.")).toBeOnTheScreen();
   });
 });

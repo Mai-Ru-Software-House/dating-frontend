@@ -35,7 +35,7 @@ export function photoFormData(photo: PickedPhoto): FormData {
   const body = new FormData();
   const name = fileNameFor(photo);
   if (__DEV__) {
-    console.log("[photo] picked", photo, "file name", name, "type", uploadMimeType(photo));
+    console.warn("[photo] picked", photo, "file name", name, "type", uploadMimeType(photo));
   }
   // File implements Blob but is not declared as one; the cast avoids `any`.
   body.append("photo", new File(photo.uri) as unknown as Blob, name);
@@ -51,7 +51,7 @@ const realPhotosApi: PhotosApi = {
     }),
   async deleteTemp(upload) {
     // How the delete token is sent is open (9.6); header X-Delete-Token until decided.
-    await request<void>("DELETE", `/photo-uploads/${encodeURIComponent(upload.uploadId)}`, {
+    await request<unknown>("DELETE", `/photo-uploads/${encodeURIComponent(upload.uploadId)}`, {
       isAuthenticated: false,
       headers: { "X-Delete-Token": upload.deleteToken },
     });

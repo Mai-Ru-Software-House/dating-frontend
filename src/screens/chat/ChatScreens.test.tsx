@@ -6,7 +6,7 @@
  * Created by Tee (Kittiphon Kijpinyochai), 7 October 2026
  */
 import { fireEvent, screen, userEvent, waitFor, within } from "@testing-library/react-native";
-import { StyleSheet } from "react-native";
+import { StyleSheet, type StyleProp, type ViewStyle } from "react-native";
 
 import { setAliceDefaults } from "../../../test/apiDefaults";
 import { freezeToday } from "../../../test/fixtures/clock";
@@ -20,6 +20,7 @@ import {
   summaryOf,
   USERS,
 } from "../../../test/fixtures/seed";
+import { parentOf } from "../../../test/hostElements";
 import {
   fakeSession,
   renderScreen,
@@ -56,9 +57,13 @@ function hostsOfType(type: string): HostElement[] {
   const queue: unknown[] = [screen.container];
   while (queue.length > 0) {
     const node = queue.shift() as
-      { type?: unknown; props?: Record<string, unknown>; children?: unknown[] } | string;
-    if (typeof node !== "object" || node === null || node.props?.["aria-hidden"] === true) continue;
-    if (node.type === type) found.push(node as unknown as HostElement);
+      { type?: unknown; props?: Record<string, unknown>; children?: unknown[] } | string | null;
+    if (typeof node !== "object" || node === null || node.props?.["aria-hidden"] === true) {
+      continue;
+    }
+    if (node.type === type) {
+      found.push(node as unknown as HostElement);
+    }
     queue.push(...(node.children ?? []));
   }
   return found;
@@ -80,7 +85,35 @@ function renderConversation(username: string, options?: RenderOptions): Promise<
  * @returns The bubble element.
  */
 function bubbleOf(text: string): HostElement {
-  return screen.getByText(text).parent as HostElement;
+  return parentOf(screen.getByText(text));
+}
+
+/**
+ * The flattened style of an element.
+ * @param element The element.
+ * @returns Its style as one object.
+ */
+function styleOf(element: HostElement): ViewStyle {
+  return StyleSheet.flatten((element.props as { style?: StyleProp<ViewStyle> }).style);
+}
+
+/**
+ * Whether a button's accessibility state says it is disabled.
+ * @param element The button.
+ * @returns The disabled flag, or undefined when the state is not set.
+ */
+function isDisabled(element: HostElement): boolean | undefined {
+  return (element.props as { accessibilityState?: { disabled?: boolean } }).accessibilityState
+    ?.disabled;
+}
+
+/**
+ * The text a Text element shows.
+ * @param element The Text element.
+ * @returns Its children.
+ */
+function textOf(element: HostElement): string {
+  return (element.props as { children: string }).children;
 }
 
 beforeEach(() => {
@@ -99,12 +132,12 @@ describe("ChatList", () => {
 
     // Section label text → its row → the section around the label and its rows.
     const sectionOf = (label: HostElement): ReturnType<typeof within> =>
-      within(label.parent!.parent!.parent!);
+      within(parentOf(parentOf(parentOf(label))));
     const favorites = sectionOf(await screen.findByText("FAVORITES"));
     const allSection = sectionOf(screen.getByText("ALL CHATS"));
     expect(favorites.getByText("Chai")).toBeOnTheScreen();
     expect(favorites.queryByText("Bob")).not.toBeOnTheScreen();
-    const names = allSection.getAllByText(/^(Bob|Hana)$/).map((t) => t.props.children);
+    const names = allSection.getAllByText(/^(Bob|Hana)$/).map(textOf);
     expect(names).toEqual(["Bob", "Hana"]);
     expect(allSection.getByText("3")).toBeOnTheScreen();
 
@@ -128,8 +161,12 @@ describe("Conversation", () => {
     const invalidate = jest.spyOn(queryClient, "invalidateQueries");
     await renderConversation("bob", { queryClient });
 
-    await waitFor(() => expect(messaging.markRead).toHaveBeenCalledWith(USERS.bob.userId));
-    await waitFor(() => expect(invalidate).toHaveBeenCalledWith({ queryKey: keys.unread }));
+    await waitFor(() => {
+      expect(messaging.markRead).toHaveBeenCalledWith(USERS.bob.userId);
+    });
+    await waitFor(() => {
+      expect(invalidate).toHaveBeenCalledWith({ queryKey: keys.unread });
+    });
     expect(invalidate).toHaveBeenCalledWith({ queryKey: keys.conversations });
   });
 
@@ -138,18 +175,20 @@ describe("Conversation", () => {
       first: { messages: DAN_THREAD.slice(0, 30), hasMore: true },
       older: { messages: DAN_THREAD.slice(30), hasMore: false },
     };
-    messaging.getMessages.mockImplementation(async (_userId, before) =>
-      before === undefined ? pages.first : pages.older,
+    messaging.getMessages.mockImplementation((_userId, before) =>
+      Promise.resolve(before === undefined ? pages.first : pages.older),
     );
     await renderConversation("dan");
     await screen.findByText("Message 60");
 
     // The list is inverted: its end is the top of the screen.
     await fireEvent(hostsOfType("RCTScrollView")[0], "endReached");
-    await waitFor(() => expect(messaging.getMessages).toHaveBeenCalledTimes(2));
-    await waitFor(() =>
-      expect(screen.queryByLabelText("Loading older messages")).not.toBeOnTheScreen(),
-    );
+    await waitFor(() => {
+      expect(messaging.getMessages).toHaveBeenCalledTimes(2);
+    });
+    await waitFor(() => {
+      expect(screen.queryByLabelText("Loading older messages")).not.toBeOnTheScreen();
+    });
     await fireEvent(hostsOfType("RCTScrollView")[0], "endReached");
 
     expect(messaging.getMessages.mock.calls).toEqual([
@@ -173,7 +212,7 @@ describe("Conversation", () => {
 
     await user.type(screen.getByLabelText("Message"), "Hi Bob, coffee this weekend?");
     await user.press(screen.getByRole("button", { name: "Send" }));
-    const pendingStyle = StyleSheet.flatten(bubbleOf("Hi Bob, coffee this weekend?").props.style);
+    const pendingStyle = styleOf(bubbleOf("Hi Bob, coffee this weekend?"));
     const sent = message(
       "msg_44",
       "alice",
@@ -184,22 +223,22 @@ describe("Conversation", () => {
     );
     messaging.getMessages.mockResolvedValue({ messages: [sent, M4, M3, M2], hasMore: false });
     confirm(sent);
-    await waitFor(() =>
-      expect(
-        StyleSheet.flatten(bubbleOf("Hi Bob, coffee this weekend?").props.style).opacity,
-      ).toBeUndefined(),
-    );
+    await waitFor(() => {
+      expect(styleOf(bubbleOf("Hi Bob, coffee this weekend?")).opacity).toBeUndefined();
+    });
     await user.type(screen.getByLabelText("Message"), "See you there");
     await user.press(screen.getByRole("button", { name: "Send" }));
     const retry = await screen.findByText("Not sent. Tap to retry.");
     await user.press(retry);
 
     expect(pendingStyle.opacity).toBe(0.5);
-    await waitFor(() => expect(messaging.sendMessage).toHaveBeenCalledTimes(3));
+    await waitFor(() => {
+      expect(messaging.sendMessage).toHaveBeenCalledTimes(3);
+    });
     expect(messaging.sendMessage).toHaveBeenLastCalledWith(USERS.bob.userId, "See you there");
-    await waitFor(() =>
-      expect(screen.queryByText("Not sent. Tap to retry.")).not.toBeOnTheScreen(),
-    );
+    await waitFor(() => {
+      expect(screen.queryByText("Not sent. Tap to retry.")).not.toBeOnTheScreen();
+    });
   });
 
   it("UT-SCR-21: long-press replies to a message and the bubble shows the quote", async () => {
@@ -237,17 +276,17 @@ describe("Notes", () => {
 
     await user.press(screen.getByRole("button", { name: "New note" }));
     const save = (): HostElement => screen.getByRole("button", { name: "Save" });
-    const whenEmpty = save().props.accessibilityState?.disabled;
+    const isDisabledWhenEmpty = isDisabled(save());
     await user.type(screen.getByLabelText("New note"), "   ");
-    const whenSpaces = save().props.accessibilityState?.disabled;
+    const isDisabledWhenSpaces = isDisabled(save());
     await user.clear(screen.getByLabelText("New note"));
     await user.type(screen.getByLabelText("New note"), created.text);
     await user.press(save());
 
-    expect([whenEmpty, whenSpaces]).toEqual([true, true]);
+    expect([isDisabledWhenEmpty, isDisabledWhenSpaces]).toEqual([true, true]);
     expect(notes.create).toHaveBeenCalledWith(USERS.bob.userId, created.text);
     expect(await screen.findByRole("button", { name: "New note" })).toBeOnTheScreen();
-    const cards = screen.getAllByText(/Met at/).map((t) => t.props.children);
+    const cards = screen.getAllByText(/Met at/).map(textOf);
     expect(cards).toEqual([created.text, older.text]);
     expect(screen.getByText("Today, 09:55")).toBeOnTheScreen();
   });

@@ -51,6 +51,16 @@ describe("messageFor", () => {
     expect(messageFor(timeout)).toBe(expected);
   });
 
+  it("UT-ERR-01: Expo's fetch reports a lost connection as an Error that starts with 'fetch failed'", () => {
+    const refused = new Error(
+      "fetch failed: java.net.ConnectException: Failed to connect to /10.0.2.2:3000",
+    );
+
+    expect(messageFor(refused)).toBe(
+      "Can't reach the server. Check your connection and try again.",
+    );
+  });
+
   it("UT-ERR-01: any other thrown error is an unknown error, not a network failure", () => {
     expect(messageFor(new Error("bug"))).toBe("Something went wrong. Try again.");
     expect(messageFor("offline")).toBe("Something went wrong. Try again.");

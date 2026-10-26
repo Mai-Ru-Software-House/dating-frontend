@@ -28,8 +28,12 @@ const logInApi = jest.mocked(sessionsApi.logIn);
  */
 async function logIn(username: string, password: string): Promise<void> {
   const user = userEvent.setup();
-  if (username !== "") await user.type(screen.getByLabelText("Username"), username);
-  if (password !== "") await user.type(screen.getByLabelText("Password"), password);
+  if (username !== "") {
+    await user.type(screen.getByLabelText("Username"), username);
+  }
+  if (password !== "") {
+    await user.type(screen.getByLabelText("Password"), password);
+  }
   await user.press(screen.getByRole("button", { name: "Log in" }));
 }
 
@@ -76,7 +80,9 @@ describe("LoginScreen", () => {
 
     await logIn("alice", "Alice2026");
 
-    await waitFor(() => expect(session.logIn).toHaveBeenCalledWith(result));
+    await waitFor(() => {
+      expect(session.logIn).toHaveBeenCalledWith(result);
+    });
     expect(logInApi).toHaveBeenCalledWith("alice", "Alice2026");
   });
 
@@ -98,8 +104,12 @@ describe("LoginScreen", () => {
     await user.press(screen.getByRole("button", { name: "Remove from this phone" }));
     await user.press(screen.getByRole("button", { name: "Remove" }));
 
-    await waitFor(async () => expect(await loadAccounts()).toEqual([]));
-    await waitFor(() => expect(currentRoute(navigation).name).toBe("Previous"));
+    await waitFor(async () => {
+      expect(await loadAccounts()).toEqual([]);
+    });
+    await waitFor(() => {
+      expect(currentRoute(navigation).name).toBe("Previous");
+    });
     expect(queryClient.getQueryData(keys.knownAccounts)).toEqual([]);
   });
 

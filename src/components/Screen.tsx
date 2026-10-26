@@ -14,7 +14,7 @@ import {
   type StyleProp,
   type ViewStyle,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useSafeAreaInsets, type EdgeInsets } from "react-native-safe-area-context";
 
 import { usePullRefresh } from "../hooks/usePullRefresh";
 import { colors, columnStyle, GUTTER, space } from "../theme";
@@ -48,6 +48,41 @@ export interface ScreenProps {
 }
 
 /**
+ * The padding the safe-area insets add above and below the content.
+ * @param props The screen's props.
+ * @param insets The device's safe-area insets.
+ * @returns The top and bottom padding in points.
+ */
+function insetPadding(props: ScreenProps, insets: EdgeInsets): { top: number; bottom: number } {
+  const { footer, isInTabs = false, hasTopInset = true } = props;
+  const shouldPadBottom = footer === undefined && !isInTabs;
+  return { top: hasTopInset ? insets.top : 0, bottom: shouldPadBottom ? insets.bottom : 0 };
+}
+
+/**
+ * The pull-to-refresh control, when the screen has a refresh handler.
+ * @param onRefresh The screen's refresh handler, if any.
+ * @param pull The pull state from usePullRefresh.
+ * @returns The control, or undefined.
+ */
+function refreshControlFor(
+  onRefresh: ScreenProps["onRefresh"],
+  pull: ReturnType<typeof usePullRefresh>,
+): React.JSX.Element | undefined {
+  if (!onRefresh) {
+    return undefined;
+  }
+  return (
+    <RefreshControl
+      refreshing={pull.isPulling}
+      onRefresh={pull.onPull}
+      tintColor={colors.accent}
+      colors={[colors.accent]}
+    />
+  );
+}
+
+/**
  * Screen wrapper used by every screen.
  * @param props See ScreenProps.
  * @returns The wrapped screen.
@@ -59,8 +94,6 @@ export function Screen(props: ScreenProps): React.JSX.Element {
     footer,
     isScrollable = true,
     isPadded = true,
-    hasTopInset = true,
-    isInTabs = false,
     onRefresh,
     contentStyle,
     backgroundColor = colors.bg,
@@ -68,11 +101,11 @@ export function Screen(props: ScreenProps): React.JSX.Element {
   } = props;
   const insets = useSafeAreaInsets();
   const pull = usePullRefresh(onRefresh ?? noop);
-  const needsBottomInset = footer === undefined && !isInTabs;
+  const { top: topInset, bottom: bottomInset } = insetPadding(props, insets);
   const column = [columnStyle, isPadded && styles.padded, contentStyle];
 
   return (
-    <View style={[styles.root, { backgroundColor, paddingTop: hasTopInset ? insets.top : 0 }]}>
+    <View style={[styles.root, { backgroundColor, paddingTop: topInset }]}>
       {header}
       {/* Android draws edge to edge, so the window doesn't resize for the keyboard: pad on both. */}
       <KeyboardAvoidingView style={styles.flex} behavior="padding">
@@ -82,27 +115,16 @@ export function Screen(props: ScreenProps): React.JSX.Element {
             style={styles.flex}
             contentContainerStyle={[
               styles.scrollContent,
-              { paddingBottom: (needsBottomInset ? insets.bottom : 0) + space.xxl },
+              { paddingBottom: bottomInset + space.xxl },
             ]}
             keyboardShouldPersistTaps="handled"
             keyboardDismissMode="interactive"
-            refreshControl={
-              onRefresh ? (
-                <RefreshControl
-                  refreshing={pull.isPulling}
-                  onRefresh={pull.onPull}
-                  tintColor={colors.accent}
-                  colors={[colors.accent]}
-                />
-              ) : undefined
-            }
+            refreshControl={refreshControlFor(onRefresh, pull)}
           >
             <View style={column}>{children}</View>
           </ScrollView>
         ) : (
-          <View style={[styles.flex, { paddingBottom: needsBottomInset ? insets.bottom : 0 }]}>
-            {children}
-          </View>
+          <View style={[styles.flex, { paddingBottom: bottomInset }]}>{children}</View>
         )}
         {footer}
       </KeyboardAvoidingView>

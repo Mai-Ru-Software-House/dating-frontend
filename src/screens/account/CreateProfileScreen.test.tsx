@@ -12,6 +12,7 @@ import * as Location from "expo-location";
 import { setPickedDate } from "../../../test/datePicker";
 import { ANIM_GIF, SQUARE_500, SQUARE_BIG } from "../../../test/fixtures/photos";
 import { MINT, ownProfileOf } from "../../../test/fixtures/seed";
+import { parentOf } from "../../../test/hostElements";
 import { currentRoute, renderScreen, type Rendered } from "../../../test/renderWithProviders";
 import { ApiError } from "../../api/errors";
 import { photosApi } from "../../api/photos";
@@ -57,9 +58,12 @@ const MINT_ABOUT: AboutYou = {
  * @param values The values.
  */
 async function fillAboutYou(user: User, values: AboutYou): Promise<void> {
-  if (values.displayName)
+  if (values.displayName) {
     await user.type(screen.getByLabelText("Display name"), values.displayName);
-  if (values.username) await user.type(screen.getByLabelText("Username"), values.username);
+  }
+  if (values.username) {
+    await user.type(screen.getByLabelText("Username"), values.username);
+  }
   if (values.password) {
     await user.type(screen.getByLabelText("Password"), values.password);
     await user.type(screen.getByLabelText("Confirm password"), values.password);
@@ -70,7 +74,9 @@ async function fillAboutYou(user: User, values: AboutYou): Promise<void> {
     await user.press(screen.getByRole("button", { name: "Choose test date" }));
     await user.press(screen.getByRole("button", { name: "Done" }));
   }
-  if (values.genderLabel) await user.press(screen.getByRole("radio", { name: values.genderLabel }));
+  if (values.genderLabel) {
+    await user.press(screen.getByRole("radio", { name: values.genderLabel }));
+  }
 }
 
 /**
@@ -194,11 +200,18 @@ describe("Step 1 username check", () => {
     await user.type(field, "m", { skipBlur: true });
     await user.type(field, "i", { skipBlur: true });
     await user.type(field, "nt", { skipBlur: true });
-    await act(() => jest.advanceTimersByTime(500));
+    await act(() => {
+      jest.advanceTimersByTime(500);
+    });
     const callsForMint = profile.checkUsername.mock.calls.map((call) => call[0]);
     await user.type(field, "1", { skipBlur: true });
-    await act(() => jest.advanceTimersByTime(500));
-    await act(async () => answerMint(false));
+    await act(() => {
+      jest.advanceTimersByTime(500);
+    });
+    await act(() => {
+      answerMint(false);
+      return Promise.resolve();
+    });
 
     expect(callsForMint).toEqual(["mint"]);
     expect(profile.checkUsername.mock.calls.map((call) => call[0])).toEqual(["mint", "mint1"]);
@@ -238,7 +251,9 @@ describe("Submit", () => {
 
     await user.press(screen.getByRole("button", { name: "Submit" }));
 
-    await waitFor(() => expect(session.logIn).toHaveBeenCalledWith(created));
+    await waitFor(() => {
+      expect(session.logIn).toHaveBeenCalledWith(created);
+    });
     expect(profile.createProfile).toHaveBeenCalledWith({
       username: "mint_01",
       password: "Mint2026",
@@ -280,7 +295,7 @@ describe("Step 2", () => {
 
     // A tap on the dimmed Next reaches the View around it (onTouchStart), which marks the step as
     // tried. RNTL doesn't pass touches through a disabled button, so fire on that View.
-    await fireEvent(screen.getByRole("button", { name: "Next" }).parent!, "touchStart");
+    await fireEvent(parentOf(screen.getByRole("button", { name: "Next" })), "touchStart");
 
     expect(screen.getByRole("button", { name: "Next" })).toBeDisabled();
     expect(await screen.findByText("Add a profile photo to continue.")).toBeOnTheScreen();
@@ -307,7 +322,9 @@ describe("Step 2 location", () => {
     expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
     await next(user, "Preferences");
     await user.press(screen.getByRole("button", { name: "Submit" }));
-    await waitFor(() => expect(profile.createProfile).toHaveBeenCalled());
+    await waitFor(() => {
+      expect(profile.createProfile).toHaveBeenCalled();
+    });
     const body = profile.createProfile.mock.calls[0][0];
     expect(body.location).toEqual({ lat: 12.5, lon: 100.9 });
     expect(body).not.toHaveProperty("placeName");
@@ -321,9 +338,12 @@ describe("Cancel", () => {
     await fillAboutYou(user, MINT_ABOUT);
     await next(user, "Photo & place");
     await pickPhoto(user, SQUARE_500);
-    await waitFor(() => expect(photos.uploadTemp).toHaveBeenCalled());
+    await waitFor(() => {
+      expect(photos.uploadTemp).toHaveBeenCalled();
+    });
     // The footer's Back (the top bar has a Back button too).
-    await user.press(screen.getAllByRole("button", { name: "Back" }).at(-1)!);
+    const backButtons = screen.getAllByRole("button", { name: "Back" });
+    await user.press(backButtons[backButtons.length - 1]);
     await screen.findByRole("header", { name: "About you" });
 
     await user.press(screen.getByRole("button", { name: "Cancel" }));
@@ -333,7 +353,9 @@ describe("Cancel", () => {
     await user.press(await screen.findByRole("button", { name: "Discard" }));
 
     expect(keptName).toHaveDisplayValue("Mint");
-    await waitFor(() => expect(currentRoute(navigation).name).toBe("Landing"));
+    await waitFor(() => {
+      expect(currentRoute(navigation).name).toBe("Landing");
+    });
     expect(photos.deleteTemp).toHaveBeenCalledWith(UPLOAD);
   });
 });

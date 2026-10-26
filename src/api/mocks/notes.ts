@@ -38,6 +38,11 @@ function findMine(me: string, noteId: string): Note {
 }
 
 export const mockNotesApi: NotesApi = {
+  /**
+   * Mock of GET /notes/people: the people I wrote about, the latest change first.
+   * @returns The people with their note count and latest note.
+   * @throws ApiError UNAUTHENTICATED when no one is signed in.
+   */
   async getPeople() {
     const me = (await authed()).profile.userId;
     const people: NotePerson[] = [];
@@ -60,6 +65,12 @@ export const mockNotesApi: NotesApi = {
     }
     return people.sort((a, b) => lastChange(b.lastNote) - lastChange(a.lastNote));
   },
+  /**
+   * Mock of GET /notes.
+   * @param aboutUserId The person the notes are about.
+   * @returns My notes about them, newest first.
+   * @throws ApiError UNAUTHENTICATED when no one is signed in.
+   */
   async getNotes(aboutUserId) {
     const me = (await authed()).profile.userId;
     return mine(me)
@@ -67,6 +78,13 @@ export const mockNotesApi: NotesApi = {
       .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
       .map((n) => ({ ...n }));
   },
+  /**
+   * Mock of POST /notes.
+   * @param aboutUserId The person the note is about.
+   * @param text The note text.
+   * @returns The new note.
+   * @throws ApiError UNAUTHENTICATED when no one is signed in.
+   */
   async create(aboutUserId, text) {
     const me = (await authed()).profile.userId;
     const note: Note = {
@@ -80,6 +98,14 @@ export const mockNotesApi: NotesApi = {
     db().notes.push(note);
     return { ...note };
   },
+  /**
+   * Mock of PATCH /notes/{noteId}.
+   * @param noteId The note.
+   * @param text The new text.
+   * @returns The updated note.
+   * @throws ApiError NOTE_NOT_FOUND when the note is missing or someone else's.
+   * @throws ApiError UNAUTHENTICATED when no one is signed in.
+   */
   async update(noteId, text) {
     const me = (await authed()).profile.userId;
     const note = findMine(me, noteId);
@@ -87,6 +113,13 @@ export const mockNotesApi: NotesApi = {
     note.updatedAt = new Date().toISOString();
     return { ...note };
   },
+  /**
+   * Mock of DELETE /notes/{noteId}.
+   * @param noteId The note.
+   * @returns After the note is deleted.
+   * @throws ApiError NOTE_NOT_FOUND when the note is missing or someone else's.
+   * @throws ApiError UNAUTHENTICATED when no one is signed in.
+   */
   async remove(noteId) {
     const me = (await authed()).profile.userId;
     findMine(me, noteId);

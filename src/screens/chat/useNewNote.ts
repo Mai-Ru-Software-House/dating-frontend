@@ -68,7 +68,9 @@ export function useNewNote(aboutUserId: string): NewNote {
     },
     isSaving,
     error,
-    open: () => setIsOpen(true),
+    open: () => {
+      setIsOpen(true);
+    },
     close,
     save,
   };

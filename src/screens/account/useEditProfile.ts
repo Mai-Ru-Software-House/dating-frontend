@@ -4,7 +4,7 @@
  * ['me']; Save uploads a new photo first, then PATCHes only the changed fields (preferences whole).
  * Created by Tee (Kittiphon Kijpinyochai), 6 October 2026
  */
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, type QueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
 import { ERROR_COPY, messageFor, normalizeField, toApiError } from "../../api/errors";
@@ -71,6 +71,40 @@ function startFrom(me: OwnProfile): EditValues {
 }
 
 /**
+ * The preferences as the form has them. A chip that was never picked keeps the saved genders.
+ * @param me The saved profile.
+ * @param v The form values.
+ * @returns The preferences to send when any part changed.
+ */
+function preferencesOf(me: OwnProfile, v: EditValues): OwnProfile["preferences"] {
+  return {
+    minAge: v.minAge,
+    maxAge: v.maxAge,
+    radiusKm: v.radiusKm,
+    targetGenders:
+      v.targetChip === null ? me.preferences.targetGenders : chipToTargetGenders(v.targetChip),
+  };
+}
+
+/**
+ * Whether any preference differs from the saved ones.
+ * @param prefs The preferences in the form.
+ * @param saved The saved preferences.
+ * @returns True when any part changed.
+ */
+function arePreferencesChanged(
+  prefs: OwnProfile["preferences"],
+  saved: OwnProfile["preferences"],
+): boolean {
+  return (
+    prefs.minAge !== saved.minAge ||
+    prefs.maxAge !== saved.maxAge ||
+    prefs.radiusKm !== saved.radiusKm ||
+    prefs.targetGenders.join() !== saved.targetGenders.join()
+  );
+}
+
+/**
  * The PATCH body: only what changed; preferences whole when any part changed.
  * @param me The saved profile.
  * @param v The form values.
@@ -78,25 +112,22 @@ function startFrom(me: OwnProfile): EditValues {
  */
 export function changedFields(me: OwnProfile, v: EditValues): UpdateProfileBody {
   const body: UpdateProfileBody = {};
-  if (v.displayName !== me.displayName) body.displayName = v.displayName;
-  if (v.dateOfBirth !== me.dateOfBirth) body.dateOfBirth = v.dateOfBirth;
-  if (v.gender !== me.gender) body.gender = v.gender;
-  if (v.location.lat !== me.location.lat || v.location.lon !== me.location.lon)
+  if (v.displayName !== me.displayName) {
+    body.displayName = v.displayName;
+  }
+  if (v.dateOfBirth !== me.dateOfBirth) {
+    body.dateOfBirth = v.dateOfBirth;
+  }
+  if (v.gender !== me.gender) {
+    body.gender = v.gender;
+  }
+  if (v.location.lat !== me.location.lat || v.location.lon !== me.location.lon) {
     body.location = v.location;
-  const prefs = {
-    minAge: v.minAge,
-    maxAge: v.maxAge,
-    radiusKm: v.radiusKm,
-    targetGenders:
-      v.targetChip === null ? me.preferences.targetGenders : chipToTargetGenders(v.targetChip),
-  };
-  const p = me.preferences;
-  const isPrefsChanged =
-    prefs.minAge !== p.minAge ||
-    prefs.maxAge !== p.maxAge ||
-    prefs.radiusKm !== p.radiusKm ||
-    prefs.targetGenders.join() !== p.targetGenders.join();
-  if (isPrefsChanged) body.preferences = prefs;
+  }
+  const prefs = preferencesOf(me, v);
+  if (arePreferencesChanged(prefs, me.preferences)) {
+    body.preferences = prefs;
+  }
   return body;
 }
 
@@ -114,6 +145,97 @@ const SERVER_FIELDS: Record<string, Field> = {
   photo: "photo",
 };
 
+/** How a failed Save shows: new field errors (null leaves them as they are) and the banner. */
+interface SaveFailure {
+  serverErrors: FormErrors | null;
+  banner: string | null;
+}
+
+/**
+ * Decides how a failed Save shows.
+ * @param error What Save threw.
+ * @param isPhotoSaved Whether the photo was saved before the other changes failed.
+ * @returns The field errors to set and the banner text.
+ */
+function describeSaveFailure(error: unknown, isPhotoSaved: boolean): SaveFailure {
+  const apiError = toApiError(error);
+  const target = apiError.field ? SERVER_FIELDS[normalizeField(apiError.field)] : undefined;
+  let serverErrors: FormErrors | null = null;
+  if (apiError.code === "GEOCODER_UNAVAILABLE") {
+    serverErrors = { location: ERROR_COPY.GEOCODER_UNAVAILABLE };
+  } else if (apiError.code === "INVALID_INPUT" && target !== undefined) {
+    serverErrors = { [target]: apiError.message || ERROR_COPY.INVALID_INPUT };
+  }
+  if (isPhotoSaved) {
+    return {
+      serverErrors,
+      banner: "Your photo was saved, but your other changes weren't. Try again.",
+    };
+  }
+  return { serverErrors, banner: target ? null : messageFor(apiError) };
+}
+
+/**
+ * Sends the changes: the new photo first, then the changed fields.
+ * @param queryClient The query client, to update the cached profile and refresh the lists.
+ * @param photo The new photo, if one was picked.
+ * @param body The changed fields (may be empty).
+ * @param onPhotoSaved Called once the photo is saved, before the other changes are sent.
+ * @returns After everything is saved.
+ * @throws ApiError when the photo upload or the PATCH fails.
+ */
+async function saveChanges(
+  queryClient: QueryClient,
+  photo: PickedPhoto | null,
+  body: UpdateProfileBody,
+  onPhotoSaved: () => void,
+): Promise<void> {
+  if (photo !== null) {
+    const { photoUrl } = await photosApi.replaceMine(photo);
+    queryClient.setQueryData<OwnProfile>(keys.me, (old) => (old ? { ...old, photoUrl } : old));
+    onPhotoSaved();
+  }
+  if (Object.keys(body).length > 0) {
+    queryClient.setQueryData(keys.me, await profileApi.updateMe(body));
+    if (body.preferences || body.location) {
+      void queryClient.invalidateQueries({ queryKey: keys.recommendationsAll });
+      void queryClient.invalidateQueries({ queryKey: keys.candidatesAll });
+    }
+  }
+}
+
+/**
+ * Remembers which fields the user has left, so their messages may show.
+ * @returns The touched fields and a function that marks one as touched.
+ */
+function useTouched(): [ReadonlySet<Field>, (key: Field) => void] {
+  const [touched, setTouched] = useState<ReadonlySet<Field>>(new Set());
+  return [
+    touched,
+    (key) => {
+      setTouched((prev) => new Set(prev).add(key));
+    },
+  ];
+}
+
+/**
+ * The message to show under a field: a server error first, else the client-side message once the
+ * field was left.
+ * @param key The field.
+ * @param serverErrors Errors the server returned.
+ * @param clientErrors Errors from the client-side checks.
+ * @param touched The fields the user has left.
+ * @returns The message, or undefined.
+ */
+function fieldMessage(
+  key: Field,
+  serverErrors: FormErrors,
+  clientErrors: FormErrors,
+  touched: ReadonlySet<Field>,
+): string | undefined {
+  return serverErrors[key] || (touched.has(key) ? clientErrors[key] || undefined : undefined);
+}
+
 /**
  * The Edit profile controller.
  * @param me The saved profile.
@@ -122,60 +244,38 @@ const SERVER_FIELDS: Record<string, Field> = {
 export function useEditProfile(me: OwnProfile): EditProfileController {
   const queryClient = useQueryClient();
   const [values, setValues] = useState<EditValues>(() => startFrom(me));
-  const [touched, setTouched] = useState<ReadonlySet<Field>>(new Set());
+  const [touched, touch] = useTouched();
   const [serverErrors, setServerErrors] = useState<FormErrors>({});
   const [isSaving, setIsSaving] = useState(false);
   const [banner, setBanner] = useState<string | null>(null);
   const clientErrors = errorsOf(aboutYouSchema(new Date()), values);
   const body = changedFields(me, values);
-  const isChanged = values.photo !== null || Object.keys(body).length > 0;
 
   const set = <K extends Field>(key: K, value: EditValues[K]): void => {
     setValues((prev) => ({ ...prev, [key]: value }));
     setServerErrors((prev) => ({ ...prev, [key]: "" }));
     setBanner(null);
   };
-  const errorFor = (key: Field): string | undefined =>
-    serverErrors[key] || (touched.has(key) ? clientErrors[key] || undefined : undefined);
-
-  const showError = (error: unknown, isPhotoSaved: boolean): void => {
-    const apiError = toApiError(error);
-    const target = apiError.field ? SERVER_FIELDS[normalizeField(apiError.field)] : undefined;
-    if (apiError.code === "GEOCODER_UNAVAILABLE") {
-      setServerErrors({ location: ERROR_COPY.GEOCODER_UNAVAILABLE });
-    } else if (apiError.code === "INVALID_INPUT" && target !== undefined) {
-      setServerErrors({ [target]: apiError.message || ERROR_COPY.INVALID_INPUT });
-    }
-    setBanner(
-      isPhotoSaved
-        ? "Your photo was saved, but your other changes weren't. Try again."
-        : target
-          ? null
-          : messageFor(apiError),
-    );
-  };
 
   const save = async (): Promise<boolean> => {
     setIsSaving(true);
     setBanner(null);
-    let isPhotoSaved = false;
+    const progress = { isPhotoSaved: false };
     try {
-      if (values.photo !== null) {
-        const { photoUrl } = await photosApi.replaceMine(values.photo);
-        queryClient.setQueryData<OwnProfile>(keys.me, (old) => (old ? { ...old, photoUrl } : old));
-        isPhotoSaved = true;
+      await saveChanges(queryClient, values.photo, body, () => {
+        progress.isPhotoSaved = true;
         setValues((prev) => ({ ...prev, photo: null }));
-      }
-      if (Object.keys(body).length > 0) {
-        queryClient.setQueryData(keys.me, await profileApi.updateMe(body));
-        if (body.preferences || body.location) {
-          void queryClient.invalidateQueries({ queryKey: keys.recommendationsAll });
-          void queryClient.invalidateQueries({ queryKey: keys.candidatesAll });
-        }
-      }
+      });
       return true;
     } catch (error) {
-      showError(error, isPhotoSaved && Object.keys(body).length > 0);
+      const failure = describeSaveFailure(
+        error,
+        progress.isPhotoSaved && Object.keys(body).length > 0,
+      );
+      if (failure.serverErrors !== null) {
+        setServerErrors(failure.serverErrors);
+      }
+      setBanner(failure.banner);
       return false;
     } finally {
       setIsSaving(false);
@@ -185,9 +285,9 @@ export function useEditProfile(me: OwnProfile): EditProfileController {
   return {
     values,
     set,
-    touch: (key) => setTouched((prev) => new Set(prev).add(key)),
-    errorFor,
-    isChanged,
+    touch,
+    errorFor: (key) => fieldMessage(key, serverErrors, clientErrors, touched),
+    isChanged: values.photo !== null || Object.keys(body).length > 0,
     isValid: Object.keys(clientErrors).length === 0,
     isSaving,
     banner,

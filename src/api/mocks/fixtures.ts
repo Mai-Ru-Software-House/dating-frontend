@@ -169,7 +169,7 @@ export function buildMessages(): Message[] {
   for (const [userId, lines] of Object.entries(THREADS)) {
     lines.forEach(([from, daysAgo, clock, text, isRead], index) => {
       messages.push({
-        messageId: `msg_${userId.replace("usr_", "")}_${index + 1}`,
+        messageId: `msg_${userId.replace("usr_", "")}_${String(index + 1)}`,
         senderId: from === "me" ? TEE.userId : userId,
         receiverId: from === "me" ? userId : TEE.userId,
         text,

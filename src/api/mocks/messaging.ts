@@ -66,13 +66,22 @@ function store(me: string, to: string, text: string, replyTo: Message | null): M
 }
 
 export const mockMessagingApi: MessagingApi = {
+  /**
+   * Mock of GET /conversations: favorites first, then the newest message first.
+   * @returns The conversations.
+   * @throws ApiError UNAUTHENTICATED when no one is signed in.
+   */
   async getConversations() {
     const me = (await authed()).profile.userId;
     const favorites = favoritesOf(me);
     const others = new Set<string>();
     for (const m of db().messages) {
-      if (m.senderId === me) others.add(m.receiverId);
-      if (m.receiverId === me) others.add(m.senderId);
+      if (m.senderId === me) {
+        others.add(m.receiverId);
+      }
+      if (m.receiverId === me) {
+        others.add(m.senderId);
+      }
     }
     const conversations: Conversation[] = [...others].map((other) => {
       const messages = thread(me, other);
@@ -95,6 +104,14 @@ export const mockMessagingApi: MessagingApi = {
         Date.parse(b.lastMessage.sentAt) - Date.parse(a.lastMessage.sentAt),
     );
   },
+  /**
+   * Mock of GET /conversations/{userId}/messages.
+   * @param userId The other person.
+   * @param before Return messages older than this message ID; omit for the newest page.
+   * @returns A page of messages, newest first.
+   * @throws ApiError USER_NOT_FOUND for an unknown person.
+   * @throws ApiError UNAUTHENTICATED when no one is signed in.
+   */
   async getMessages(userId, before) {
     const me = (await authed()).profile.userId;
     summaryOf(userId);
@@ -103,11 +120,27 @@ export const mockMessagingApi: MessagingApi = {
     const page = all.slice(start, start + MESSAGES_PAGE);
     return { messages: page.map((m) => ({ ...m })), hasMore: start + MESSAGES_PAGE < all.length };
   },
+  /**
+   * Mock of POST /messages.
+   * @param userId The recipient.
+   * @param text The message text.
+   * @returns The stored message.
+   * @throws ApiError USER_NOT_FOUND for an unknown person.
+   * @throws ApiError UNAUTHENTICATED when no one is signed in.
+   */
   async sendMessage(userId, text) {
     const me = (await authed()).profile.userId;
     summaryOf(userId);
     return { ...store(me, userId, text, null) };
   },
+  /**
+   * Mock of POST /messages/{messageId}/replies.
+   * @param messageId The message being replied to.
+   * @param text The reply text.
+   * @returns The stored reply.
+   * @throws ApiError MESSAGE_NOT_FOUND when the message is not in one of my conversations.
+   * @throws ApiError UNAUTHENTICATED when no one is signed in.
+   */
   async reply(messageId, text) {
     const me = (await authed()).profile.userId;
     const original = db().messages.find((m) => m.messageId === messageId);
@@ -117,6 +150,12 @@ export const mockMessagingApi: MessagingApi = {
     const to = original.senderId === me ? original.receiverId : original.senderId;
     return { ...store(me, to, text, original) };
   },
+  /**
+   * Mock of PATCH /conversations/{userId}: marks their messages to me as read.
+   * @param userId The other person.
+   * @returns After the messages are marked.
+   * @throws ApiError UNAUTHENTICATED when no one is signed in.
+   */
   async markRead(userId) {
     const me = (await authed()).profile.userId;
     for (const m of db().messages) {
@@ -125,6 +164,11 @@ export const mockMessagingApi: MessagingApi = {
       }
     }
   },
+  /**
+   * Mock of GET /messages?unread=true.
+   * @returns My unread messages, newest first.
+   * @throws ApiError UNAUTHENTICATED when no one is signed in.
+   */
   async getUnread() {
     const me = (await authed()).profile.userId;
     const messages = db()

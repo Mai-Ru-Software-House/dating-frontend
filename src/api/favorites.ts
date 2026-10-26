@@ -27,7 +27,7 @@ const realFavoritesApi: FavoritesApi = {
     await request<unknown>("PUT", `/favorites/${encodeURIComponent(userId)}`);
   },
   async remove(userId) {
-    await request<void>("DELETE", `/favorites/${encodeURIComponent(userId)}`);
+    await request<unknown>("DELETE", `/favorites/${encodeURIComponent(userId)}`);
   },
 };
 

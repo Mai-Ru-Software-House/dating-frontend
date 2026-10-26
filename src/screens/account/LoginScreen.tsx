@@ -91,8 +91,21 @@ export function LoginScreen({
     }
   };
 
+  const onSubmit = (): void => {
+    void submit();
+  };
+
   return (
-    <Screen header={<TopBar onBack={() => navigation.goBack()} />} contentStyle={styles.content}>
+    <Screen
+      header={
+        <TopBar
+          onBack={() => {
+            navigation.goBack();
+          }}
+        />
+      }
+      contentStyle={styles.content}
+    >
       <Text style={styles.title} accessibilityRole="header">
         Welcome back
       </Text>
@@ -118,24 +131,28 @@ export function LoginScreen({
         autoComplete="current-password"
         autoCapitalize="none"
         returnKeyType="go"
-        onSubmitEditing={submit}
+        onSubmitEditing={onSubmit}
         isLocked={isBusy}
         error={errors.password}
         hasErrorBorder={errors.isPasswordRed}
         trailing={{
           label: isPasswordShown ? "Hide" : "Show",
-          onPress: () => setIsPasswordShown((shown) => !shown),
+          onPress: () => {
+            setIsPasswordShown((shown) => !shown);
+          },
           accessibilityLabel: isPasswordShown ? "Hide password" : "Show password",
         }}
       />
       <View style={styles.actions}>
-        <Button label="Log in" onPress={submit} isLoading={isBusy} />
+        <Button label="Log in" onPress={onSubmit} isLoading={isBusy} />
         <Banner message={errors.banner} />
       </View>
       {pickedUsername !== undefined ? (
         <View style={styles.footer}>
           <Pressable
-            onPress={() => setIsConfirmingRemove(true)}
+            onPress={() => {
+              setIsConfirmingRemove(true);
+            }}
             accessibilityRole="button"
             hitSlop={8}
           >
@@ -146,7 +163,9 @@ export function LoginScreen({
         <View style={styles.footer}>
           <Text style={styles.footerText}>New here? </Text>
           <Pressable
-            onPress={() => navigation.replace(isSwitch ? "SwitchCreateProfile" : "CreateProfile")}
+            onPress={() => {
+              navigation.replace(isSwitch ? "SwitchCreateProfile" : "CreateProfile");
+            }}
             accessibilityRole="link"
             hitSlop={8}
           >
@@ -157,10 +176,12 @@ export function LoginScreen({
       <ConfirmDialog
         isVisible={isConfirmingRemove}
         title="Remove this account?"
-        message={`@${pickedUsername} will be forgotten on this phone. You can log in to it again later.`}
+        message={`@${pickedUsername ?? ""} will be forgotten on this phone. You can log in to it again later.`}
         cancelLabel="Cancel"
         confirmLabel="Remove"
-        onCancel={() => setIsConfirmingRemove(false)}
+        onCancel={() => {
+          setIsConfirmingRemove(false);
+        }}
         onConfirm={() => void removeFromPhone()}
       />
     </Screen>

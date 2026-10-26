@@ -51,7 +51,9 @@ export function ToastProvider({ children }: { children: ReactNode }): React.JSX.
       Animated.timing(opacity, { toValue: 1, duration: FADE_MS, useNativeDriver: true }).start();
       timer.current = setTimeout(() => {
         Animated.timing(opacity, { toValue: 0, duration: FADE_MS, useNativeDriver: true }).start(
-          () => setMessage(null),
+          () => {
+            setMessage(null);
+          },
         );
       }, VISIBLE_MS);
     },

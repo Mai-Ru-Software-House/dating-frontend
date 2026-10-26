@@ -46,7 +46,16 @@ export function SwitchUserScreen({ navigation }: RootScreenProps<"SwitchUser">):
   };
 
   return (
-    <Screen header={<TopBar title="Switch user" onBack={() => navigation.goBack()} />}>
+    <Screen
+      header={
+        <TopBar
+          title="Switch user"
+          onBack={() => {
+            navigation.goBack();
+          }}
+        />
+      }
+    >
       <View style={styles.section}>
         <SectionLabel label="Logged in as" />
         {me ? (
@@ -80,7 +89,9 @@ export function SwitchUserScreen({ navigation }: RootScreenProps<"SwitchUser">):
           <SectionLabel
             label="Other accounts on this phone"
             actionLabel={isRemoving ? "Done" : "Edit"}
-            onPress={() => setIsRemoving((on) => !on)}
+            onPress={() => {
+              setIsRemoving((on) => !on);
+            }}
           />
           <ListGroup dividerInset={ACCOUNT_ROW_TEXT_INSET}>
             {others.map((account) => (
@@ -92,7 +103,9 @@ export function SwitchUserScreen({ navigation }: RootScreenProps<"SwitchUser">):
                 photoUrl={account.photoUrl}
                 isRemoving={isRemoving}
                 onRemove={() => void remove(account.userId)}
-                onPress={() => navigation.navigate("SwitchLogin", { username: account.username })}
+                onPress={() => {
+                  navigation.navigate("SwitchLogin", { username: account.username });
+                }}
               />
             ))}
           </ListGroup>
@@ -102,7 +115,9 @@ export function SwitchUserScreen({ navigation }: RootScreenProps<"SwitchUser">):
         label="Add account"
         icon={Plus}
         variant="secondary"
-        onPress={() => navigation.navigate("SwitchLogin", {})}
+        onPress={() => {
+          navigation.navigate("SwitchLogin", {});
+        }}
         style={styles.add}
       />
       <Text style={styles.footnote}>

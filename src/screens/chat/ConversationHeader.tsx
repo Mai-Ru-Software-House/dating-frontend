@@ -40,7 +40,7 @@ export function ConversationHeader(props: ConversationHeaderProps): React.JSX.El
           accessibilityRole="button"
           accessibilityLabel="Back"
         >
-          <ChevronLeft size={size.icon + 4} color={colors.ink} strokeWidth={ICON_STROKE} />
+          <ChevronLeft size={size.icon + space.xs} color={colors.ink} strokeWidth={ICON_STROKE} />
         </Pressable>
         <Avatar
           userId={other.userId}

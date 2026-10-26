@@ -11,11 +11,11 @@ import { messageFor } from "../../api/errors";
 import type { Conversation } from "../../api/types";
 import { EmptyState } from "../../components/EmptyState";
 import { ListRow } from "../../components/ListRow";
+import { ListSection } from "../../components/ListSection";
 import { LoadError } from "../../components/LoadError";
 import { RowSkeleton } from "../../components/RowSkeleton";
 import { Screen } from "../../components/Screen";
 import { SearchBar } from "../../components/SearchBar";
-import { SectionLabel } from "../../components/SectionLabel";
 import { useConversations } from "../../hooks/useConversations";
 import { useFavorites } from "../../hooks/useFavorites";
 import { useRefreshOnFocus } from "../../hooks/useRefreshOnFocus";
@@ -53,7 +53,9 @@ export function ChatListScreen({ navigation }: TabScreenProps<"ChatsTab">): Reac
         time: formatListTime(c.lastMessage.sentAt, now),
         unreadCount: c.unreadCount,
       }}
-      onPress={() => navigation.navigate("Conversation", c.user)}
+      onPress={() => {
+        navigation.navigate("Conversation", c.user);
+      }}
     />
   );
 
@@ -75,7 +77,9 @@ export function ChatListScreen({ navigation }: TabScreenProps<"ChatsTab">): Reac
             title="No chats yet. Find someone in Matches and say hi."
             action={{
               label: "Go to Matches",
-              onPress: () => navigation.navigate("MatchesTab"),
+              onPress: () => {
+                navigation.navigate("MatchesTab");
+              },
               variant: "secondary",
             }}
           />
@@ -83,18 +87,13 @@ export function ChatListScreen({ navigation }: TabScreenProps<"ChatsTab">): Reac
         {all.length > 0 && sections.favorites.length + sections.others.length === 0 ? (
           <EmptyState title={`No one called "${search.trim()}".`} />
         ) : null}
-        {sections.favorites.length > 0 ? (
-          <View style={styles.section}>
-            <SectionLabel label="Favorites" hasStar />
-            {sections.favorites.map((c) => row(c, true))}
-          </View>
-        ) : null}
-        {sections.others.length > 0 ? (
-          <View style={styles.section}>
-            <SectionLabel label="All chats" />
-            {sections.others.map((c) => row(c, false))}
-          </View>
-        ) : null}
+        <ListSection
+          label="Favorites"
+          hasStar
+          items={sections.favorites}
+          renderItem={(c) => row(c, true)}
+        />
+        <ListSection label="All chats" items={sections.others} renderItem={(c) => row(c, false)} />
       </View>
     </Screen>
   );
@@ -109,8 +108,5 @@ const styles = StyleSheet.create({
   },
   list: {
     marginTop: space.sm,
-  },
-  section: {
-    marginTop: space.xl,
   },
 });
