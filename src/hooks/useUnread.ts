@@ -7,6 +7,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
+import { CHAT_POLL_MS } from "../constants/limits";
 import { messagingApi } from "../api/messaging";
 import { keys } from "../session/queryClient";
 import { groupUnread, type UnreadGroup } from "../utils/unread";
@@ -32,6 +33,7 @@ export function useUnread(isEnabled = true): Unread {
     queryKey: keys.unread,
     queryFn: messagingApi.getUnread,
     enabled: isEnabled,
+    refetchInterval: CHAT_POLL_MS,
   });
   const groups = useMemo(() => groupUnread(query.data?.messages ?? []), [query.data]);
   return {

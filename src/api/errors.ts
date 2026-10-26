@@ -96,12 +96,17 @@ export function isErrorCode(code: unknown): code is ApiErrorCode {
 }
 
 /**
- * Whether fetch itself failed: a rejected request (TypeError) or a timeout (AbortError).
+ * Whether fetch itself failed: a rejected request (TypeError), a timeout (AbortError), or Expo's
+ * fetch, which reports a lost connection as a plain Error whose message starts with "fetch failed".
  * @param error What was caught.
  * @returns True for a network failure.
  */
 export function isNetworkFailure(error: unknown): boolean {
-  return error instanceof TypeError || (error instanceof Error && error.name === "AbortError");
+  return (
+    error instanceof TypeError ||
+    (error instanceof Error &&
+      (error.name === "AbortError" || error.message.startsWith("fetch failed")))
+  );
 }
 
 /**

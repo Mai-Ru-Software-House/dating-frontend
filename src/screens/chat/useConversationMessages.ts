@@ -8,6 +8,7 @@
 import { useInfiniteQuery, useQueryClient, type QueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState, type Dispatch, type SetStateAction } from "react";
 
+import { CHAT_POLL_MS } from "../../constants/limits";
 import { messagingApi } from "../../api/messaging";
 import type { Message, MessageQuote } from "../../api/types";
 import { keys } from "../../session/queryClient";
@@ -143,6 +144,7 @@ export function useConversationMessages(userId: string, myId: string): Conversat
     queryKey: keys.messages(userId),
     queryFn: ({ pageParam }) => messagingApi.getMessages(userId, pageParam),
     initialPageParam: undefined as string | undefined,
+    refetchInterval: CHAT_POLL_MS,
     getNextPageParam: (last) =>
       last.hasMore ? last.messages[last.messages.length - 1]?.messageId : undefined,
   });

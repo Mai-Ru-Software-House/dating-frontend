@@ -64,6 +64,9 @@ export const UNREAD_LIMIT = 50;
 /** Wait after the last keystroke before checking a username. */
 export const USERNAME_CHECK_DEBOUNCE_MS = 500;
 
+/** How often chat screens ask the backend for new messages (it has no push yet). */
+export const CHAT_POLL_MS = 3000;
+
 /** Request timeout. */
 export const REQUEST_TIMEOUT_MS = 15_000;
 
