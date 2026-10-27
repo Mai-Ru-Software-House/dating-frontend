@@ -3,9 +3,7 @@
  * Place lookup from GPS coordinates (api-integration.md 6.3). No session needed.
  * Created by Tee (Kittiphon Kijpinyochai), 6 October 2026
  */
-import { USE_MOCKS } from "../constants/env";
 import { request } from "./client";
-import { mockPlacesApi } from "./mocks/places";
 
 /** Place endpoints. */
 export interface PlacesApi {
@@ -27,4 +25,8 @@ const realPlacesApi: PlacesApi = {
 };
 
 /** Place endpoints, real or mock. */
-export const placesApi: PlacesApi = USE_MOCKS ? mockPlacesApi : realPlacesApi;
+export const placesApi: PlacesApi =
+  process.env.EXPO_PUBLIC_USE_MOCKS === "1"
+    ? // eslint-disable-next-line @typescript-eslint/no-require-imports -- loaded only in mock mode so release bundles drop src/api/mocks
+      (require("./mocks/places") as typeof import("./mocks/places")).mockPlacesApi
+    : realPlacesApi;

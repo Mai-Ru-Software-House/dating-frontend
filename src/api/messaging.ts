@@ -4,10 +4,8 @@
  * 6.11).
  * Created by Tee (Kittiphon Kijpinyochai), 6 October 2026
  */
-import { USE_MOCKS } from "../constants/env";
 import { MESSAGES_PAGE, UNREAD_LIMIT } from "../constants/limits";
 import { request } from "./client";
-import { mockMessagingApi } from "./mocks/messaging";
 import type { Conversation, Message, MessagePage, UnreadMessage } from "./types";
 
 /** Messaging endpoints. */
@@ -55,4 +53,8 @@ const realMessagingApi: MessagingApi = {
 };
 
 /** Messaging endpoints, real or mock. */
-export const messagingApi: MessagingApi = USE_MOCKS ? mockMessagingApi : realMessagingApi;
+export const messagingApi: MessagingApi =
+  process.env.EXPO_PUBLIC_USE_MOCKS === "1"
+    ? // eslint-disable-next-line @typescript-eslint/no-require-imports -- loaded only in mock mode so release bundles drop src/api/mocks
+      (require("./mocks/messaging") as typeof import("./mocks/messaging")).mockMessagingApi
+    : realMessagingApi;

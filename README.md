@@ -174,6 +174,22 @@ In `src/constants/features.ts`:
 | Edit and delete a note     | on      | on    | `PATCH` and `DELETE /notes/{noteId}` exist        |
 | Typing indicator in a chat | off     | off   | the API has no typing status                      |
 
+## Release build
+
+The `production` profile in `eas.json` builds an Android APK with mocks off
+(`EXPO_PUBLIC_USE_MOCKS=0`) and cleartext HTTP allowed (`expo-build-properties` in `app.json`).
+The mock backend is not in the bundle. JSON allows no comments, so note that
+`EXPO_PUBLIC_API_BASE_URL` in `eas.json` holds the placeholder `REPLACE_WITH_SERVER_HOST`.
+
+1. Replace `REPLACE_WITH_SERVER_HOST` in `eas.json` with the server address.
+2. Build with `npx eas-cli build -p android --profile production`. It needs an Expo account,
+   and EAS creates and keeps the signing keystore.
+
+If the server later moves to HTTPS with a redirect from port 80, rebuild with the `https://`
+URL. Android does not follow a redirect on a POST such as login.
+
+iOS users run the app through Expo Go. There is no iOS build.
+
 ## Project layout
 
 ```

@@ -3,10 +3,8 @@
  * Recommendations and search (api-integration.md 6.7, 6.8).
  * Created by Tee (Kittiphon Kijpinyochai), 6 October 2026
  */
-import { USE_MOCKS } from "../constants/env";
 import { SEARCH_LIMIT } from "../constants/limits";
 import { request } from "./client";
-import { mockMatchingApi } from "./mocks/matching";
 import type { CandidateCard, RecommendationsPage, SearchCriteria } from "./types";
 
 /** Matching endpoints. */
@@ -35,4 +33,8 @@ const realMatchingApi: MatchingApi = {
 };
 
 /** Matching endpoints, real or mock. */
-export const matchingApi: MatchingApi = USE_MOCKS ? mockMatchingApi : realMatchingApi;
+export const matchingApi: MatchingApi =
+  process.env.EXPO_PUBLIC_USE_MOCKS === "1"
+    ? // eslint-disable-next-line @typescript-eslint/no-require-imports -- loaded only in mock mode so release bundles drop src/api/mocks
+      (require("./mocks/matching") as typeof import("./mocks/matching")).mockMatchingApi
+    : realMatchingApi;

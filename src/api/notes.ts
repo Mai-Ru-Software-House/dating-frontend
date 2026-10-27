@@ -4,9 +4,7 @@
  * frontend requests not in the contract yet (8.10, 8.11).
  * Created by Tee (Kittiphon Kijpinyochai), 6 October 2026
  */
-import { USE_MOCKS } from "../constants/env";
 import { request } from "./client";
-import { mockNotesApi } from "./mocks/notes";
 import type { Note, NotePerson } from "./types";
 
 /** Note endpoints. */
@@ -41,4 +39,8 @@ const realNotesApi: NotesApi = {
 };
 
 /** Note endpoints, real or mock. */
-export const notesApi: NotesApi = USE_MOCKS ? mockNotesApi : realNotesApi;
+export const notesApi: NotesApi =
+  process.env.EXPO_PUBLIC_USE_MOCKS === "1"
+    ? // eslint-disable-next-line @typescript-eslint/no-require-imports -- loaded only in mock mode so release bundles drop src/api/mocks
+      (require("./mocks/notes") as typeof import("./mocks/notes")).mockNotesApi
+    : realNotesApi;

@@ -3,9 +3,7 @@
  * Favorites (api-integration.md 6.9). The app keeps one favorites set from GET /favorites.
  * Created by Tee (Kittiphon Kijpinyochai), 6 October 2026
  */
-import { USE_MOCKS } from "../constants/env";
 import { request } from "./client";
-import { mockFavoritesApi } from "./mocks/favorites";
 import type { UserSummary } from "./types";
 
 /** Favorite endpoints. */
@@ -32,4 +30,8 @@ const realFavoritesApi: FavoritesApi = {
 };
 
 /** Favorite endpoints, real or mock. */
-export const favoritesApi: FavoritesApi = USE_MOCKS ? mockFavoritesApi : realFavoritesApi;
+export const favoritesApi: FavoritesApi =
+  process.env.EXPO_PUBLIC_USE_MOCKS === "1"
+    ? // eslint-disable-next-line @typescript-eslint/no-require-imports -- loaded only in mock mode so release bundles drop src/api/mocks
+      (require("./mocks/favorites") as typeof import("./mocks/favorites")).mockFavoritesApi
+    : realFavoritesApi;

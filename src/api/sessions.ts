@@ -4,9 +4,7 @@
  * and the 4 October contract's single { token }.
  * Created by Tee (Kittiphon Kijpinyochai), 6 October 2026
  */
-import { USE_MOCKS } from "../constants/env";
 import { request } from "./client";
-import { mockSessionsApi } from "./mocks/sessions";
 import type { OwnProfile, Session } from "./types";
 
 /** What the server may send back from login or sign-up. */
@@ -64,4 +62,8 @@ const realSessionsApi: SessionsApi = {
 };
 
 /** Session endpoints, real or mock. */
-export const sessionsApi: SessionsApi = USE_MOCKS ? mockSessionsApi : realSessionsApi;
+export const sessionsApi: SessionsApi =
+  process.env.EXPO_PUBLIC_USE_MOCKS === "1"
+    ? // eslint-disable-next-line @typescript-eslint/no-require-imports -- loaded only in mock mode so release bundles drop src/api/mocks
+      (require("./mocks/sessions") as typeof import("./mocks/sessions")).mockSessionsApi
+    : realSessionsApi;
