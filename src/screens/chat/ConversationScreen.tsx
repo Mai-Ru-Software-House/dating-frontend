@@ -126,7 +126,7 @@ export function ConversationScreen({
         ListFooterComponent={
           chat.isLoadingOlder ? (
             <ActivityIndicator style={styles.older} color={colors.accent} />
-          ) : null
+          ) : undefined
         }
         onEndReached={chat.loadOlder}
         onEndReachedThreshold={0.3}

@@ -11,6 +11,7 @@ import {
   ScrollView,
   StyleSheet,
   View,
+  type ScrollViewInstance,
   type StyleProp,
   type ViewStyle,
 } from "react-native";
@@ -44,7 +45,7 @@ export interface ScreenProps {
   /** Background color (default bg). */
   backgroundColor?: string;
   /** Ref to the ScrollView, to scroll a field into view. */
-  scrollRef?: Ref<ScrollView>;
+  scrollRef?: Ref<ScrollViewInstance>;
 }
 
 /**

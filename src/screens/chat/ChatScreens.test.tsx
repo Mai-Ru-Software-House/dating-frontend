@@ -94,7 +94,7 @@ function bubbleOf(text: string): HostElement {
  * @returns Its style as one object.
  */
 function styleOf(element: HostElement): ViewStyle {
-  return StyleSheet.flatten((element.props as { style?: StyleProp<ViewStyle> }).style);
+  return StyleSheet.flatten((element.props as { style?: StyleProp<ViewStyle> }).style) ?? {};
 }
 
 /**

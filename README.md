@@ -17,7 +17,7 @@ Owner: Tee (Kittiphon Kijpinyochai). For a shorter walkthrough see [HOW-TO-RUN.m
 | ------------ | ---------------------------------------------------- | -------------------------------------- |
 | Node.js      | 24 LTS (npm 11 comes with it)                        | everything                             |
 | git          | any recent                                           |                                        |
-| Expo Go      | the version for Expo SDK 57                          | running the app (phone or emulator)    |
+| Expo Go      | the version for Expo SDK 58                          | running the app (phone or emulator)    |
 | Java         | 21 (Temurin)                                         | the Android SDK tools only             |
 | Android SDK  | command-line tools, platform-tools (`adb`), emulator | emulators, in `~/Android/Sdk`          |
 | System image | `system-images;android-36;google_apis;x86_64`        | one image for every emulator           |

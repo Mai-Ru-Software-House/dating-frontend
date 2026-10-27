@@ -148,7 +148,7 @@ export function RecommendedList({ header }: { header: ReactElement }): React.JSX
       )}
       ListHeaderComponent={top}
       ListFooterComponent={
-        isLoadingMore ? <ActivityIndicator style={styles.more} color={colors.accent} /> : null
+        isLoadingMore ? <ActivityIndicator style={styles.more} color={colors.accent} /> : undefined
       }
       onEndReached={loadMore}
       onEndReachedThreshold={0.4}
