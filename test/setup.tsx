@@ -70,6 +70,13 @@ jest.mock("@react-native-community/datetimepicker", () => {
   };
 });
 
+// Gesture Handler 3 throws when a GestureDetector has no GestureHandlerRootView above it. The app
+// has one in App.tsx; component tests render without it, so default the context to "present".
+jest.mock("react-native-gesture-handler/lib/module/GestureHandlerRootViewContext", () => ({
+  __esModule: true,
+  default: jest.requireActual<typeof import("react")>("react").createContext(true),
+}));
+
 jest.mock("react-native-worklets", () =>
   jest.requireActual<object>("react-native-worklets/lib/module/mock"),
 );

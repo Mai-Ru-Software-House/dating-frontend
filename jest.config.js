@@ -8,6 +8,8 @@ module.exports = {
   preset: "jest-expo",
   // Screen tests render full navigators; the 5 s default times out when the whole suite runs in parallel.
   testTimeout: 20000,
+  // Reanimated 4.7's mock needs its resolver to load the JS (non-native) initializers under Jest.
+  resolver: "react-native-reanimated/jest/resolver",
   globalSetup: "<rootDir>/test/globalSetup.ts",
   setupFilesAfterEnv: ["<rootDir>/test/setup.tsx"],
   testMatch: ["<rootDir>/src/**/*.test.ts?(x)"],

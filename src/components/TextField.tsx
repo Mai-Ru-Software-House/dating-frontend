@@ -13,6 +13,7 @@ import {
   TextInput,
   View,
   type PressableProps,
+  type TextInputInstance,
   type TextInputProps,
 } from "react-native";
 
@@ -181,67 +182,69 @@ function renderPickerText(
  * @param props See TextFieldProps.
  * @returns The field.
  */
-export const TextField = forwardRef<TextInput, TextFieldProps>(function TextField(props, ref) {
-  const {
-    label,
-    error,
-    hasErrorBorder = false,
-    trailing,
-    isReadOnly = false,
-    isLocked = false,
-    helper,
-    helperColor = colors.muted,
-    onPressBox,
-    onFocus,
-    onBlur,
-    value,
-    ...inputProps
-  } = props;
-  const [isFocused, setIsFocused] = useState(false);
-  const isRed = isFocused || Boolean(error) || hasErrorBorder;
+export const TextField = forwardRef<TextInputInstance, TextFieldProps>(
+  function TextField(props, ref) {
+    const {
+      label,
+      error,
+      hasErrorBorder = false,
+      trailing,
+      isReadOnly = false,
+      isLocked = false,
+      helper,
+      helperColor = colors.muted,
+      onPressBox,
+      onFocus,
+      onBlur,
+      value,
+      ...inputProps
+    } = props;
+    const [isFocused, setIsFocused] = useState(false);
+    const isRed = isFocused || Boolean(error) || hasErrorBorder;
 
-  if (isReadOnly) {
-    return renderReadOnly(label, value, helper, helperColor);
-  }
+    if (isReadOnly) {
+      return renderReadOnly(label, value, helper, helperColor);
+    }
 
-  return (
-    <View style={styles.wrap}>
-      <Text style={styles.label}>{label}</Text>
-      <Pressable
-        onPress={onPressBox}
-        disabled={onPressBox === undefined}
-        {...pickerAccessibility(label, value, onPressBox !== undefined)}
-        style={[styles.box, isRed && styles.boxRed]}
-      >
-        {onPressBox ? (
-          renderPickerText(value, inputProps.placeholder)
-        ) : (
-          <TextInput
-            ref={ref}
-            {...inputProps}
-            value={value}
-            editable={!isLocked}
-            accessibilityLabel={label}
-            placeholderTextColor={colors.muted}
-            maxFontSizeMultiplier={MAX_FONT_SCALE}
-            onFocus={(e) => {
-              setIsFocused(true);
-              onFocus?.(e);
-            }}
-            onBlur={(e) => {
-              setIsFocused(false);
-              onBlur?.(e);
-            }}
-            style={styles.input}
-          />
-        )}
-        {renderTrailing(trailing)}
-      </Pressable>
-      <FieldError message={error} />
-      {renderHelper(helper, error, helperColor)}
-    </View>
-  );
-});
+    return (
+      <View style={styles.wrap}>
+        <Text style={styles.label}>{label}</Text>
+        <Pressable
+          onPress={onPressBox}
+          disabled={onPressBox === undefined}
+          {...pickerAccessibility(label, value, onPressBox !== undefined)}
+          style={[styles.box, isRed && styles.boxRed]}
+        >
+          {onPressBox ? (
+            renderPickerText(value, inputProps.placeholder)
+          ) : (
+            <TextInput
+              ref={ref}
+              {...inputProps}
+              value={value}
+              editable={!isLocked}
+              accessibilityLabel={label}
+              placeholderTextColor={colors.muted}
+              maxFontSizeMultiplier={MAX_FONT_SCALE}
+              onFocus={(e) => {
+                setIsFocused(true);
+                onFocus?.(e);
+              }}
+              onBlur={(e) => {
+                setIsFocused(false);
+                onBlur?.(e);
+              }}
+              style={styles.input}
+            />
+          )}
+          {renderTrailing(trailing)}
+        </Pressable>
+        <FieldError message={error} />
+        {renderHelper(helper, error, helperColor)}
+      </View>
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   wrap: {
