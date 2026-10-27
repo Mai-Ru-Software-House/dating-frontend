@@ -4,9 +4,7 @@
  * (api-integration.md 6.1, 6.4, 6.5, 6.14).
  * Created by Tee (Kittiphon Kijpinyochai), 6 October 2026
  */
-import { USE_MOCKS } from "../constants/env";
 import { request } from "./client";
-import { mockProfileApi } from "./mocks/profile";
 import { toSession, type RawSession } from "./sessions";
 import type {
   CreateProfileBody,
@@ -49,4 +47,8 @@ const realProfileApi: ProfileApi = {
 };
 
 /** Profile endpoints, real or mock. */
-export const profileApi: ProfileApi = USE_MOCKS ? mockProfileApi : realProfileApi;
+export const profileApi: ProfileApi =
+  process.env.EXPO_PUBLIC_USE_MOCKS === "1"
+    ? // eslint-disable-next-line @typescript-eslint/no-require-imports -- loaded only in mock mode so release bundles drop src/api/mocks
+      (require("./mocks/profile") as typeof import("./mocks/profile")).mockProfileApi
+    : realProfileApi;

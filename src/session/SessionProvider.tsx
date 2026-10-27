@@ -18,12 +18,10 @@ import {
 
 import { setSessionBridge, type Tokens } from "../api/client";
 import { toApiError } from "../api/errors";
-import { SEED_KNOWN_ACCOUNTS } from "../api/mocks/fixtures";
 import { profileApi } from "../api/profile";
 import { sessionsApi } from "../api/sessions";
 import type { OwnProfile, Session } from "../api/types";
 import { useToast } from "../components/Toast";
-import { USE_MOCKS } from "../constants/env";
 import { hasStoredAccounts, rememberAccount, saveAccounts } from "./knownAccounts";
 import { keys } from "./queryClient";
 import { clearTokens, readTokens, writeTokens } from "./tokenStore";
@@ -112,8 +110,10 @@ export function SessionProvider({ children }: { children: ReactNode }): React.JS
   const check = useCallback(async () => {
     isChecking.current = true;
     try {
-      if (USE_MOCKS && !(await hasStoredAccounts())) {
-        await saveAccounts(SEED_KNOWN_ACCOUNTS);
+      if (process.env.EXPO_PUBLIC_USE_MOCKS === "1" && !(await hasStoredAccounts())) {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports -- loaded only in mock mode so release bundles drop src/api/mocks
+        const fixtures = require("../api/mocks/fixtures") as typeof import("../api/mocks/fixtures");
+        await saveAccounts(fixtures.SEED_KNOWN_ACCOUNTS);
       }
       tokens.current = await readTokens();
       if (tokens.current === null) {

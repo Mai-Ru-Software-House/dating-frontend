@@ -6,11 +6,9 @@
  */
 import { File } from "expo-file-system";
 
-import { USE_MOCKS } from "../constants/env";
 import { UPLOAD_TIMEOUT_MS } from "../constants/limits";
 import { fileNameFor, uploadMimeType } from "../utils/photo";
 import { request } from "./client";
-import { mockPhotosApi } from "./mocks/photos";
 import type { PhotoUpload, PickedPhoto } from "./types";
 
 /** Photo endpoints. */
@@ -64,4 +62,8 @@ const realPhotosApi: PhotosApi = {
 };
 
 /** Photo endpoints, real or mock. */
-export const photosApi: PhotosApi = USE_MOCKS ? mockPhotosApi : realPhotosApi;
+export const photosApi: PhotosApi =
+  process.env.EXPO_PUBLIC_USE_MOCKS === "1"
+    ? // eslint-disable-next-line @typescript-eslint/no-require-imports -- loaded only in mock mode so release bundles drop src/api/mocks
+      (require("./mocks/photos") as typeof import("./mocks/photos")).mockPhotosApi
+    : realPhotosApi;

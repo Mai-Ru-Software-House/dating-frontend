@@ -6,7 +6,6 @@
  * Created by Tee (Kittiphon Kijpinyochai), 6 October 2026
  */
 import { currentAccessToken, photoSource } from "../api/client";
-import { MOCK_GRADIENT_INDEX } from "../api/mocks/fixtures";
 import { USE_MOCKS } from "../constants/env";
 import { avatarGradients } from "../theme";
 import { gradientIndex } from "../utils/avatar";
@@ -38,6 +37,11 @@ export function usePhotoSource(photoUrl: string | null | undefined): PhotoSource
  * @returns The two gradient colors.
  */
 export function gradientFor(userId: string): readonly [string, string] {
-  const overrides = USE_MOCKS ? MOCK_GRADIENT_INDEX : {};
+  const overrides =
+    process.env.EXPO_PUBLIC_USE_MOCKS === "1"
+      ? // eslint-disable-next-line @typescript-eslint/no-require-imports -- loaded only in mock mode so release bundles drop src/api/mocks
+        (require("../api/mocks/fixtures") as typeof import("../api/mocks/fixtures"))
+          .MOCK_GRADIENT_INDEX
+      : {};
   return avatarGradients[gradientIndex(userId, avatarGradients.length, overrides)];
 }
