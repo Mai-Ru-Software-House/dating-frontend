@@ -51,7 +51,8 @@
         {
           "photosPermission": "Mai Ru needs your photos so you can choose a profile picture."
         }
-      ]
+      ],
+      ["expo-build-properties", { "android": { "usesCleartextTraffic": true } }]
     ]
   }
 }
