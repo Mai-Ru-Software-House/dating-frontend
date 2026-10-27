@@ -1,14 +1,15 @@
 # Mai Ru: mobile app (frontend)
 
 The React Native app for **Mai Ru**, the SEN-201 dating app: profiles, match recommendations and
-search, favorites, chat with replies, and private notes about people. Built with Expo (managed
+search, favorites, chat with replies (new messages are polled every 3 seconds), private notes about
+people, and switching between accounts remembered on the phone. Built with Expo (managed
 workflow, TypeScript), React Navigation, TanStack Query and React Hook Form + Zod. It runs in Expo
 Go, so no native build is needed.
 
 The app talks to the Mai Ru backend (`dating-backend`) by default. A built-in mock backend is kept
 for demos and for working on screens without a server (see [Mock mode](#mock-mode)).
 
-Owner: Tee (Kittiphon Kijpinyochai).
+Owner: Tee (Kittiphon Kijpinyochai). For a shorter walkthrough see [HOW-TO-RUN.md](HOW-TO-RUN.md).
 
 ## Requirements
 
@@ -59,6 +60,7 @@ Which address to use depends on where the app runs:
 
 - **Android emulator, backend on the same PC:** `http://10.0.2.2:<port>/api/v1`. Inside the
   emulator, `localhost` is the emulator itself; `10.0.2.2` is the PC.
+- **iOS Simulator, backend on the same Mac:** `http://localhost:<port>/api/v1`.
 - **Phone on the same Wi-Fi:** `http://<PC's LAN IP>:<port>/api/v1`, for example
   `http://192.168.1.23:3000/api/v1` (`hostname -I` shows the IP). The backend must listen on
   `0.0.0.0`, not only `127.0.0.1`, and the firewall must allow the port.
@@ -116,17 +118,28 @@ gear button on first launch; close the sheet with "Continue".
 
 ## Scripts
 
-| Command                                                       | What it does                                                                                      |
-| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| `npm start`                                                   | Expo dev server against the backend (`EXPO_PUBLIC_API_BASE_URL`)                                  |
-| `npm run start:mocks`                                         | Expo dev server with the mock backend                                                             |
-| `npm run preview -- <avd-name> [--mocks]`                     | Opens the app on that emulator (see above). Without a name it uses `mairu-iphone-15`              |
-| `npm run preview:all [-- --mocks]`                            | The same on `mairu-android-small`, `mairu-iphone-15` and `mairu-tablet` (each takes a few GB RAM) |
-| `npm run text:large -- <serial>`                              | Text size 1.3× on that emulator, for the large text check                                         |
-| `npm run text:normal -- <serial>`                             | Text size back to 1.0×                                                                            |
-| `npm run avds:create`                                         | Creates (or recreates) the six emulators                                                          |
-| `npm run typecheck` / `npm run lint` / `npm run format:check` | `tsc --noEmit`, ESLint, Prettier. Run all three before every commit                               |
-| `npm test` / `npm run test:ci`                                | Unit tests (Jest, `unit-test-plan.md`); `test:ci` adds coverage with the plan's thresholds        |
+| Command                                                       | What it does                                                                                                                                                |
+| ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm start`                                                   | Expo dev server against the backend (`EXPO_PUBLIC_API_BASE_URL`)                                                                                            |
+| `npm run start:mocks`                                         | Expo dev server with the mock backend                                                                                                                       |
+| `npm run preview -- <avd-name> [--mocks]`                     | Opens the app on that emulator (see above). Without a name it uses `mairu-iphone-15`                                                                        |
+| `npm run preview:all [-- --mocks]`                            | The same on `mairu-android-small`, `mairu-iphone-15` and `mairu-tablet` (each takes a few GB RAM)                                                           |
+| `npm run text:large -- <serial>`                              | Text size 1.3× on that emulator, for the large text check                                                                                                   |
+| `npm run text:normal -- <serial>`                             | Text size back to 1.0×                                                                                                                                      |
+| `npm run avds:create`                                         | Creates (or recreates) the six emulators                                                                                                                    |
+| `npm run typecheck` / `npm run lint` / `npm run format:check` | `tsc --noEmit`, ESLint, Prettier. Run all three before every commit                                                                                         |
+| `npm run lint:quality`                                        | ESLint with the stricter static-analysis config (`eslint.quality.config.mjs`)                                                                               |
+| `npm run format`                                              | Prettier, rewriting files                                                                                                                                   |
+| `npm test` / `npm run test:watch` / `npm run test:ci`         | Unit tests (Jest, `unit-test-plan.md`); `watch` reruns on change; `test:ci` adds coverage with the plan's thresholds (`src/utils` 90% lines, `src/api` 85%) |
+| `npm run seed:bangkok`                                        | Creates fake users around Bangkok through the API to test matching (see below)                                                                              |
+
+### Seeding test users
+
+`node scripts/seed-bangkok-users.mjs` registers fake users (`bkk_001`, `bkk_002`, ..., all with the
+password `Bangkok2026`) through the public API. The same `--seed` gives the same people, and users
+that already exist are skipped. Options: `--base-url`, `--count` (default 10000), `--seed`,
+`--password`, `--concurrency`, `--image-size`, `--update-existing`, `--dry-run`. The base URL
+defaults to `EXPO_PUBLIC_API_BASE_URL`.
 
 ## Mock mode
 
@@ -145,6 +158,9 @@ Mock times are relative to the device clock (the designs' "today" is shown as to
 | `mai_ru01`  | `password123`           | Mai (remembered on Switch user)          |
 | `mai_ru02`  | `password123`           | Mai (second remembered account)          |
 
+On the Switch user screen you can add an account (it opens Login in switch mode) or choose Edit →
+Remove to forget one remembered on the phone.
+
 Also: the username `nok` is always taken, and GPS at 12.500, 100.900 has no place name. The preview
 script puts the emulator's GPS on the KMITL/CMKL campus (13.723, 100.784).
 
@@ -152,11 +168,11 @@ script puts the emulator's GPS on the KMITL/CMKL campus (13.723, 100.784).
 
 In `src/constants/features.ts`:
 
-| Feature                    | Backend | Mocks | Why                                                            |
-| -------------------------- | ------- | ----- | -------------------------------------------------------------- |
-| Edit profile               | off     | on    | waits for `PATCH /users/me` to be confirmed                    |
-| Edit and delete a note     | off     | on    | waits for `PATCH` and `DELETE /notes/{noteId}` to be confirmed |
-| Typing indicator in a chat | off     | off   | the API has no typing status                                   |
+| Feature                    | Backend | Mocks | Why                                               |
+| -------------------------- | ------- | ----- | ------------------------------------------------- |
+| Edit profile               | on      | on    | `PATCH /users/me` and `PUT /users/me/photo` exist |
+| Edit and delete a note     | on      | on    | `PATCH` and `DELETE /notes/{noteId}` exist        |
+| Typing indicator in a chat | off     | off   | the API has no typing status                      |
 
 ## Project layout
 
@@ -172,7 +188,9 @@ src/hooks/               data hooks (useMe, useFavorites, useUnread, ...)
 src/utils/               pure functions: formatting, rules, grouping, sorting
 src/constants/           limits, gender list, feature flags, env
 src/theme/               colors, type, spacing, layout helpers
-scripts/                 emulator and preview helpers
+test/                    shared Jest setup, mocks and render helpers
+scripts/                 emulator and preview helpers, Bangkok user seeding
+quality_assessment/      ESLint static-analysis report for the SEN-201 assignment
 ```
 
 Design and API docs live outside this repo, in the team's `Mai Ru Dating App/docs/` folder
@@ -180,6 +198,7 @@ Design and API docs live outside this repo, in the team's `Mai Ru Dating App/doc
 
 ## Contributing
 
-`main` always builds; changes reach it through a reviewed pull request from a feature branch. Every
+`main` always builds; changes reach it through a reviewed pull request from a feature branch. Run
+`npm run typecheck`, `npm run lint`, `npm run format:check` and `npm test` first. Every
 file starts with a header comment (name, purpose, author and date), exported functions and
 components have JSDoc, and TypeScript is `strict` with no `any`. Never commit `.env`.
